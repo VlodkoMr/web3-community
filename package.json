@@ -1,0 +1,50 @@
+{
+  "name": "web3-community",
+  "private": true,
+  "version": "0.0.1",
+  "scripts": {
+    "clean:hardhat": "env $(cat .env) npx hardhat clean",
+    "cleanup": "rm -rf ./dist && rm -rf .parcel-cache",
+    "parcel:build": "parcel build src/index.html --public-url ./",
+    "local": "env $(cat .env) npx hardhat node",
+    "deploy": "env $(cat .env) npx hardhat run src/backend/scripts/deploy.local.js --network mumbai_testnet",
+    "update:local": "env $(cat .env) npx hardhat run src/backend/scripts/update.local.js --network mumbai_testnet",
+    "verify:local": "env $(cat .env) npx hardhat verify '0xEDE2eDf1A0eB671C4F88f5715A17D9320a3167DA' --network mumbai_testnet",
+    "build:local": "cp src/frontend/contractsData/localhost/* src/frontend/contractsData/ && npm run cleanup && NODE_ENV=localhost npm run parcel:build",
+    "start": "npm run cleanup && NODE_ENV=localhost parcel src/index.html --open",
+    "deploy:mumbai": "env $(cat .env) npx hardhat run src/backend/scripts/deploy.mumbai.js --network mumbai_testnet",
+    "update:mumbai": "env $(cat .env) npx hardhat run src/backend/scripts/update.mumbai.js --network mumbai_testnet",
+    "verify:mumbai": "env $(cat .env) npx hardhat verify '0xCE887EE940278bA1DFC5287067ea0925cc21F5F6' --network mumbai_testnet",
+    "build:mumbai": "cp src/frontend/contractsData/mumbai_testnet/* src/frontend/contractsData/ && npm run cleanup && NODE_ENV=testnet.mumbai npm run parcel:build",
+    "deploy:polygon": "env $(cat .env) npx hardhat run src/backend/scripts/deploy.polygon.js --network polygon_mainnet",
+    "update:polygon": "env $(cat .env) npx hardhat run src/backend/scripts/update.polygon.js --network polygon_mainnet",
+    "verify:polygon": "env $(cat .env) npx hardhat verify '0x82a0434135aEABB5284A4dfEda20b8bB4a25624A' --network polygon_mainnet",
+    "build:polygon": "cp src/frontend/contractsData/polygon_mainnet/* src/frontend/contractsData/ && npm run cleanup && NODE_ENV=mainnet.polygon npm run parcel:build"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.7.3",
+    "@openzeppelin/contracts-upgradeable": "^4.7.3",
+    "@openzeppelin/hardhat-upgrades": "^1.19.1",
+    "connectkit": "^0.0.2",
+    "ethers": "^5.7.0",
+    "flowbite": "^1.5.3",
+    "flowbite-react": "^0.1.10",
+    "parcel": "^2.6.2",
+    "process": "^0.11.10",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.3.0",
+    "react-scroll": "^1.8.7",
+    "styled-components": "^5.3.5",
+    "wagmi": "^0.6.4"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^1.0.2",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "autoprefixer": "^10.4.8",
+    "hardhat": "^2.10.1",
+    "postcss": "^8.4.16",
+    "tailwindcss": "^3.1.8"
+  }
+}
