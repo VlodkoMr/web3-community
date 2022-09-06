@@ -5,11 +5,12 @@ import logoColor from '../assets/images/logo/logo.png';
 import { Link, NavLink, ScrollLink } from '../assets/css/common.style';
 import { animateScroll } from "react-scroll";
 import { useAccount } from "wagmi";
+import { Dropdown } from "flowbite-react";
 
 export const Header = ({ isInner }) => {
   const [scroll, setScroll] = useState(false);
+  const [communityDropdownOpen, setCommunityDropdownOpen] = useState(false);
   const { isConnected } = useAccount();
-
 
   useEffect(() => {
     // Change header bg on scroll
@@ -79,36 +80,17 @@ export const Header = ({ isInner }) => {
 
                     </li>
                     <li className="relative ml-2 mt-4">
-                      <div>
-                        <button id="dropdownDefault" data-dropdown-toggle="dropdown"
-                                className="text-white bg-transparent hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg
-                                text-base px-4 py-2.5 text-center inline-flex items-center"
-                                type="button">Community
-                          <svg
-                            className="ml-2 w-4 h-4"
-                            aria-hidden="true"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </button>
-                        <div id="dropdown" className="absolute z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700">
-                          <ul className="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefault">
-                            <li>
-                              <a href="#" className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Comm 1</a>
-                            </li>
-                            <li>
-                              <a href="#" className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Comm 2</a>
-                            </li>
-                            <li>
-                              <a href="#" className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">+ Create New</a>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
+                      <Dropdown label="My Community">
+                        <Dropdown.Item>
+                          Dashboard
+                        </Dropdown.Item>
+                        <Dropdown.Item>
+                          Settings
+                        </Dropdown.Item>
+                        <Dropdown.Item>
+                          + New Community
+                        </Dropdown.Item>
+                      </Dropdown>
                     </li>
                   </ul>
                 )}

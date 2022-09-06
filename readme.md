@@ -30,29 +30,29 @@ Fill environment variables in files:
 ### Build & Deploy
 
 ```
-yarn deploy
-yarn start
+npm run deploy
+npm run start
 ```
 
 ## Production
 
 ```
-yarn deploy:polygon
-yarn build:polygon
+npm run deploy:polygon
+npm run build:polygon
 ```
 
 - Update CONTRACT_PROXY in src/backend/scripts/update.polygon.js
-- Deploy frontend or use Spheron network for CI/CD
-- Fill environment variables: .env.mainnet.polygon
+- Fill environment variables for your chain
+- Build frontend & deploy
 
 ### Verify Smart Contract
 
 ```
-yarn verify:polygon
+npm run verify:polygon
 ```
 
 ### Update Smart Contract
 
 ```
-yarn update:polygon
+npm run update:polygon
 ```
