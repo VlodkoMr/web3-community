@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Label, TextInput, Button, Textarea, FileInput } from 'flowbite-react';
 import { resizeFileImage, uploadMediaToIPFS } from '../../utils/media';
 import { useDispatch } from 'react-redux';
 import { addTransaction } from '../../store/transactionSlice';
 
-export function CreateCommunity({ contract }) {
+export function CreateCommunity({ contract, handleSuccess }) {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     name: "",
@@ -36,7 +36,7 @@ export function CreateCommunity({ contract }) {
 
         tx.wait().then(receipt => {
           if (receipt.status === 1) {
-            console.log('receipt', receipt);
+            handleSuccess();
           } else {
             alert('Minting error');
           }
@@ -85,17 +85,18 @@ export function CreateCommunity({ contract }) {
             <Label htmlFor="description" value="Description" />
           </div>
           <Textarea id="description"
-                    required={true}
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           />
         </div>
+
         {/*<div className="flex items-center gap-2">*/}
         {/*  <Checkbox id="remember" />*/}
         {/*  <Label htmlFor="remember">*/}
         {/*    Remember me*/}
         {/*  </Label>*/}
         {/*</div>*/}
+
         <div className={"flex justify-end"}>
           <Button type="Submit" gradientDuoTone="purpleToPink">
             <span className="uppercase">Create</span>
@@ -103,7 +104,6 @@ export function CreateCommunity({ contract }) {
           </Button>
         </div>
       </form>
-
 
     </>
   );

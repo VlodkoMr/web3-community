@@ -5,12 +5,15 @@ import logoColor from '../assets/images/logo/logo.png';
 import { Container, Link, NavLink, ScrollLink } from '../assets/css/common.style';
 import { animateScroll } from "react-scroll";
 import { useAccount } from "wagmi";
-import { Dropdown } from "flowbite-react";
-import { useSelector } from 'react-redux';
+import { Dropdown, Modal } from "flowbite-react";
+import { useDispatch, useSelector } from 'react-redux';
+import { setCurrentCommunity } from '../store/communitySlice';
+import { CreateCommunity } from './Dashboard/CreateCommunity';
 
-
-export const Header = ({ isInner }) => {
+export const Header = ({ contract, isInner }) => {
+  const dispatch = useDispatch();
   const [scroll, setScroll] = useState(false);
+  const [communityPopupVisible, setCommunityPopupVisible] = useState(false);
   const { isConnected } = useAccount();
   const communityList = useSelector(state => state.community.list);
   const currentCommunity = useSelector(state => state.community.current);
@@ -33,8 +36,19 @@ export const Header = ({ isInner }) => {
         result = item.name;
       }
     });
-
     return result;
+  }
+
+  const selectCommunity = (id) => {
+    dispatch(setCurrentCommunity({
+      id: id
+    }));
+  }
+
+  const handleSuccessCreate = () => {
+    setCommunityPopupVisible(false);
+    // Todo: reload components
+    document.location.reload();
   }
 
   return (
@@ -96,13 +110,15 @@ export const Header = ({ isInner }) => {
                       {communityList.length > 0 ? (
                         <Dropdown label={getCurrentTitle()}>
                           {communityList.map(item => (
-                            <Dropdown.Item>
+                            <Dropdown.Item
+                              onClick={() => selectCommunity(item.id)}
+                              key={item.id}>
                               <span className={"whitespace-nowrap"}>
                                 {item.name}
                               </span>
                             </Dropdown.Item>
                           ))}
-                          <Dropdown.Item>
+                          <Dropdown.Item onClick={() => setCommunityPopupVisible(true)}>
                             <span className={"whitespace-nowrap"}>
                               + New Community
                             </span>
@@ -128,6 +144,26 @@ export const Header = ({ isInner }) => {
           </div>
         </div>
       </Container>
+
+
+      <Modal size="md"
+             popup={true}
+             show={communityPopupVisible}
+             onClose={() => setCommunityPopupVisible(false)}>
+        <Modal.Header />
+        <Modal.Body>
+          <div className="text-lg pb-6 text-center w-full">
+            Create New Community
+          </div>
+          <div className="space-y-6 px-6 pb-4 sm:pb-6 lg:px-8 xl:pb-8">
+            <CreateCommunity
+              contract={contract}
+              handleSuccess={() => handleSuccessCreate()}
+            />
+          </div>
+        </Modal.Body>
+      </Modal>
+
     </div>
   );
 }

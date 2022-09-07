@@ -3,9 +3,9 @@ import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { Link } from 'react-router-dom';
 
-export const Error404 = () => (
+export const Error404 = ({contract}) => (
   <div className="flex flex-col h-screen relative">
-    <Header />
+    <Header contract={contract} />
 
     <div
       id="home"

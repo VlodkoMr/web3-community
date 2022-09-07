@@ -1,5 +1,5 @@
 import React from "react";
-import { MdSpaceDashboard } from 'react-icons/md';
+import { MdPermMedia, MdSettings, MdSpaceDashboard } from 'react-icons/md';
 import { GiToken } from 'react-icons/gi';
 import { useLocation, NavLink } from "react-router-dom";
 
@@ -32,12 +32,17 @@ export function DashboardLeftMenu() {
       </li>
       <li className="relative">
         <MenuItem title={"NFT Collection"} link={"/community/nft"}>
-          <MdSpaceDashboard color={getNavLinkClass("/community/nft") ? "white" : ""} />
+          <MdPermMedia color={getNavLinkClass("/community/nft") ? "white" : ""} />
         </MenuItem>
       </li>
       <li className="relative">
         <MenuItem title={"Fungible Token"} link={"/community/token"}>
           <GiToken color={getNavLinkClass("/community/token") ? "white" : ""} />
+        </MenuItem>
+      </li>
+      <li className="relative">
+        <MenuItem title={"Settings"} link={"/community/settings"}>
+          <MdSettings color={getNavLinkClass("/community/settings") ? "white" : ""} />
         </MenuItem>
       </li>
     </ul>

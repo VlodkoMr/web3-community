@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-export const Dashboard = ({ contract }) => {
+export const FungibleToken = ({ contract }) => {
   const dispatch = useDispatch();
   const currentCommunity = useSelector(state => state.community.current);
 
@@ -11,13 +11,13 @@ export const Dashboard = ({ contract }) => {
 
   useEffect(() => {
     if (contract) {
-      console.log('Dashboard load')
+      console.log('FungibleToken load')
     }
   }, [contract]);
 
   return (
     <>
-      <h3 className="text-2xl font-semibold mb-2">Dashboard</h3>
+      <h3 className="text-2xl font-semibold mb-2">Fungible Token</h3>
       <div>
         ...
       </div>

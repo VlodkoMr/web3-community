@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Dashboard, Home, Community, Error404 } from './pages';
+import { Dashboard, Home, Community, Error404, FungibleToken, NftCollection, Settings } from './pages';
 import { useAccount, useSigner } from 'wagmi'
 import { ethers } from 'ethers';
 import { Transaction } from './components/Transaction';
@@ -29,11 +29,14 @@ export default function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route exact path="/" element={<Home />} />
+          <Route exact path="/" element={<Home contract={contract} />} />
           <Route exact path="/community" element={<Community contract={contract} />}>
             <Route exact path="dashboard" element={<Dashboard contract={contract} />} />
+            <Route exact path="nft" element={<NftCollection contract={contract} />} />
+            <Route exact path="token" element={<FungibleToken contract={contract} />} />
+            <Route exact path="settings" element={<Settings contract={contract} />} />
           </Route>
-          <Route path='*' element={<Error404 />} />
+          <Route path='*' element={<Error404 contract={contract} />} />
         </Routes>
       </BrowserRouter>
 

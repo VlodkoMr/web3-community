@@ -4,11 +4,11 @@ import { Footer } from "../components/Footer";
 import { Btn, ScrollLink } from '../assets/css/common.style';
 import { Feature } from '../components/Home/Feature';
 
-export const Home = () => {
+export const Home = ({contract}) => {
 
   return (
     <>
-      <Header />
+      <Header contract={contract} />
 
       <div
         id="home"

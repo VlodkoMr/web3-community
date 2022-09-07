@@ -16,23 +16,19 @@ export const Community = ({ contract }) => {
   const { address } = useAccount();
   const [isReady, setIsReady] = useState(false);
   const communityList = useSelector(state => state.community.list);
-  const currentCommunity = useSelector(state => state.community.current);
 
   const loadCommunityList = async () => {
     const myCommunity = await contract.getUserCommunities(address);
     if (myCommunity.length) {
-      dispatch(setCommunityList({
-        list: myCommunity.map(item => transformCommunity(item))
-      }));
       dispatch(setCurrentCommunity({
         id: parseInt(myCommunity[0].id)
       }));
+      dispatch(setCommunityList({
+        list: myCommunity.map(item => transformCommunity(item))
+      }));
     }
-  }
-
-  useEffect(() => {
     setIsReady(true);
-  }, [communityList]);
+  }
 
   useEffect(() => {
     if (contract) {
@@ -40,14 +36,18 @@ export const Community = ({ contract }) => {
     }
   }, [contract]);
 
+  const onCommunityCreated = () => {
+    loadCommunityList();
+  }
+
   return (
     <InnerPageWrapper>
-      <Header isInner={true} />
+      <Header isInner={true} contract={contract} />
       <div id="home" className="relative h-[80px] bg-primary mb-6" />
 
       {isReady ? (
         <Wrapper>
-          {currentCommunity !== null ? (
+          {communityList.length > 0 ? (
             <Container className="flex flex-row">
               <div className="w-56">
                 <DashboardLeftMenu />
@@ -63,7 +63,10 @@ export const Community = ({ contract }) => {
                 <p className="text-sm">Look like you don't have Community, let's create first one:</p>
 
                 <div className="my-6">
-                  <CreateCommunity contract={contract} />
+                  <CreateCommunity
+                    contract={contract}
+                    handleSuccess={() => onCommunityCreated()}
+                  />
                 </div>
 
                 <hr className="my-4" />
