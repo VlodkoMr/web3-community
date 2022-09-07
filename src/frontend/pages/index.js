@@ -1,2 +1,4 @@
 export * from "./Home";
-export * from "./Dashboard";
+export * from "./Community/Dashboard";
+export * from "./Community/Community";
+export * from "./Error404";

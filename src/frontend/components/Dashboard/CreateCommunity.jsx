@@ -1,23 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Label, TextInput, Button, Textarea, FileInput } from 'flowbite-react';
 import { resizeFileImage, uploadMediaToIPFS } from '../../utils/media';
-import { writeTx } from '../../utils/request';
-import { useContractWrite } from 'wagmi';
-import web3ContractABI from '../../contractsData/Web3Community.json';
+import { useDispatch } from 'react-redux';
+import { addTransaction } from '../../store/transactionSlice';
 
 export function CreateCommunity({ contract }) {
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     name: "",
     logo: "",
     description: ""
   });
-  // const { config, error } = writeTx("createCommunity");
-  // const { write } = useContractWrite(config);
-
-  // useEffect(() => {
-  //   console.log('write', write);
-  // }, [write])
-
 
   const handleCreate = (e) => {
     e.preventDefault();
@@ -29,14 +22,31 @@ export function CreateCommunity({ contract }) {
         alert(e);
       })
     } else {
-      createCommunity();
+      createCommunity("");
     }
   }
 
   const createCommunity = (logoURL) => {
-    // contract.createCommunity(formData.name, logoURL)
+    if (contract) {
+      contract.createCommunity(formData.name, logoURL).then(tx => {
+        dispatch(addTransaction({
+          hash: tx.hash,
+          description: "Create New Community"
+        }));
 
-    console.log('+')
+        tx.wait().then(receipt => {
+          if (receipt.status === 1) {
+            console.log('receipt', receipt);
+          } else {
+            alert('Minting error');
+          }
+        });
+      }).catch(err => {
+        console.log('tx canceled', err)
+      });
+    } else {
+      alert("Please connect your wallet");
+    }
   }
 
   const resizeImage = (e) => {
@@ -47,50 +57,54 @@ export function CreateCommunity({ contract }) {
   }
 
   return (
-    <form className="flex flex-col gap-4" onSubmit={handleCreate}>
-      <div>
-        <div className="mb-1 block text-left">
-          <Label htmlFor="name" value="Community Title" />
-          <sup className={"text-red-400"}>*</sup>
+    <>
+      <form className="flex flex-col gap-4" onSubmit={handleCreate}>
+        <div>
+          <div className="mb-1 block text-left">
+            <Label htmlFor="name" value="Community Title" />
+            <sup className={"text-red-400"}>*</sup>
+          </div>
+          <TextInput id="name"
+                     type="text"
+                     required={true}
+                     value={formData.name}
+                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          />
         </div>
-        <TextInput id="name"
-                   type="text"
-                   required={true}
-                   value={formData.name}
-                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-        />
-      </div>
-      <div>
-        <div className="mb-1 block text-left">
-          <Label htmlFor="logo" value="Logo" />
+        <div>
+          <div className="mb-1 block text-left">
+            <Label htmlFor="logo" value="Logo" />
+          </div>
+          <FileInput id="logo"
+                     accept="image/*"
+                     onChange={(e) => resizeImage(e)}
+          />
         </div>
-        <FileInput id="logo"
-                   accept="image/*"
-                   onChange={(e) => resizeImage(e)}
-        />
-      </div>
-      <div>
-        <div className="mb-1 block text-left">
-          <Label htmlFor="description" value="Description" />
+        <div>
+          <div className="mb-1 block text-left">
+            <Label htmlFor="description" value="Description" />
+          </div>
+          <Textarea id="description"
+                    required={true}
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+          />
         </div>
-        <Textarea id="description"
-                  required={true}
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-        />
-      </div>
-      {/*<div className="flex items-center gap-2">*/}
-      {/*  <Checkbox id="remember" />*/}
-      {/*  <Label htmlFor="remember">*/}
-      {/*    Remember me*/}
-      {/*  </Label>*/}
-      {/*</div>*/}
-      <div className={"flex justify-end"}>
-        <Button type="Submit" gradientDuoTone="purpleToPink">
-          <span className="uppercase">Create</span>
-          <img src={require("../../assets/images/home/arrow.svg")} alt="->" className={"w-4 h-2 ml-2"} />
-        </Button>
-      </div>
-    </form>
+        {/*<div className="flex items-center gap-2">*/}
+        {/*  <Checkbox id="remember" />*/}
+        {/*  <Label htmlFor="remember">*/}
+        {/*    Remember me*/}
+        {/*  </Label>*/}
+        {/*</div>*/}
+        <div className={"flex justify-end"}>
+          <Button type="Submit" gradientDuoTone="purpleToPink">
+            <span className="uppercase">Create</span>
+            <img src={require("../../assets/images/home/arrow.svg")} alt="->" className={"w-4 h-2 ml-2"} />
+          </Button>
+        </div>
+      </form>
+
+
+    </>
   );
 }

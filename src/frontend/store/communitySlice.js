@@ -10,8 +10,11 @@ const communitySlice = createSlice({
     setCommunityList(state, action) {
       state.list = action.payload.list;
     },
+    setCurrentCommunity(state, action) {
+      state.current = action.payload.id;
+    },
   }
 });
 
-export const { setCommunityList } = communitySlice.actions;
+export const { setCommunityList, setCurrentCommunity } = communitySlice.actions;
 export default communitySlice.reducer;

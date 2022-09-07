@@ -62,7 +62,7 @@ export const NavLink = styled(ReactNavLink).attrs((props) => ({
     px-6
     cursor-pointer
     lg:mr-0 lg:hover:opacity-70 lg:py-6 lg:inline-flex 
-    ${props.dark ? "lg:text-dark" : "lg:text-white hover:text-primary lg:hover:text-white"}
+    ${props.dark === "true" ? "lg:text-dark" : "lg:text-white hover:text-primary lg:hover:text-white"}
     `,
 }))``;
 
@@ -77,6 +77,6 @@ export const ScrollLink = styled(Scroll.Link).attrs((props) => ({
     lg:mr-0
     cursor-pointer
     lg:py-6 lg:inline-flex  lg:hover:opacity-70
-    ${props.dark ? "lg:text-dark" : "lg:text-white hover:text-primary lg:hover:text-white"}
+    ${props.dark === "true" ? "lg:text-dark" : "lg:text-white hover:text-primary lg:hover:text-white"}
     `,
 }))``;

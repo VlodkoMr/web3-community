@@ -1,10 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 import communitySlice from './communitySlice';
-import contractSlice from './contractSlice';
+import transactionSlice from './transactionSlice';
 
 export default configureStore({
   reducer: {
-    contract: contractSlice,
     community: communitySlice,
+    transactions: transactionSlice,
   }
 });

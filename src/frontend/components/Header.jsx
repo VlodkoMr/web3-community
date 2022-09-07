@@ -13,6 +13,7 @@ export const Header = ({ isInner }) => {
   const [scroll, setScroll] = useState(false);
   const { isConnected } = useAccount();
   const communityList = useSelector(state => state.community.list);
+  const currentCommunity = useSelector(state => state.community.current);
 
   useEffect(() => {
     // Change header bg on scroll
@@ -24,6 +25,17 @@ export const Header = ({ isInner }) => {
   const toggleHome = () => {
     animateScroll.scrollToTop();
   };
+
+  const getCurrentTitle = () => {
+    let result = "";
+    communityList.map(item => {
+      if (item.id === currentCommunity) {
+        result = item.name;
+      }
+    });
+
+    return result;
+  }
 
   return (
     <div
@@ -59,37 +71,41 @@ export const Header = ({ isInner }) => {
                 {!isInner ? (
                   <ul className="lg:flex">
                     <li className="relative group">
-                      <ScrollLink to="/" onClick={toggleHome} dark={scroll ? true : undefined}>Home</ScrollLink>
+                      <ScrollLink to="/" onClick={toggleHome} dark={scroll ? "true" : undefined}>Home</ScrollLink>
                     </li>
                     <li className="relative group">
-                      <ScrollLink to={"about"} dark={scroll ? true : undefined} smooth={true}>About</ScrollLink>
+                      <ScrollLink to={"about"} dark={scroll ? "true" : undefined} smooth={true}>About</ScrollLink>
                     </li>
                     <li className="relative group">
-                      <ScrollLink to={"pricing"} dark={scroll ? true : undefined} smooth={true}>Pricing</ScrollLink>
+                      <ScrollLink to={"pricing"} dark={scroll ? "true" : undefined} smooth={true}>Pricing</ScrollLink>
                     </li>
                     <li className="relative group">
-                      <ScrollLink to={"team"} dark={scroll ? true : undefined} smooth={true}>Team</ScrollLink>
+                      <ScrollLink to={"team"} dark={scroll ? "true" : undefined} smooth={true}>Team</ScrollLink>
                     </li>
                     <li className="relative group">
-                      <ScrollLink to={"contact"} dark={scroll ? true : undefined} smooth={true}>Contact</ScrollLink>
+                      <ScrollLink to={"contact"} dark={scroll ? "true" : undefined} smooth={true}>Contact</ScrollLink>
                     </li>
                   </ul>
                 ) : (
                   <ul className="lg:flex">
                     <li className="relative">
-                      <NavLink to={"/"} dark={scroll ? true : undefined}>&laquo; Home</NavLink>
+                      <NavLink to={"/"} dark={scroll ? "true" : undefined}>&laquo; Home</NavLink>
                       <span className="text-white opacity-40">/</span>
                     </li>
                     <li className="relative ml-2 mt-4">
                       {communityList.length > 0 ? (
-                        <Dropdown label="My Community">
+                        <Dropdown label={getCurrentTitle()}>
                           {communityList.map(item => (
                             <Dropdown.Item>
-                              {item.name}
+                              <span className={"whitespace-nowrap"}>
+                                {item.name}
+                              </span>
                             </Dropdown.Item>
                           ))}
                           <Dropdown.Item>
-                            + New Community
+                            <span className={"whitespace-nowrap"}>
+                              + New Community
+                            </span>
                           </Dropdown.Item>
                         </Dropdown>
                       ) : (
@@ -102,7 +118,7 @@ export const Header = ({ isInner }) => {
             </div>
             <div className="sm:flex justify-end hidden pr-16 lg:pr-0">
               {isConnected && !isInner && (
-                <NavLink to={"/dashboard"} dark={scroll ? true : undefined}>My Dashboard</NavLink>
+                <NavLink to={"/community/dashboard"} dark={scroll ? "true" : undefined}>My Dashboard</NavLink>
               )}
 
               <div className={`${isConnected && !isInner && "pt-4"} ml-2`}>

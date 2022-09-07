@@ -26,18 +26,18 @@ export function DashboardLeftMenu() {
   return (
     <ul>
       <li className="relative">
-        <MenuItem title={"Dashboard"} link={"/dashboard"}>
-          <MdSpaceDashboard color={getNavLinkClass("/dashboard") ? "white" : ""} />
+        <MenuItem title={"Dashboard"} link={"/community/dashboard"}>
+          <MdSpaceDashboard color={getNavLinkClass("/community/dashboard") ? "white" : ""} />
         </MenuItem>
       </li>
       <li className="relative">
-        <MenuItem title={"NFT Collection"} link={"/nft"}>
-          <MdSpaceDashboard color={getNavLinkClass("/nft") ? "white" : ""} />
+        <MenuItem title={"NFT Collection"} link={"/community/nft"}>
+          <MdSpaceDashboard color={getNavLinkClass("/community/nft") ? "white" : ""} />
         </MenuItem>
       </li>
       <li className="relative">
-        <MenuItem title={"Fungible Token"} link={"/token"}>
-          <GiToken color={getNavLinkClass("/token") ? "white" : ""} />
+        <MenuItem title={"Fungible Token"} link={"/community/token"}>
+          <GiToken color={getNavLinkClass("/community/token") ? "white" : ""} />
         </MenuItem>
       </li>
     </ul>

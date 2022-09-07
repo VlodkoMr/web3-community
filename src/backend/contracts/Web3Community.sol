@@ -40,4 +40,14 @@ contract Web3Community is Initializable, OwnableUpgradeable, UUPSUpgradeable, Ut
     communityList[msg.sender].push(Community(communityCount, _name, _logo, address(0), address(0)));
   }
 
+  function getUserCommunities(address _owner) public view returns (Community[] memory) {
+    return communityList[_owner];
+    //    uint _totalCount = communityList[_owner].length;
+    //    Community[] memory _result = new Community[](_totalCount);
+    //    for (uint _i = 0; _i < _listId.length; ++_i) {
+    //      result[_i] = communityList[_owner];
+    //    }
+    //    return _result;
+  }
+
 }

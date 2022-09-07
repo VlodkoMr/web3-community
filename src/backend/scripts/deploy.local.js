@@ -17,10 +17,6 @@ async function main() {
   })
   await web3Community.deployed();
 
-  // const Web3Community = await hre.ethers.getContractFactory("Web3Community");
-  // const web3Community = await Web3Community.deploy();
-  // await web3Community.deployed();
-
   console.log("Deployed to: ", web3Community.address);
   saveFrontendFiles(web3Community, "Web3Community");
 }
