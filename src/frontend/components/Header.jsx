@@ -9,7 +9,6 @@ import { Dropdown } from "flowbite-react";
 
 export const Header = ({ isInner }) => {
   const [scroll, setScroll] = useState(false);
-  const [communityDropdownOpen, setCommunityDropdownOpen] = useState(false);
   const { isConnected } = useAccount();
 
   useEffect(() => {
