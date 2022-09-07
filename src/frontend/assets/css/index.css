@@ -11,3 +11,11 @@ body {
 .filter-blur {
     backdrop-filter: blur(5px);
 }
+
+.left-nav.active {
+    @apply shadow-gray-300/30 shadow-md bg-white font-semibold text-slate-600;
+}
+
+.left-nav.active > div {
+    @apply bg-gradient-to-tl from-primary to-pink-400 !shadow-none;
+}

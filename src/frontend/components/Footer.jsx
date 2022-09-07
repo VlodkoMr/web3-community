@@ -1,4 +1,5 @@
 import React from "react";
+import { Container } from '../assets/css/common.style';
 
 export const Footer = () => (
   <>
@@ -8,7 +9,7 @@ export const Footer = () => (
     >
 
       <div className="border-t border-opacity-40 py-8">
-        <div className="container">
+        <Container>
           <div className="flex flex-wrap -mx-4">
             <div className="w-full md:w-2/3 lg:w-1/2 px-4">
               <div className="my-1">
@@ -48,7 +49,7 @@ export const Footer = () => (
               </div>
             </div>
           </div>
-        </div>
+        </Container>
       </div>
 
       <div>

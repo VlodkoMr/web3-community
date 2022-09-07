@@ -2,14 +2,17 @@ import React, { useEffect, useState } from "react";
 import { ConnectKitButton } from 'connectkit';
 import logoWhite from '../assets/images/logo/logo-white.png';
 import logoColor from '../assets/images/logo/logo.png';
-import { Link, NavLink, ScrollLink } from '../assets/css/common.style';
+import { Container, Link, NavLink, ScrollLink } from '../assets/css/common.style';
 import { animateScroll } from "react-scroll";
 import { useAccount } from "wagmi";
 import { Dropdown } from "flowbite-react";
+import { useSelector } from 'react-redux';
+
 
 export const Header = ({ isInner }) => {
   const [scroll, setScroll] = useState(false);
   const { isConnected } = useAccount();
+  const communityList = useSelector(state => state.community.list);
 
   useEffect(() => {
     // Change header bg on scroll
@@ -27,7 +30,7 @@ export const Header = ({ isInner }) => {
       className={`ud-header fixed top-0 left-0 z-40 w-full flex items-center
       ${scroll ? "black-type bg-white/70 shadow filter-blur" : "bg-transparent"}`}
     >
-      <div className="container">
+      <Container>
         <div className="flex -mx-4 items-center justify-between relative">
           <div className="px-4 w-60 max-w-full">
             <Link to={"/"} className="navbar-logo w-full block py-5">
@@ -75,21 +78,23 @@ export const Header = ({ isInner }) => {
                   <ul className="lg:flex">
                     <li className="relative">
                       <NavLink to={"/"} dark={scroll ? true : undefined}>&laquo; Home</NavLink>
-                      <span className="text-white">/</span>
-
+                      <span className="text-white opacity-40">/</span>
                     </li>
                     <li className="relative ml-2 mt-4">
-                      <Dropdown label="My Community">
-                        <Dropdown.Item>
-                          Dashboard
-                        </Dropdown.Item>
-                        <Dropdown.Item>
-                          Settings
-                        </Dropdown.Item>
-                        <Dropdown.Item>
-                          + New Community
-                        </Dropdown.Item>
-                      </Dropdown>
+                      {communityList.length > 0 ? (
+                        <Dropdown label="My Community">
+                          {communityList.map(item => (
+                            <Dropdown.Item>
+                              {item.name}
+                            </Dropdown.Item>
+                          ))}
+                          <Dropdown.Item>
+                            + New Community
+                          </Dropdown.Item>
+                        </Dropdown>
+                      ) : (
+                        <div className="text-white pt-2 pl-4 opacity-50">New Community</div>
+                      )}
                     </li>
                   </ul>
                 )}
@@ -106,7 +111,7 @@ export const Header = ({ isInner }) => {
             </div>
           </div>
         </div>
-      </div>
+      </Container>
     </div>
   );
 }

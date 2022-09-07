@@ -13,7 +13,9 @@ export const InnerPageWrapper = styled.section.attrs({
   flex 
   flex-col 
   min-h-screen 
-  justify-between`,
+  justify-between
+  bg-gray-50 
+  text-slate-500`,
 })``;
 
 export const Btn = styled.button.attrs({
@@ -36,9 +38,6 @@ export const Btn = styled.button.attrs({
 
 export const Container = styled.div.attrs({
   className: `
-    px-2
-    z-10
-    xl:px-10
     mx-auto
     container`,
 })``;

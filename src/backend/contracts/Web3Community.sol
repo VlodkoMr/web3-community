@@ -13,13 +13,14 @@ import "../abstract/utils.sol";
 contract Web3Community is Initializable, OwnableUpgradeable, UUPSUpgradeable, Utils {
   uint public communityCount;
 
-  mapping(uint => Community) communityList;
+  mapping(address => Community[]) public communityList;
 
   struct Community {
+    uint id;
     string name;
-    string description;
-    address mainContract;
-    address[] participants;
+    string logo;
+    address nftContract;
+    address ftContract;
   }
 
   /// @custom:oz-upgrades-unsafe-allow constructor
@@ -34,6 +35,9 @@ contract Web3Community is Initializable, OwnableUpgradeable, UUPSUpgradeable, Ut
 
   function _authorizeUpgrade(address newImplementation) internal onlyOwner override {}
 
-
+  function createCommunity(string memory _name, string memory _logo) public {
+    communityCount += 1;
+    communityList[msg.sender].push(Community(communityCount, _name, _logo, address(0), address(0)));
+  }
 
 }

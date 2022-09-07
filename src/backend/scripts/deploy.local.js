@@ -11,33 +11,18 @@ async function main() {
   const [deployer] = await hre.ethers.getSigners();
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
-  const nativeTokenSymbol = "MATIC";
-  const emptyAddress = "0x0000000000000000000000000000000000000000";
-
-  const RestoreTogetherNFT = await hre.ethers.getContractFactory("RestoreTogetherNFT");
-  const restoreTogetherNFT = await hre.upgrades.deployProxy(RestoreTogetherNFT, [], {
+  const Web3Community = await hre.ethers.getContractFactory("Web3Community");
+  const web3Community = await hre.upgrades.deployProxy(Web3Community, [], {
     initializer: "initialize"
   })
-  await restoreTogetherNFT.deployed();
+  await web3Community.deployed();
 
-  // const RestoreTogetherNFT = await hre.ethers.getContractFactory("RestoreTogetherNFT");
-  // const restoreTogetherNFT = await RestoreTogetherNFT.deploy();
-  // await restoreTogetherNFT.deployed();
+  // const Web3Community = await hre.ethers.getContractFactory("Web3Community");
+  // const web3Community = await Web3Community.deploy();
+  // await web3Community.deployed();
 
-  console.log("Deployed to: ", restoreTogetherNFT.address);
-  saveFrontendFiles(restoreTogetherNFT, "RestoreTogetherNFT");
-
-  // let nonce = await deployer.getTransactionCount();
-  // console.log('Wallet Nonce', nonce);
-
-  const RestoreTogetherContract = await hre.ethers.getContractAt("RestoreTogetherNFT", restoreTogetherNFT.address);
-  await RestoreTogetherContract.addCurrency(nativeTokenSymbol, emptyAddress, false, 18, "0xd0D5e3DB44DE05E9F294BB0a3bEEaF030DE24Ada");
-  await RestoreTogetherContract.addCurrency("ETH", "0xe680fa3cf20caab259ab3e2d55a29c942ad72d01", false, 18, "0x0715A7794a1dc8e42615F059dD6e406A6594651A");
-  await RestoreTogetherContract.addCurrency("USDT", "0xf7f730ffaec85455e3ba44f488c2bd2a741953b3", true, 18, emptyAddress);
-  await RestoreTogetherContract.addCurrency("USDC", "0xe11A86849d99F524cAC3E7A0Ec1241828e332C62", true, 18, emptyAddress);
-  await RestoreTogetherContract.addCurrency("DAI", "0xe680fa3cf20caab259ab3e2d55a29c942ad72d01", true, 18, emptyAddress);
-
-  console.log("Added currencies");
+  console.log("Deployed to: ", web3Community.address);
+  saveFrontendFiles(web3Community, "Web3Community");
 }
 
 // We recommend this pattern to be able to use async/await everywhere
