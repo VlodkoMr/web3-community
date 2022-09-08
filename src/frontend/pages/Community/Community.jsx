@@ -6,10 +6,9 @@ import { DashboardLeftMenu } from '../../components/Community/LeftMenu';
 import { useDispatch, useSelector } from "react-redux";
 import { CreateCommunity } from '../../components/Community/CreateCommunity';
 import { useAccount } from 'wagmi';
-import { setCommunityList, setCurrentCommunity } from '../../store/communitySlice';
 import { Outlet } from "react-router-dom";
 import { Spinner } from 'flowbite-react';
-import { transformCommunity } from '../../utils/transform';
+import { loadCommunityList } from '../../utils/requests';
 
 export const Community = ({ contract }) => {
   const dispatch = useDispatch();
@@ -17,35 +16,19 @@ export const Community = ({ contract }) => {
   const [isReady, setIsReady] = useState(false);
   const communityList = useSelector(state => state.community.list);
 
-  const loadCommunityList = async () => {
-    const myCommunity = await contract.getUserCommunities(address);
-    if (myCommunity.length) {
-      let selectedCommunity = parseInt(localStorage.getItem("communityId"));
-      if (!selectedCommunity) {
-        selectedCommunity = parseInt(myCommunity[0].id);
-      }
-
-      const transformedCommunity = myCommunity.map(item => {
-        const community = transformCommunity(item);
-        if (community.id === selectedCommunity) {
-          // select active community
-          dispatch(setCurrentCommunity({ community }));
-        }
-        return community;
-      });
-      dispatch(setCommunityList({ list: transformedCommunity }));
-    }
-    setIsReady(true);
-  }
 
   useEffect(() => {
     if (contract) {
-      loadCommunityList();
+      loadCommunityList(contract, dispatch, address).then(() => {
+        setIsReady(true);
+      });
     }
   }, [contract]);
 
   const onCommunityCreated = () => {
-    loadCommunityList();
+    loadCommunityList(contract, dispatch, address).then(() => {
+      setIsReady(true);
+    });
   }
 
   return (

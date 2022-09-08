@@ -1,5 +1,5 @@
 import React from "react";
-import { useTransaction } from 'wagmi';
+import { useWaitForTransaction } from 'wagmi';
 import { useDispatch } from 'react-redux';
 import { removeTransaction } from '../store/transactionSlice';
 import { Spinner } from 'flowbite-react';
@@ -8,7 +8,7 @@ import { MdClose, MdOutlineCheckCircleOutline, MdOutlineErrorOutline } from 'rea
 export const Transaction = ({ tx }) => {
   const dispatch = useDispatch();
 
-  const { isError, isLoading, isSuccess } = useTransaction({
+  const { isError, isLoading, isSuccess } = useWaitForTransaction({
     hash: tx.hash,
     onSuccess: () => {
       removeTransactionDelay();
@@ -45,7 +45,9 @@ export const Transaction = ({ tx }) => {
       <div className={`shadow-lg rounded-lg mb-4 px-4 py-3 text-sm flex text-gray-100 border-2 border-white/30 relative ${getStatusClass()}`}>
         <div className="w-8 pt-1 mr-4 opacity-90">
           {isLoading && (
-            <Spinner size="xl" color="white" />
+            <div className="w-10">
+              <Spinner size="lg" />
+            </div>
           )}
           {isError && (
             <MdOutlineErrorOutline color="white" className="w-8 h-8" />

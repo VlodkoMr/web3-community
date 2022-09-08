@@ -4,7 +4,7 @@ import { resizeFileImage, uploadMediaToIPFS } from '../../utils/media';
 import { useDispatch } from 'react-redux';
 import { addTransaction } from '../../store/transactionSlice';
 
-export function CreateCommunity({ contract, handleSuccess }) {
+export function CreateCommunity({ contract, handleSuccess, handleTxStart }) {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -27,6 +27,14 @@ export function CreateCommunity({ contract, handleSuccess }) {
     }
   }
 
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      logo: "",
+      description: ""
+    });
+  }
+
   const createCommunity = (logoURL) => {
     if (contract) {
       setIsLoading(true);
@@ -36,10 +44,12 @@ export function CreateCommunity({ contract, handleSuccess }) {
           description: `Create Community "${formData.name}"`
         }));
 
+        handleTxStart?.();
         tx.wait().then(receipt => {
           setIsLoading(false);
           if (receipt.status === 1) {
             handleSuccess();
+            resetForm();
           } else {
             alert('Minting error');
           }

@@ -41,7 +41,7 @@ export default function App() {
       </BrowserRouter>
 
       {transactions.length > 0 && (
-        <div className="absolute z-50 right-0 top-0 w-[420px] pr-5 pt-5">
+        <div className="absolute z-60 right-0 top-0 w-[420px] pr-5 pt-5">
           {transactions.map(tx => (
             <Transaction tx={tx} key={tx.hash} />
           ))}
