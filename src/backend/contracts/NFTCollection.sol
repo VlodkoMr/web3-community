@@ -10,11 +10,12 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract NFTCollection is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, Ownable {
   using Counters for Counters.Counter;
-  Collection[] collection;
+  Collection[] public collectionItems;
+  uint public collectionItemsTotal;
 
   struct Collection {
-    uint id;
     string uri;
+    uint id;
     uint price;
     uint supply;
     uint mintedAmount;
@@ -37,11 +38,11 @@ contract NFTCollection is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, 
   // Mint NFT and send to address
   function safeMint(address _to, uint _collectionId) public onlyOwner {
     _requireNotPaused();
-    require(_collectionId <= collection.length, "Wrong Collection");
+    require(_collectionId <= collectionItemsTotal, "Wrong Collection");
     require(_to != address(0), "Wrong wallet Address");
 
     uint _tokenId = _tokenIdCounter.current();
-    Collection storage collectionItem = collection[_collectionId - 1];
+    Collection storage collectionItem = collectionItems[_collectionId - 1];
     collectionItem.mintedAmount += 1;
 
     _tokenIdCounter.increment();
@@ -55,10 +56,11 @@ contract NFTCollection is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, 
     require(_price >= 0, "Wrong Price");
     require(_supply >= 0, "Wrong Supply");
 
-    collection.push(
+    collectionItemsTotal += 1;
+    collectionItems.push(
       Collection(
-        collection.length + 1,
         _uri,
+        collectionItemsTotal,
         _price,
         _supply,
         0
@@ -67,11 +69,11 @@ contract NFTCollection is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, 
 
   // Update NFT in collection
   function updateCollectionItem(uint _collectionId, uint _price, uint _supply) public onlyOwner {
-    require(_collectionId <= collection.length, "Wrong Collection");
+    require(_collectionId <= collectionItemsTotal, "Wrong Collection");
     require(_price >= 0, "Wrong Price");
     require(_supply >= 0, "Wrong Supply");
 
-    Collection storage collectionItem = collection[_collectionId - 1];
+    Collection storage collectionItem = collectionItems[_collectionId - 1];
     // Allow unlimited supply, but check minted amount
     if (_supply > 0) {
       require(_supply >= collectionItem.mintedAmount, "Supply is less that already minted");
@@ -83,8 +85,8 @@ contract NFTCollection is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, 
 
   function payToMint(uint _collectionId) public payable {
     _requireNotPaused();
-    require(_collectionId <= collection.length, "Wrong Collection");
-    Collection storage collectionItem = collection[_collectionId - 1];
+    require(_collectionId <= collectionItemsTotal, "Wrong Collection");
+    Collection storage collectionItem = collectionItems[_collectionId - 1];
 
     if (collectionItem.price > 0) {
       require(collectionItem.price == msg.value, "Wrong payment amount to mint");

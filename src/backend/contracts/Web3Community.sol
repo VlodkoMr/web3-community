@@ -79,7 +79,7 @@ contract Web3Community is Initializable, OwnableUpgradeable, UUPSUpgradeable, Ut
 
   function deployNFTCollectionContract(uint _communityId, string memory _name, string memory _symbol) public {
     require(bytes(_name).length >= 3, "Collection name should be longer than 2 symbols");
-    require(bytes(_symbol).length == 3, "Symbol length should be 3 chars");
+    require(bytes(_symbol).length >= 3 && bytes(_symbol).length <= 5, "Symbol length should be 3-5 chars");
 
     (, uint _index) = getCommunityById(msg.sender, _communityId);
     Community[] storage userCommunities = communityList[msg.sender];

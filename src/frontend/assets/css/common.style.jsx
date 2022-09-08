@@ -100,6 +100,6 @@ InnerBlock.Header = styled.div.attrs({
   className: `
   text-xl 
   font-semibold 
-  mb-4
+  mb-2
   text-gray-600`,
 })``

@@ -93,7 +93,7 @@ export function DeployFTContract({ contract }) {
         </div>
 
         <Button disabled={isLoadingCreate} type="Submit" gradientDuoTone="purpleToPink">
-          Enable Fungible Token
+          Create Fungible Token
           {isLoadingCreate && (
             <span className="ml-2">
             <Spinner size="sm" />

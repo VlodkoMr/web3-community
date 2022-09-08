@@ -2,16 +2,23 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Button } from 'flowbite-react';
 import { InnerBlock } from '../../assets/css/common.style';
-import { useSigner } from 'wagmi';
-import { isContractAddress } from '../../utils/format';
+import { useAccount, useSigner } from 'wagmi';
+import { convertFromEther, FormatNumber, isContractAddress } from '../../utils/format';
 import { ethers } from 'ethers';
 import FungibleTokenABI from '../../contractsData/FungibleToken.json';
 import { DeployFTContract } from '../../components/Community/DeployFTContract';
 
 export const FungibleToken = ({ contract }) => {
   const { data: signer } = useSigner();
+  const { address } = useAccount();
   const [isReady, setIsReady] = useState(false);
   const [myFTContract, setMyFTContract] = useState();
+  const [myFTDetails, setMyFTDetails] = useState({
+    name: "",
+    symbol: "",
+    supply: 0,
+    balance: 0,
+  });
   const currentCommunity = useSelector(state => state.community.current);
 
   useEffect(() => {
@@ -25,6 +32,12 @@ export const FungibleToken = ({ contract }) => {
     }
   }, [currentCommunity]);
 
+  useEffect(() => {
+    if (myFTContract) {
+      loadMyFTDetails();
+    }
+  }, [myFTContract]);
+
   const loadMyFTContract = () => {
     const contract = new ethers.Contract(
       currentCommunity.ftContract,
@@ -34,13 +47,20 @@ export const FungibleToken = ({ contract }) => {
     setMyFTContract(contract);
   }
 
+  const loadMyFTDetails = async () => {
+    setMyFTDetails({
+      name: await myFTContract.name(),
+      symbol: await myFTContract.symbol(),
+      supply: await myFTContract.totalSupply(),
+      balance: await myFTContract.balanceOf(address),
+    })
+  }
+
   const test = async () => {
     if (myFTContract) {
       console.log('myFTContract', myFTContract);
       const owner = await myFTContract.owner();
-      const totalSupply = await myFTContract.totalSupply();
       console.log('owner', owner);
-      console.log('totalSupply', parseInt(totalSupply));
     }
   }
 
@@ -51,18 +71,34 @@ export const FungibleToken = ({ contract }) => {
           <InnerBlock.Header className="flex justify-between">
             <span>Fungible Token</span>
             {isContractAddress(currentCommunity.ftContract) && (
-              <span className="text-sm bg-gray-50 rounded px-3 py-1 font-medium">
-                Contract: <small>{currentCommunity.ftContract}</small>
+              <span className="text-sm bg-gray-50 rounded px-3 py-1 font-normal text-slate-500">
+                <span className="font-semibold mr-1">Contract:</span>
+                <small className="opacity-80">{currentCommunity.ftContract}</small>
               </span>
             )}
           </InnerBlock.Header>
           <div>
             {isContractAddress(currentCommunity.ftContract) ? (
               <>
-                ...
+                <div className="flex justify-between text-sm mb-3 -mt-1">
+                  <div className="mr-10">
+                    <span className="opacity-80">Token Name:</span> <b>{myFTDetails.name}</b>
+                  </div>
+                  <div>
+                    <span className="opacity-80">Total Supply:</span>
+                    <b className="ml-1">{FormatNumber(convertFromEther(myFTDetails.supply, 0))} {myFTDetails.symbol}</b>
+                  </div>
+                </div>
 
-                <Button onClick={() => test()}>Test</Button>
+                <hr className="mb-6" />
+                <div className="flex text-sm mb-6">
+                  Wallet Balance: <b className="ml-1">{FormatNumber(convertFromEther(myFTDetails.balance, 0))} {myFTDetails.symbol}</b>
+                </div>
 
+                <div className="flex text-sm gap-3">
+                  {/*<Button onClick={() => test()}>Add Token to Metamask</Button>*/}
+                  <Button onClick={() => test()}>Create Tokens Airdrop</Button>
+                </div>
               </>
             ) : (
               <DeployFTContract contract={contract} />
