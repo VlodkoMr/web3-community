@@ -4,7 +4,7 @@ import { resizeFileImage, uploadMediaToIPFS } from '../../utils/media';
 import { useDispatch } from 'react-redux';
 import { addTransaction } from '../../store/transactionSlice';
 
-export function CreateCommunity({ contract, handleSuccess, handleTxStart }) {
+export function CommunityLinks({ contract }) {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -129,7 +129,6 @@ export function CreateCommunity({ contract, handleSuccess, handleTxStart }) {
           </div>
         )}
       </form>
-
     </>
   );
 }

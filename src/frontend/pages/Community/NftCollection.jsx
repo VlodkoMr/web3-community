@@ -97,11 +97,12 @@ export const NftCollection = ({ contract }) => {
                 <hr className="mb-6" />
                 <div className="flex justify-between text-sm mb-6">
                   <div>
-                    Total: <b className="ml-1">{FormatNumber(convertFromEther(myCollectionDetails.itemsTotal, 0))} NFT</b>
+                    Total: <b
+                    className="ml-1">{FormatNumber(convertFromEther(myCollectionDetails.itemsTotal, 0))} NFT</b>
                   </div>
                   <div className="-mt-2">
                     <Button gradientDuoTone="purpleToPink" size="sm" onClick={() => setMintNFTPopupVisible(true)}>
-                      + Create New NFT
+                      + New NFT
                     </Button>
                   </div>
                 </div>

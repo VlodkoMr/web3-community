@@ -8,7 +8,7 @@ import { useAccount } from "wagmi";
 import { Dropdown, Modal } from "flowbite-react";
 import { useDispatch, useSelector } from 'react-redux';
 import { setCurrentCommunity } from '../store/communitySlice';
-import { CreateCommunity } from './Community/CreateCommunity';
+import { EditCommunity } from './Community/EditCommunity';
 import { loadCommunityList } from '../utils/requests';
 
 export const Header = ({ contract, isInner }) => {
@@ -153,7 +153,7 @@ export const Header = ({ contract, isInner }) => {
             Create New Community
           </div>
           <div className="space-y-6 px-6 pb-4 sm:pb-6 lg:px-8 xl:pb-8">
-            <CreateCommunity
+            <EditCommunity
               contract={contract}
               handleTxStart={() => handleTxStart()}
               handleSuccess={() => handleSuccessCreate()}

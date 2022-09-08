@@ -1,8 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { InnerBlock } from '../../assets/css/common.style';
+import { convertFromEther, FormatNumber, isContractAddress } from '../../utils/format';
+import { Button, Card } from 'flowbite-react';
+import { DeployNFTContract } from '../../components/Community/DeployNFTContract';
+import { EditCommunity } from '../../components/Community/EditCommunity';
 
 export const Settings = ({ contract }) => {
   const dispatch = useDispatch();
+  const [isReady, setIsReady] = useState(false);
   const currentCommunity = useSelector(state => state.community.current);
 
   useEffect(() => {
@@ -12,15 +18,33 @@ export const Settings = ({ contract }) => {
   useEffect(() => {
     if (contract) {
       console.log('Settings load')
+      setIsReady(true);
     }
   }, [contract]);
 
   return (
-    <>
-      <h3 className="text-2xl font-semibold mb-2">Settings</h3>
-      <div>
-        ...
-      </div>
-    </>
+    <div className="flex gap-6">
+      {isReady && (
+        <>
+          <InnerBlock className={"flex-1"}>
+            <InnerBlock.Header className="flex justify-between">
+              <span>General Settings</span>
+            </InnerBlock.Header>
+            <div className="mt-4">
+              <EditCommunity contract={contract} editCommunity={currentCommunity} />
+            </div>
+          </InnerBlock>
+
+          <InnerBlock className={"flex-1"}>
+            <InnerBlock.Header className="flex justify-between">
+              <span>Community Links</span>
+            </InnerBlock.Header>
+            <div className="mt-4">
+              ...
+            </div>
+          </InnerBlock>
+        </>
+      )}
+    </div>
   );
 }

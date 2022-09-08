@@ -12,11 +12,6 @@
       "kind": "uups"
     },
     {
-      "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-      "txHash": "0xa592fe006fe51cac9c866c17f815c58027e5fe426b41e9784c8eb29148ecc797",
-      "kind": "uups"
-    },
-    {
       "address": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
       "txHash": "0x70216d93151742706d7f1e643c01c8b3c9cbedc503bed65c4eeffab6b71e8aab",
       "kind": "uups"
@@ -79,6 +74,11 @@
     {
       "address": "0x09635F643e140090A9A8Dcd712eD6285858ceBef",
       "txHash": "0x4df5ddb17b541c43467daf9fabca595041a310cc139ee1c8d7b4cf0659412f68",
+      "kind": "uups"
+    },
+    {
+      "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+      "txHash": "0x60dbbcc5ca579676e7cb0532b72cb58561c505680caa25d6e920cff5d4c8f595",
       "kind": "uups"
     }
   ],
@@ -247,183 +247,6 @@
     "6c0db213e7f60f7f83075c62ee8437f3434a4b231ac7551f73a485146a6408df": {
       "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
       "txHash": "0x9fd7fc2e01da22a6cb399a3a1aa923e4411ec3f1aa7933016658cf10e2616302",
-      "layout": {
-        "storage": [
-          {
-            "label": "_initialized",
-            "offset": 0,
-            "slot": "0",
-            "type": "t_uint8",
-            "contract": "Initializable",
-            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
-            "retypedFrom": "bool"
-          },
-          {
-            "label": "_initializing",
-            "offset": 1,
-            "slot": "0",
-            "type": "t_bool",
-            "contract": "Initializable",
-            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
-          },
-          {
-            "label": "__gap",
-            "offset": 0,
-            "slot": "1",
-            "type": "t_array(t_uint256)50_storage",
-            "contract": "ContextUpgradeable",
-            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
-          },
-          {
-            "label": "_owner",
-            "offset": 0,
-            "slot": "51",
-            "type": "t_address",
-            "contract": "OwnableUpgradeable",
-            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
-          },
-          {
-            "label": "__gap",
-            "offset": 0,
-            "slot": "52",
-            "type": "t_array(t_uint256)49_storage",
-            "contract": "OwnableUpgradeable",
-            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
-          },
-          {
-            "label": "__gap",
-            "offset": 0,
-            "slot": "101",
-            "type": "t_array(t_uint256)50_storage",
-            "contract": "ERC1967UpgradeUpgradeable",
-            "src": "@openzeppelin/contracts-upgradeable/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol:211"
-          },
-          {
-            "label": "__gap",
-            "offset": 0,
-            "slot": "151",
-            "type": "t_array(t_uint256)50_storage",
-            "contract": "UUPSUpgradeable",
-            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol:107"
-          },
-          {
-            "label": "communityCount",
-            "offset": 0,
-            "slot": "201",
-            "type": "t_uint256",
-            "contract": "Web3Community",
-            "src": "src/backend/contracts/Web3Community.sol:15"
-          },
-          {
-            "label": "contractsNFTList",
-            "offset": 0,
-            "slot": "202",
-            "type": "t_array(t_contract(NFTCollection)5852)dyn_storage",
-            "contract": "Web3Community",
-            "src": "src/backend/contracts/Web3Community.sol:16"
-          },
-          {
-            "label": "communityList",
-            "offset": 0,
-            "slot": "203",
-            "type": "t_mapping(t_address,t_array(t_struct(Community)5896_storage)dyn_storage)",
-            "contract": "Web3Community",
-            "src": "src/backend/contracts/Web3Community.sol:18"
-          }
-        ],
-        "types": {
-          "t_address": {
-            "label": "address",
-            "numberOfBytes": "20"
-          },
-          "t_array(t_contract(NFTCollection)5852)dyn_storage": {
-            "label": "contract NFTCollection[]",
-            "numberOfBytes": "32"
-          },
-          "t_array(t_struct(Community)5896_storage)dyn_storage": {
-            "label": "struct Web3Community.Community[]",
-            "numberOfBytes": "32"
-          },
-          "t_array(t_uint256)49_storage": {
-            "label": "uint256[49]",
-            "numberOfBytes": "1568"
-          },
-          "t_array(t_uint256)50_storage": {
-            "label": "uint256[50]",
-            "numberOfBytes": "1600"
-          },
-          "t_bool": {
-            "label": "bool",
-            "numberOfBytes": "1"
-          },
-          "t_contract(NFTCollection)5852": {
-            "label": "contract NFTCollection",
-            "numberOfBytes": "20"
-          },
-          "t_mapping(t_address,t_array(t_struct(Community)5896_storage)dyn_storage)": {
-            "label": "mapping(address => struct Web3Community.Community[])",
-            "numberOfBytes": "32"
-          },
-          "t_string_storage": {
-            "label": "string",
-            "numberOfBytes": "32"
-          },
-          "t_struct(Community)5896_storage": {
-            "label": "struct Web3Community.Community",
-            "members": [
-              {
-                "label": "id",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "0"
-              },
-              {
-                "label": "name",
-                "type": "t_string_storage",
-                "offset": 0,
-                "slot": "1"
-              },
-              {
-                "label": "description",
-                "type": "t_string_storage",
-                "offset": 0,
-                "slot": "2"
-              },
-              {
-                "label": "logo",
-                "type": "t_string_storage",
-                "offset": 0,
-                "slot": "3"
-              },
-              {
-                "label": "nftContract",
-                "type": "t_address",
-                "offset": 0,
-                "slot": "4"
-              },
-              {
-                "label": "ftContract",
-                "type": "t_address",
-                "offset": 0,
-                "slot": "5"
-              }
-            ],
-            "numberOfBytes": "192"
-          },
-          "t_uint256": {
-            "label": "uint256",
-            "numberOfBytes": "32"
-          },
-          "t_uint8": {
-            "label": "uint8",
-            "numberOfBytes": "1"
-          }
-        }
-      }
-    },
-    "6a98e05d06393d5002c6928b5cb982c27e258a1f62a3d82b32bd834e2f0e36a6": {
-      "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
-      "txHash": "0x408a76f231540ab86feaac0b7fafbf2f9abeb03915c4bd8ab74bb1d75e042a35",
       "layout": {
         "storage": [
           {
@@ -2105,8 +1928,8 @@
       }
     },
     "3c2177a86657b5d66f3fa4229bd41e02e910b3df6048b090947ae3ce0b0939f3": {
-      "address": "0x7a2088a1bFc9d81c55368AE168C2C02570cB814F",
-      "txHash": "0xf14ee0822612d35cd519a0ef30135843d57dfd26799d406b2feaabb10c143360",
+      "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+      "txHash": "0x0dda11925371ffe5aea4d5c4494b28e7ce595b54f0d590374c62fef9a677a864",
       "layout": {
         "storage": [
           {

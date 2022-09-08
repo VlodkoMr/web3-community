@@ -4,7 +4,7 @@ import { Header } from "../../components/Header";
 import { Footer } from "../../components/Footer";
 import { DashboardLeftMenu } from '../../components/Community/LeftMenu';
 import { useDispatch, useSelector } from "react-redux";
-import { CreateCommunity } from '../../components/Community/CreateCommunity';
+import { EditCommunity } from '../../components/Community/EditCommunity';
 import { useAccount } from 'wagmi';
 import { Outlet } from "react-router-dom";
 import { Spinner } from 'flowbite-react';
@@ -55,7 +55,7 @@ export const Community = ({ contract }) => {
                 <p className="text-sm">Look like you don't have Community, let's create first one:</p>
 
                 <div className="my-6">
-                  <CreateCommunity
+                  <EditCommunity
                     contract={contract}
                     handleSuccess={() => onCommunityCreated()}
                   />
