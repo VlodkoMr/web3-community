@@ -1,32 +1,74 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { Button } from 'flowbite-react';
+import { InnerBlock } from '../../assets/css/common.style';
+import { useSigner } from 'wagmi';
+import { isContractAddress } from '../../utils/format';
+import { ethers } from 'ethers';
+import NFTCollectionABI from '../../contractsData/NFTCollection.json';
+import { DeployNFTContract } from '../../components/Community/DeployNFTContract';
 
 export const NftCollection = ({ contract }) => {
-  const dispatch = useDispatch();
+  const { data: signer } = useSigner();
+  const [isReady, setIsReady] = useState(false);
+  const [myNftContract, setMyNftContract] = useState();
   const currentCommunity = useSelector(state => state.community.current);
 
   useEffect(() => {
-    console.log('currentCommunity', currentCommunity);
+    setIsReady(false);
+    if (currentCommunity && currentCommunity.id) {
+      // Init NFT Contract interface
+      if (isContractAddress(currentCommunity.nftContract)) {
+        loadMyNFTContract();
+      }
+      setIsReady(true);
+    }
   }, [currentCommunity]);
 
-  useEffect(() => {
-    if (contract) {
-      console.log('Nft Collection load')
+  const loadMyNFTContract = () => {
+    const contract = new ethers.Contract(
+      currentCommunity.nftContract,
+      NFTCollectionABI.abi,
+      signer
+    );
+    setMyNftContract(contract);
+  }
+
+
+  const test = async () => {
+    if (myNftContract) {
+      console.log('myNftContract', myNftContract);
+      const owner = await myNftContract.owner();
+      console.log('owner', owner);
     }
-  }, [contract]);
+  }
 
   return (
-    <>
-      <h3 className="text-2xl font-semibold mb-2 text-gray-600">NFT Collection</h3>
-      <div>
-        <p className="text-sm opacity-80 mb-4">
-          This section allow you create unique NFT for your community, sell it, transfer or enable minting for
-          free. <br />
-          To start using NFT Collections, let's enable this feature: <br />
-        </p>
-        <Button>...</Button>
-      </div>
-    </>
+    <div className="flex flex-row">
+      {isReady && (
+        <InnerBlock>
+          <InnerBlock.Header className="flex justify-between">
+            <span>NFT Collection</span>
+            {isContractAddress(currentCommunity.nftContract) && (
+              <span className="text-sm bg-gray-50 rounded px-3 py-1 font-medium">
+                Contract: <small>{currentCommunity.nftContract}</small>
+              </span>
+            )}
+          </InnerBlock.Header>
+          <div>
+            {isContractAddress(currentCommunity.nftContract) ? (
+              <>
+                ...
+
+                <Button onClick={() => test()}>Test</Button>
+
+              </>
+            ) : (
+              <DeployNFTContract contract={contract} />
+            )}
+          </div>
+        </InnerBlock>
+      )}
+    </div>
   );
 }

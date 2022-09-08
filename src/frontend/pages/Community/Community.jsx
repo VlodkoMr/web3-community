@@ -12,16 +12,17 @@ import { loadCommunityList } from '../../utils/requests';
 
 export const Community = ({ contract }) => {
   const dispatch = useDispatch();
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
   const [isReady, setIsReady] = useState(false);
   const communityList = useSelector(state => state.community.list);
-
 
   useEffect(() => {
     if (contract) {
       loadCommunityList(contract, dispatch, address).then(() => {
         setIsReady(true);
       });
+    } else if (!isConnected) {
+      setIsReady(true);
     }
   }, [contract]);
 

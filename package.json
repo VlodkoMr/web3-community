@@ -5,6 +5,7 @@
   "scripts": {
     "clean:hardhat": "env $(cat .env) npx hardhat clean",
     "cleanup": "rm -rf ./dist && rm -rf .parcel-cache",
+    "compile": "npx hardhat compile",
     "parcel:build": "parcel build src/index.html --public-url ./",
     "local": "env $(cat .env) npx hardhat node",
     "deploy": "env $(cat .env) npx hardhat run src/backend/scripts/deploy.local.js --network localhost",

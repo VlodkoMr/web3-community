@@ -80,3 +80,26 @@ export const ScrollLink = styled(Scroll.Link).attrs((props) => ({
     ${props.dark === "true" ? "lg:text-dark" : "lg:text-white hover:text-primary lg:hover:text-white"}
     `,
 }))``;
+
+export const InnerBlock = styled.section.attrs({
+  className: `
+  w-full 
+  relative 
+  flex 
+  flex-col 
+  break-words 
+  bg-white 
+  rounded-xl 
+  shadow-gray-300/30 
+  shadow-lg 
+  px-8 
+  py-6`,
+})``;
+
+InnerBlock.Header = styled.div.attrs({
+  className: `
+  text-xl 
+  font-semibold 
+  mb-4
+  text-gray-600`,
+})``

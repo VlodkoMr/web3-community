@@ -9,7 +9,6 @@ export const loadCommunityList = async (contract, dispatch, address, setLastByDe
         const lastCommunity = myCommunity[myCommunity.length - 1];
         localStorage.setItem("communityId", parseInt(lastCommunity.id));
       }
-
       let selectedCommunity = parseInt(localStorage.getItem("communityId"));
       if (!selectedCommunity) {
         selectedCommunity = parseInt(myCommunity[0].id);

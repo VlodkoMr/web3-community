@@ -18,3 +18,7 @@ import { ethers } from 'ethers';
 // export const shortTx = (address) => {
 //   return address.slice(0, 7) + '...' + address.slice(35, 42);
 // }
+
+export const isContractAddress = (address) => {
+  return !/^0x0+$/.test(address);
+}

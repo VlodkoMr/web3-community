@@ -17,10 +17,12 @@ export function CreateCommunity({ contract, handleSuccess, handleTxStart }) {
     e.preventDefault();
 
     if (formData.logo.length) {
+      setIsLoading(true);
       uploadMediaToIPFS(formData.logo, formData.name).then(logoURL => {
         createCommunity(logoURL);
       }).catch(e => {
         alert(e);
+        setIsLoading(false);
       })
     } else {
       createCommunity("");
@@ -57,6 +59,7 @@ export function CreateCommunity({ contract, handleSuccess, handleTxStart }) {
       }).catch(err => {
         console.log('tx canceled', err);
         setIsLoading(false);
+        alert("Transaction error!");
       });
     } else {
       alert("Please connect your wallet");

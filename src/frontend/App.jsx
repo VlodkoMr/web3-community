@@ -10,7 +10,11 @@ import web3ContractABI from './contractsData/Web3Community.json';
 
 export default function App() {
   const transactions = useSelector(state => state.transactions.list);
-  const { isConnected } = useAccount();
+  const { isConnected } = useAccount({
+    onDisconnect() {
+      localStorage.removeItem("communityId");
+    }
+  });
   const { data: signer } = useSigner();
   const [contract, setContract] = useState();
 
@@ -29,14 +33,18 @@ export default function App() {
     <>
       <BrowserRouter>
         <Routes>
+
           <Route exact path="/" element={<Home contract={contract} />} />
           <Route exact path="/community" element={<Community contract={contract} />}>
+
             <Route exact path="dashboard" element={<Dashboard contract={contract} />} />
             <Route exact path="nft" element={<NftCollection contract={contract} />} />
             <Route exact path="token" element={<FungibleToken contract={contract} />} />
             <Route exact path="settings" element={<Settings contract={contract} />} />
+
           </Route>
           <Route path='*' element={<Error404 contract={contract} />} />
+
         </Routes>
       </BrowserRouter>
 

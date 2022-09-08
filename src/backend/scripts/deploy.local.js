@@ -1,11 +1,5 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// You can also run a script with `npx hardhat run <script>`. If you do that, Hardhat
-// will compile your contracts, add the Hardhat Runtime Environment's members to the
-// global scope, and execute the script.
 const hre = require("hardhat");
-const { saveFrontendFiles } = require('./utils');
+const { saveAllFrontendFiles, saveFrontendArtifact } = require('./utils');
 
 async function main() {
   const [deployer] = await hre.ethers.getSigners();
@@ -18,7 +12,11 @@ async function main() {
   await web3Community.deployed();
 
   console.log("Deployed to: ", web3Community.address);
-  saveFrontendFiles(web3Community, "Web3Community");
+
+  saveAllFrontendFiles(web3Community, "Web3Community");
+
+  saveFrontendArtifact("NFTCollection");
+  saveFrontendArtifact("FungibleToken");
 }
 
 // We recommend this pattern to be able to use async/await everywhere
