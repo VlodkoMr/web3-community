@@ -11,7 +11,7 @@ const communitySlice = createSlice({
       state.list = action.payload.list;
     },
     setCurrentCommunity(state, action) {
-      state.current = action.payload.id;
+      state.current = action.payload.community;
     },
   }
 });

@@ -11,43 +11,48 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "../abstract/utils.sol";
 
 contract Web3Community is Initializable, OwnableUpgradeable, UUPSUpgradeable, Utils {
-  uint public communityCount;
+	uint public communityCount;
 
-  mapping(address => Community[]) public communityList;
+	mapping(address => Community[]) public communityList;
 
-  struct Community {
-    uint id;
-    string name;
-    string logo;
-    address nftContract;
-    address ftContract;
-  }
+	struct Community {
+		uint id;
+		string name;
+		string description;
+		string logo;
+		address nftContract;
+		address ftContract;
+	}
 
-  /// @custom:oz-upgrades-unsafe-allow constructor
-  constructor() {
-    _disableInitializers();
-  }
+	/// @custom:oz-upgrades-unsafe-allow constructor
+	constructor() {
+		_disableInitializers();
+	}
 
-  function initialize() initializer public {
-    __Ownable_init();
-    __UUPSUpgradeable_init();
-  }
+	function initialize() initializer public {
+		__Ownable_init();
+		__UUPSUpgradeable_init();
+	}
 
-  function _authorizeUpgrade(address newImplementation) internal onlyOwner override {}
+	function _authorizeUpgrade(address newImplementation) internal onlyOwner override {}
 
-  function createCommunity(string memory _name, string memory _logo) public {
-    communityCount += 1;
-    communityList[msg.sender].push(Community(communityCount, _name, _logo, address(0), address(0)));
-  }
+	function createCommunity(string memory _name, string memory _description, string memory _logo) public {
+		communityCount += 1;
+		communityList[msg.sender].push(
+			Community(
+				communityCount, _name, _description, _logo, address(0), address(0)
+			)
+		);
+	}
 
-  function getUserCommunities(address _owner) public view returns (Community[] memory) {
-    return communityList[_owner];
-    //    uint _totalCount = communityList[_owner].length;
-    //    Community[] memory _result = new Community[](_totalCount);
-    //    for (uint _i = 0; _i < _listId.length; ++_i) {
-    //      result[_i] = communityList[_owner];
-    //    }
-    //    return _result;
-  }
+	function getUserCommunities(address _owner) public view returns (Community[] memory) {
+		return communityList[_owner];
+		//    uint _totalCount = communityList[_owner].length;
+		//    Community[] memory _result = new Community[](_totalCount);
+		//    for (uint _i = 0; _i < _listId.length; ++_i) {
+		//      result[_i] = communityList[_owner];
+		//    }
+		//    return _result;
+	}
 
 }

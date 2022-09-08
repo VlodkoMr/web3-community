@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Container, InnerPageWrapper, Wrapper } from '../../assets/css/common.style';
 import { Header } from "../../components/Header";
 import { Footer } from "../../components/Footer";
-import { DashboardLeftMenu } from '../../components/Dashboard/LeftMenu';
+import { DashboardLeftMenu } from '../../components/Community/LeftMenu';
 import { useDispatch, useSelector } from "react-redux";
-import { CreateCommunity } from '../../components/Dashboard/CreateCommunity';
+import { CreateCommunity } from '../../components/Community/CreateCommunity';
 import { useAccount } from 'wagmi';
 import { setCommunityList, setCurrentCommunity } from '../../store/communitySlice';
 import { Outlet } from "react-router-dom";
@@ -20,12 +20,20 @@ export const Community = ({ contract }) => {
   const loadCommunityList = async () => {
     const myCommunity = await contract.getUserCommunities(address);
     if (myCommunity.length) {
-      dispatch(setCurrentCommunity({
-        id: parseInt(myCommunity[0].id)
-      }));
-      dispatch(setCommunityList({
-        list: myCommunity.map(item => transformCommunity(item))
-      }));
+      let selectedCommunity = parseInt(localStorage.getItem("communityId"));
+      if (!selectedCommunity) {
+        selectedCommunity = parseInt(myCommunity[0].id);
+      }
+
+      const transformedCommunity = myCommunity.map(item => {
+        const community = transformCommunity(item);
+        if (community.id === selectedCommunity) {
+          // select active community
+          dispatch(setCurrentCommunity({ community }));
+        }
+        return community;
+      });
+      dispatch(setCommunityList({ list: transformedCommunity }));
     }
     setIsReady(true);
   }

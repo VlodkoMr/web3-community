@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Label, TextInput, Button, Textarea, FileInput } from 'flowbite-react';
+import { Label, TextInput, Button, Textarea, FileInput, Spinner } from 'flowbite-react';
 import { resizeFileImage, uploadMediaToIPFS } from '../../utils/media';
 import { useDispatch } from 'react-redux';
 import { addTransaction } from '../../store/transactionSlice';
 
 export function CreateCommunity({ contract, handleSuccess }) {
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     logo: "",
@@ -28,13 +29,15 @@ export function CreateCommunity({ contract, handleSuccess }) {
 
   const createCommunity = (logoURL) => {
     if (contract) {
-      contract.createCommunity(formData.name, logoURL).then(tx => {
+      setIsLoading(true);
+      contract.createCommunity(formData.name, formData.description, logoURL).then(tx => {
         dispatch(addTransaction({
           hash: tx.hash,
-          description: "Create New Community"
+          description: `Create Community "${formData.name}"`
         }));
 
         tx.wait().then(receipt => {
+          setIsLoading(false);
           if (receipt.status === 1) {
             handleSuccess();
           } else {
@@ -42,7 +45,8 @@ export function CreateCommunity({ contract, handleSuccess }) {
           }
         });
       }).catch(err => {
-        console.log('tx canceled', err)
+        console.log('tx canceled', err);
+        setIsLoading(false);
       });
     } else {
       alert("Please connect your wallet");
@@ -58,7 +62,7 @@ export function CreateCommunity({ contract, handleSuccess }) {
 
   return (
     <>
-      <form className="flex flex-col gap-4" onSubmit={handleCreate}>
+      <form className="flex flex-col gap-4 relative" onSubmit={handleCreate}>
         <div>
           <div className="mb-1 block text-left">
             <Label htmlFor="name" value="Community Title" />
@@ -103,6 +107,14 @@ export function CreateCommunity({ contract, handleSuccess }) {
             <img src={require("../../assets/images/home/arrow.svg")} alt="->" className={"w-4 h-2 ml-2"} />
           </Button>
         </div>
+
+        {isLoading && (
+          <div className="bg-white/80 absolute top-0 bottom-0 right-0 left-0 z-10">
+            <div className={"w-12 mx-auto mt-10"}>
+              <Spinner size={10} />
+            </div>
+          </div>
+        )}
       </form>
 
     </>

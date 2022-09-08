@@ -8,7 +8,7 @@ import { useAccount } from "wagmi";
 import { Dropdown, Modal } from "flowbite-react";
 import { useDispatch, useSelector } from 'react-redux';
 import { setCurrentCommunity } from '../store/communitySlice';
-import { CreateCommunity } from './Dashboard/CreateCommunity';
+import { CreateCommunity } from './Community/CreateCommunity';
 
 export const Header = ({ contract, isInner }) => {
   const dispatch = useDispatch();
@@ -29,20 +29,13 @@ export const Header = ({ contract, isInner }) => {
     animateScroll.scrollToTop();
   };
 
-  const getCurrentTitle = () => {
-    let result = "";
-    communityList.map(item => {
-      if (item.id === currentCommunity) {
-        result = item.name;
-      }
-    });
-    return result;
-  }
-
-  const selectCommunity = (id) => {
+  const selectCommunity = (community) => {
     dispatch(setCurrentCommunity({
-      id: id
+      community: community
     }));
+
+    // save in local storage
+    localStorage.setItem("communityId", community.id);
   }
 
   const handleSuccessCreate = () => {
@@ -107,11 +100,11 @@ export const Header = ({ contract, isInner }) => {
                       <span className="text-white opacity-40">/</span>
                     </li>
                     <li className="relative ml-2 mt-4">
-                      {communityList.length > 0 ? (
-                        <Dropdown label={getCurrentTitle()}>
+                      {communityList.length > 0 && currentCommunity ? (
+                        <Dropdown label={currentCommunity.name}>
                           {communityList.map(item => (
                             <Dropdown.Item
-                              onClick={() => selectCommunity(item.id)}
+                              onClick={() => selectCommunity(item)}
                               key={item.id}>
                               <span className={"whitespace-nowrap"}>
                                 {item.name}

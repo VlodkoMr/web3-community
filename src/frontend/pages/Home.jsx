@@ -3,8 +3,9 @@ import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { Btn, ScrollLink } from '../assets/css/common.style';
 import { Feature } from '../components/Home/Feature';
+import { Link } from 'react-router-dom';
 
-export const Home = ({contract}) => {
+export const Home = ({ contract }) => {
 
   return (
     <>
@@ -36,7 +37,9 @@ export const Home = ({contract}) => {
                 </p>
                 <ul className="flex flex-wrap items-center justify-center mb-10">
                   <li>
-                    <Btn>Create Community</Btn>
+                    <Link to={"/community/dashboard"}>
+                      <Btn>Create Community</Btn>
+                    </Link>
                   </li>
                   <li>
                     <ScrollLink to={"features"} smooth={true}>
