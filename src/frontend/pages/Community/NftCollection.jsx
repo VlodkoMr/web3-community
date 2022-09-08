@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Button } from 'flowbite-react';
+import { Button, Card } from 'flowbite-react';
 import { InnerBlock } from '../../assets/css/common.style';
 import { useAccount, useSigner } from 'wagmi';
 import { convertFromEther, FormatNumber, isContractAddress } from '../../utils/format';
 import { ethers } from 'ethers';
 import NFTCollectionABI from '../../contractsData/NFTCollection.json';
 import { DeployNFTContract } from '../../components/Community/DeployNFTContract';
+import { CreateNFTPopup } from '../../components/Community/CreateNFTPopup';
 
 export const NftCollection = ({ contract }) => {
   const { data: signer } = useSigner();
@@ -14,11 +15,12 @@ export const NftCollection = ({ contract }) => {
   const [isReady, setIsReady] = useState(false);
   const [myNftContract, setMyNftContract] = useState();
   const currentCommunity = useSelector(state => state.community.current);
+  const [mintNFTPopupVisible, setMintNFTPopupVisible] = useState(false);
   const [myCollectionDetails, setMyCollectionDetails] = useState({
     name: "",
     symbol: "",
     supply: 0,
-    balance: 0,
+    itemsTotal: 0,
   });
 
   useEffect(() => {
@@ -53,7 +55,6 @@ export const NftCollection = ({ contract }) => {
       symbol: await myNftContract.symbol(),
       supply: await myNftContract.totalSupply(),
       itemsTotal: await myNftContract.collectionItemsTotal(),
-      balance: await myNftContract.balanceOf(address),
     })
   }
 
@@ -88,17 +89,35 @@ export const NftCollection = ({ contract }) => {
                     <span className="opacity-80">Collection Name:</span> <b>{myCollectionDetails.name}</b>
                   </div>
                   <div>
-                    <span className="opacity-80">Total Items:</span>
-                    <b className="ml-1">{FormatNumber(convertFromEther(myCollectionDetails.itemsTotal, 0))} NFTs</b>
+                    <span className="opacity-80">Total Minted:</span>
+                    <b className="ml-1">{FormatNumber(convertFromEther(myCollectionDetails.supply, 0))} NFT</b>
                   </div>
                 </div>
 
                 <hr className="mb-6" />
-                <div className="flex text-sm mb-6">
-                  Wallet Balance: <b className="ml-1">{FormatNumber(convertFromEther(myCollectionDetails.balance, 0))} NFTs</b>
+                <div className="flex justify-between text-sm mb-6">
+                  <div>
+                    Total: <b className="ml-1">{FormatNumber(convertFromEther(myCollectionDetails.itemsTotal, 0))} NFT</b>
+                  </div>
+                  <div className="-mt-2">
+                    <Button gradientDuoTone="purpleToPink" size="sm" onClick={() => setMintNFTPopupVisible(true)}>
+                      + Create New NFT
+                    </Button>
+                  </div>
                 </div>
 
-                <Button onClick={() => test()}>Test</Button>
+
+                <div className="w-72 relative text-sm mb-6">
+                  <span className="text-gray-700 absolute top-3 left-3 bg-white/80 px-3 py-1 rounded-md ">
+                    Free
+                  </span>
+                  <Card imgSrc="https://flowbite.com/docs/images/blog/image-1.jpg">
+                    <p className="text-center font-semibold">
+                      <span>Minted: 0/9999 NFTs</span>
+                    </p>
+                  </Card>
+                </div>
+
 
               </>
             ) : (
@@ -107,6 +126,12 @@ export const NftCollection = ({ contract }) => {
           </div>
         </InnerBlock>
       )}
+
+      <CreateNFTPopup
+        popupVisible={mintNFTPopupVisible}
+        setPopupVisible={setMintNFTPopupVisible}
+      />
+
     </div>
   );
 }
