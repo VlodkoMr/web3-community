@@ -19,7 +19,6 @@ export const Community = () => {
   const [isReady, setIsReady] = useState(false);
   const {
     data: communityList,
-    isError,
     isLoading,
     refetch: RefetchCommunityList
   } = useContractRead({
@@ -29,27 +28,18 @@ export const Community = () => {
   })
 
   useEffect(() => {
-    console.log('isError', isError);
-  }, [isError]);
-
-
-  useEffect(() => {
-    console.log('isLoading', isLoading);
-  }, [isLoading]);
-
-  useEffect(() => {
     if (!isLoading) {
       loadCommunityList(communityList);
     }
   }, [isLoading])
 
-  const loadCommunityList = (communityList) => {
+  const loadCommunityList = (communityList, setLastByDefault = false) => {
     setIsReady(false);
     if (communityList.length) {
-      // if (setLastByDefault) {
-      //   const lastCommunity = communityList[communityList.length - 1];
-      //   localStorage.setItem("communityId", lastCommunity.id);
-      // }
+      if (setLastByDefault) {
+        const lastCommunity = communityList[communityList.length - 1];
+        localStorage.setItem("communityId", lastCommunity.id);
+      }
       let selectedCommunity = parseInt(localStorage.getItem("communityId"));
       if (!selectedCommunity) {
         selectedCommunity = parseInt(communityList[0].id);
@@ -70,10 +60,9 @@ export const Community = () => {
     }
   }
 
-  const reloadCommunityList = () => {
+  const reloadCommunityList = (setLastByDefault = false) => {
     RefetchCommunityList().then(result => {
-      console.log('result', result);
-      loadCommunityList(result.data);
+      loadCommunityList(result.data, setLastByDefault);
     });
   }
 

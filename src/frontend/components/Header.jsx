@@ -4,17 +4,17 @@ import logoWhite from '../assets/images/logo/logo-white.png';
 import logoColor from '../assets/images/logo/logo.png';
 import { Container, Link, NavLink, ScrollLink } from '../assets/css/common.style';
 import { animateScroll } from "react-scroll";
-import { useAccount } from "wagmi";
 import { Dropdown, Modal } from "flowbite-react";
 import { useDispatch, useSelector } from 'react-redux';
 import { setCurrentCommunity } from '../store/communitySlice';
 import { EditCommunity } from './Community/EditCommunity';
+import { useAccount } from 'wagmi';
 
 export const Header = ({ isInner, reloadCommunityList }) => {
   const dispatch = useDispatch();
+  const { isConnected } = useAccount();
   const [scroll, setScroll] = useState(false);
   const [communityPopupVisible, setCommunityPopupVisible] = useState(false);
-  const { isConnected } = useAccount();
   const communityList = useSelector(state => state.community.list);
   const currentCommunity = useSelector(state => state.community.current);
 
@@ -43,7 +43,7 @@ export const Header = ({ isInner, reloadCommunityList }) => {
   }
 
   const handleSuccessCreate = async () => {
-    reloadCommunityList();
+    reloadCommunityList(true);
   }
 
   return (

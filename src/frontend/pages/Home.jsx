@@ -3,9 +3,26 @@ import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { Btn, ScrollLink } from '../assets/css/common.style';
 import { Feature } from '../components/Home/Feature';
-import { Link } from 'react-router-dom';
+import { useAccount } from 'wagmi';
+import { useNavigate } from 'react-router-dom';
+
+const dashboardURL = "/community/dashboard";
 
 export const Home = () => {
+  const navigate = useNavigate();
+  const { isConnected } = useAccount({
+    onConnect() {
+      navigate(dashboardURL);
+    }
+  });
+
+  const redirectOrConnect = () => {
+    if (isConnected) {
+      navigate(dashboardURL);
+    } else {
+      alert("Please connect your wallet.");
+    }
+  }
 
   return (
     <>
@@ -37,9 +54,9 @@ export const Home = () => {
                 </p>
                 <ul className="flex flex-wrap items-center justify-center mb-10">
                   <li>
-                    <Link to={"/community/dashboard"}>
-                      <Btn>Create Community</Btn>
-                    </Link>
+                    <Btn onClick={() => redirectOrConnect()}>
+                      Create Community
+                    </Btn>
                   </li>
                   <li>
                     <ScrollLink to={"features"} smooth={true}>

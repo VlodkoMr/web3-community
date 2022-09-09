@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Spinner, TextInput } from 'flowbite-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addTransaction } from '../../store/transactionSlice';
-import { loadCommunityList } from '../../utils/requests';
-import { useAccount } from 'wagmi';
+import { factoryContract } from '../../utils/requests';
+import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
+import { useDebounce } from 'use-debounce';
 
-export function DeployFTContract() {
+export function DeployFTContract({ reloadCommunityList }) {
   const dispatch = useDispatch();
-  const { address } = useAccount();
   const [isLoadingCreate, setIsLoadingCreate] = useState(false);
   const currentCommunity = useSelector(state => state.community.current);
   const [formData, setFormData] = useState({
@@ -15,42 +15,127 @@ export function DeployFTContract() {
     symbol: "",
     supply: ""
   });
+  const [debouncedFormData] = useDebounce(formData, 500);
+  const [isFormDataValid, setIsFormDataValid] = useState(false);
+  const [debouncedIsValid] = useDebounce(isFormDataValid, 300);
+
+  // ------------- Update Community Methods -------------
+
+  const { config: configDeploy, error: errorDeploy } = usePrepareContractWrite({
+    ...factoryContract,
+    enabled: debouncedIsValid,
+    functionName: 'deployFTContract',
+    args: [currentCommunity.id, debouncedFormData.name, debouncedFormData.symbol.toUpperCase(), debouncedFormData.supply]
+  });
+
+  const { data: deployData, write: deployWrite } = useContractWrite({
+    ...configDeploy,
+    onSuccess: ({ hash }) => {
+      dispatch(addTransaction({
+        hash: hash,
+        description: `Create your Fungible Token`
+      }));
+    },
+    onError: ({ message }) => {
+      console.log('onError message', message);
+      setIsLoadingCreate(false);
+    },
+  });
+
+  useWaitForTransaction({
+    hash: deployData?.hash,
+    onError: error => {
+      console.log('is err', error)
+    },
+    onSuccess: data => {
+      if (data) {
+        reloadCommunityList();
+      }
+    },
+  });
+
+  // ------------- Form -------------
+
+  useEffect(() => {
+    console.log('errorDeploy', errorDeploy)
+  }, [errorDeploy]);
+
+  useEffect(() => {
+    setIsFormDataValid(!isFormErrors());
+  }, [formData]);
+
+  const isFormErrors = () => {
+    if (formData.name.length < 3) {
+      return "Error: Collection name should be more than 3 chars";
+    }
+    if (formData.symbol.length < 3 || formData.symbol.length > 5) {
+      return "Error: Token symbol should be 3-5 chars";
+    }
+    if (parseInt(formData.supply) < 1) {
+      return "Error: Wrong token supply";
+    }
+    return false;
+  }
+
+  // ------------- Actions -------------
 
   const deployFTContract = async (e) => {
     e.preventDefault();
 
-    if (formData.name.length < 3) {
-      alert("Error: Token name should be longer than 3 chars");
-      return;
-    }
-    if (formData.symbol.length < 3 || formData.symbol.length > 5) {
-      alert("Error: Token symbol should be 3-5 chars");
-      return;
-    }
-    if (parseInt(formData.supply) < 1) {
-      alert("Error: Wrong token supply");
+    const formError = isFormErrors();
+    if (formError) {
+      alert(formError);
       return;
     }
 
     setIsLoadingCreate(true);
-    window.contracts.factory.deployFTContract(currentCommunity.id, formData.name, formData.symbol.toUpperCase(), formData.supply).then(tx => {
-      dispatch(addTransaction({
-        hash: tx.hash,
-        description: `Create your Fungible Token`
-      }));
-
-      tx.wait().then(receipt => {
-        setIsLoadingCreate(false);
-        if (receipt.status === 1) {
-          loadCommunityList(dispatch, address);
-        }
-      });
-    }).catch(err => {
-      console.log('tx canceled', err);
-      setIsLoadingCreate(false);
-      alert("Transaction error!");
-    });
+    deployWrite?.();
   }
+  // const dispatch = useDispatch();
+  // const { address } = useAccount();
+  // const [isLoadingCreate, setIsLoadingCreate] = useState(false);
+  // const currentCommunity = useSelector(state => state.community.current);
+  // const [formData, setFormData] = useState({
+  //   name: "",
+  //   symbol: "",
+  //   supply: ""
+  // });
+  //
+  // const deployFTContract = async (e) => {
+  //   e.preventDefault();
+  //
+  //   if (formData.name.length < 3) {
+  //     alert("Error: Token name should be longer than 3 chars");
+  //     return;
+  //   }
+  //   if (formData.symbol.length < 3 || formData.symbol.length > 5) {
+  //     alert("Error: Token symbol should be 3-5 chars");
+  //     return;
+  //   }
+  //   if (parseInt(formData.supply) < 1) {
+  //     alert("Error: Wrong token supply");
+  //     return;
+  //   }
+  //
+  //   setIsLoadingCreate(true);
+  //   window.contracts.factory.deployFTContract(currentCommunity.id, formData.name, formData.symbol.toUpperCase(), formData.supply).then(tx => {
+  //     dispatch(addTransaction({
+  //       hash: tx.hash,
+  //       description: `Create your Fungible Token`
+  //     }));
+  //
+  //     tx.wait().then(receipt => {
+  //       setIsLoadingCreate(false);
+  //       if (receipt.status === 1) {
+  //         loadCommunityList(dispatch, address);
+  //       }
+  //     });
+  //   }).catch(err => {
+  //     console.log('tx canceled', err);
+  //     setIsLoadingCreate(false);
+  //     alert("Transaction error!");
+  //   });
+  // }
 
   return (
     <>

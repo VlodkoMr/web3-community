@@ -13,16 +13,16 @@ export function DeployNFTContract({ reloadCommunityList }) {
   const [formData, setFormData] = useState({
     name: "",
     symbol: "",
-    supply: ""
   });
-  const [debouncedFormData] = useDebounce(formData, 500);
+  const [debouncedFormData] = useDebounce(formData, 300);
   const [isFormDataValid, setIsFormDataValid] = useState(false);
+  const [debouncedIsValid] = useDebounce(isFormDataValid, 300);
 
   // ------------- Update Community Methods -------------
 
   const { config: configDeploy, error: errorDeploy } = usePrepareContractWrite({
     ...factoryContract,
-    enabled: isFormDataValid,
+    enabled: debouncedIsValid,
     functionName: 'deployNFTCollectionContract',
     args: [currentCommunity.id, debouncedFormData.name, debouncedFormData.symbol.toUpperCase()]
   });
@@ -36,7 +36,8 @@ export function DeployNFTContract({ reloadCommunityList }) {
       }));
     },
     onError: ({ message }) => {
-      console.log('onError message', message)
+      console.log('onError message', message);
+      setIsLoadingCreate(false);
     },
   });
 
@@ -59,6 +60,7 @@ export function DeployNFTContract({ reloadCommunityList }) {
   }, [errorDeploy]);
 
   useEffect(() => {
+    console.log('!isFormErrors()', !isFormErrors())
     setIsFormDataValid(!isFormErrors());
   }, [formData]);
 

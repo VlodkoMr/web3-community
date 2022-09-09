@@ -7,10 +7,14 @@ import { convertFromEther, FormatNumber, isContractAddress } from '../../utils/f
 import { ethers } from 'ethers';
 import FungibleTokenABI from '../../contractsData/FungibleToken.json';
 import { DeployFTContract } from '../../components/Community/DeployFTContract';
+import { useOutletContext } from 'react-router-dom';
 
 export const FungibleToken = () => {
   const { data: signer } = useSigner();
   const { address } = useAccount();
+  const [reloadCommunityList] = useOutletContext();
+  const currentCommunity = useSelector(state => state.community.current);
+
   const [isReady, setIsReady] = useState(false);
   const [myFTContract, setMyFTContract] = useState();
   const [myFTDetails, setMyFTDetails] = useState({
@@ -19,7 +23,6 @@ export const FungibleToken = () => {
     supply: 0,
     balance: 0,
   });
-  const currentCommunity = useSelector(state => state.community.current);
 
   useEffect(() => {
     setIsReady(false);
@@ -101,7 +104,7 @@ export const FungibleToken = () => {
                 </div>
               </>
             ) : (
-              <DeployFTContract />
+              <DeployFTContract reloadCommunityList={reloadCommunityList} />
             )}
           </div>
         </InnerBlock>
