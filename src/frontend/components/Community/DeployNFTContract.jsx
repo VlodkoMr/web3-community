@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Spinner, TextInput } from 'flowbite-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addTransaction } from '../../store/transactionSlice';
-import { loadCommunityList } from '../../utils/requests';
-import { useAccount } from 'wagmi';
+import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
+import { factoryContract } from '../../utils/requests';
+import { useDebounce } from 'use-debounce';
 
-export function DeployNFTContract({ contract }) {
+export function DeployNFTContract({ reloadCommunityList }) {
   const dispatch = useDispatch();
-  const { address } = useAccount();
   const [isLoadingCreate, setIsLoadingCreate] = useState(false);
   const currentCommunity = useSelector(state => state.community.current);
   const [formData, setFormData] = useState({
@@ -15,37 +15,76 @@ export function DeployNFTContract({ contract }) {
     symbol: "",
     supply: ""
   });
+  const [debouncedFormData] = useDebounce(formData, 500);
+  const [isFormDataValid, setIsFormDataValid] = useState(false);
+
+  // ------------- Update Community Methods -------------
+
+  const { config: configDeploy, error: errorDeploy } = usePrepareContractWrite({
+    ...factoryContract,
+    enabled: isFormDataValid,
+    functionName: 'deployNFTCollectionContract',
+    args: [currentCommunity.id, debouncedFormData.name, debouncedFormData.symbol.toUpperCase()]
+  });
+
+  const { data: deployData, write: deployWrite } = useContractWrite({
+    ...configDeploy,
+    onSuccess: ({ hash }) => {
+      dispatch(addTransaction({
+        hash: hash,
+        description: `Create your NFT Collection`
+      }));
+    },
+    onError: ({ message }) => {
+      console.log('onError message', message)
+    },
+  });
+
+  useWaitForTransaction({
+    hash: deployData?.hash,
+    onError: error => {
+      console.log('is err', error)
+    },
+    onSuccess: data => {
+      if (data) {
+        reloadCommunityList();
+      }
+    },
+  });
+
+  // ------------- Form -------------
+
+  useEffect(() => {
+    console.log('errorDeploy', errorDeploy)
+  }, [errorDeploy]);
+
+  useEffect(() => {
+    setIsFormDataValid(!isFormErrors());
+  }, [formData]);
+
+  const isFormErrors = () => {
+    if (formData.name.length < 3) {
+      return "Error: Collection name should be more than 3 chars";
+    }
+    if (formData.symbol.length < 3 || formData.symbol.length > 5) {
+      return "Error: Token symbol should be 3-5 chars";
+    }
+    return false;
+  }
+
+  // ------------- Actions -------------
 
   const deployNFTContract = async (e) => {
     e.preventDefault();
 
-    if (formData.name.length < 3) {
-      alert("Error: Token name should be longer than 3 chars");
-      return;
-    }
-    if (formData.symbol.length < 3 || formData.symbol.length > 5) {
-      alert("Error: Token symbol should be 3-5 chars");
+    const formError = isFormErrors();
+    if (formError) {
+      alert(formError);
       return;
     }
 
     setIsLoadingCreate(true);
-    contract.deployNFTCollectionContract(currentCommunity.id, formData.name, formData.symbol.toUpperCase()).then(tx => {
-      dispatch(addTransaction({
-        hash: tx.hash,
-        description: `Create your NFT Collection`
-      }));
-
-      tx.wait().then(receipt => {
-        setIsLoadingCreate(false);
-        if (receipt.status === 1) {
-          loadCommunityList(contract, dispatch, address);
-        }
-      });
-    }).catch(err => {
-      console.log('tx canceled', err);
-      setIsLoadingCreate(false);
-      alert("Transaction error!");
-    });
+    deployWrite?.();
   }
 
   return (

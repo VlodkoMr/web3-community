@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-export const Dashboard = ({ contract }) => {
+export const Dashboard = () => {
   const dispatch = useDispatch();
   const currentCommunity = useSelector(state => state.community.current);
 
@@ -10,10 +10,10 @@ export const Dashboard = ({ contract }) => {
   }, [currentCommunity]);
 
   useEffect(() => {
-    if (contract) {
+    if (window.contracts) {
       console.log('Dashboard load')
     }
-  }, [contract]);
+  }, [window.contracts]);
 
   return (
     <>

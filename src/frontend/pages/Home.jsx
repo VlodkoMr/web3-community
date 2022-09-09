@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { Btn, ScrollLink } from '../assets/css/common.style';
 import { Feature } from '../components/Home/Feature';
 import { Link } from 'react-router-dom';
 
-export const Home = ({ contract }) => {
+export const Home = () => {
 
   return (
     <>
-      <Header contract={contract} />
+      <Header />
 
       <div
         id="home"

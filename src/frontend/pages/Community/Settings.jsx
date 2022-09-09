@@ -6,7 +6,7 @@ import { Button, Card } from 'flowbite-react';
 import { DeployNFTContract } from '../../components/Community/DeployNFTContract';
 import { EditCommunity } from '../../components/Community/EditCommunity';
 
-export const Settings = ({ contract }) => {
+export const Settings = () => {
   const dispatch = useDispatch();
   const [isReady, setIsReady] = useState(false);
   const currentCommunity = useSelector(state => state.community.current);
@@ -16,11 +16,11 @@ export const Settings = ({ contract }) => {
   }, [currentCommunity]);
 
   useEffect(() => {
-    if (contract) {
+    if (window.contracts) {
       console.log('Settings load')
       setIsReady(true);
     }
-  }, [contract]);
+  }, [window.contracts]);
 
   return (
     <div className="flex gap-6">
@@ -31,7 +31,7 @@ export const Settings = ({ contract }) => {
               <span>General Settings</span>
             </InnerBlock.Header>
             <div className="mt-4">
-              <EditCommunity contract={contract} editCommunity={currentCommunity} />
+              <EditCommunity editCommunity={currentCommunity} />
             </div>
           </InnerBlock>
 

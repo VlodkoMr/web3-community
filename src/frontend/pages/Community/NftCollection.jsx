@@ -2,19 +2,20 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Button, Card } from 'flowbite-react';
 import { InnerBlock } from '../../assets/css/common.style';
-import { useAccount, useSigner } from 'wagmi';
+import { useSigner } from 'wagmi';
 import { convertFromEther, FormatNumber, isContractAddress } from '../../utils/format';
 import { ethers } from 'ethers';
 import NFTCollectionABI from '../../contractsData/NFTCollection.json';
 import { DeployNFTContract } from '../../components/Community/DeployNFTContract';
 import { CreateNFTPopup } from '../../components/Community/CreateNFTPopup';
+import { useOutletContext } from "react-router-dom";
 
-export const NftCollection = ({ contract }) => {
+export const NftCollection = () => {
   const { data: signer } = useSigner();
-  const { address } = useAccount();
+  const [reloadCommunityList] = useOutletContext();
   const [isReady, setIsReady] = useState(false);
-  const [myNftContract, setMyNftContract] = useState();
   const currentCommunity = useSelector(state => state.community.current);
+  const [myNftContract, setMyNftContract] = useState();
   const [mintNFTPopupVisible, setMintNFTPopupVisible] = useState(false);
   const [myCollectionDetails, setMyCollectionDetails] = useState({
     name: "",
@@ -122,7 +123,7 @@ export const NftCollection = ({ contract }) => {
 
               </>
             ) : (
-              <DeployNFTContract contract={contract} />
+              <DeployNFTContract reloadCommunityList={reloadCommunityList} />
             )}
           </div>
         </InnerBlock>

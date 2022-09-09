@@ -4,7 +4,7 @@ import { resizeFileImage, uploadMediaToIPFS } from '../../utils/media';
 import { useDispatch } from 'react-redux';
 import { addTransaction } from '../../store/transactionSlice';
 
-export function CreateNFTPopup({ contract, popupVisible, setPopupVisible, handleSuccess }) {
+export function CreateNFTPopup({ popupVisible, setPopupVisible, handleSuccess }) {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     price: "",
@@ -37,7 +37,7 @@ export function CreateNFTPopup({ contract, popupVisible, setPopupVisible, handle
   }
 
   const createCommunity = () => {
-    if (contract) {
+    if (window.contracts) {
       setIsLoading(true);
       // contract.createCommunity(formData.name, formData.description, logoURL).then(tx => {
       //   dispatch(addTransaction({

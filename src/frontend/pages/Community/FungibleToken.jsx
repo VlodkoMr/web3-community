@@ -8,7 +8,7 @@ import { ethers } from 'ethers';
 import FungibleTokenABI from '../../contractsData/FungibleToken.json';
 import { DeployFTContract } from '../../components/Community/DeployFTContract';
 
-export const FungibleToken = ({ contract }) => {
+export const FungibleToken = () => {
   const { data: signer } = useSigner();
   const { address } = useAccount();
   const [isReady, setIsReady] = useState(false);
@@ -101,7 +101,7 @@ export const FungibleToken = ({ contract }) => {
                 </div>
               </>
             ) : (
-              <DeployFTContract contract={contract} />
+              <DeployFTContract />
             )}
           </div>
         </InnerBlock>

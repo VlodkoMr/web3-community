@@ -4,7 +4,7 @@ import { resizeFileImage, uploadMediaToIPFS } from '../../utils/media';
 import { useDispatch } from 'react-redux';
 import { addTransaction } from '../../store/transactionSlice';
 
-export function CommunityLinks({ contract }) {
+export function CommunityLinks() {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -38,29 +38,29 @@ export function CommunityLinks({ contract }) {
   }
 
   const createCommunity = (logoURL) => {
-    if (contract) {
+    if (window.contracts) {
       setIsLoading(true);
-      contract.createCommunity(formData.name, formData.description, logoURL).then(tx => {
-        dispatch(addTransaction({
-          hash: tx.hash,
-          description: `Create Community "${formData.name}"`
-        }));
-
-        handleTxStart?.();
-        tx.wait().then(receipt => {
-          setIsLoading(false);
-          if (receipt.status === 1) {
-            handleSuccess();
-            resetForm();
-          } else {
-            alert('Minting error');
-          }
-        });
-      }).catch(err => {
-        console.log('tx canceled', err);
-        setIsLoading(false);
-        alert("Transaction error!");
-      });
+      // window.contracts.main.createCommunity(formData.name, formData.description, logoURL).then(tx => {
+      //   dispatch(addTransaction({
+      //     hash: tx.hash,
+      //     description: `Create Community "${formData.name}"`
+      //   }));
+      //
+      //   // handleTxStart?.();
+      //   tx.wait().then(receipt => {
+      //     setIsLoading(false);
+      //     if (receipt.status === 1) {
+      //       // handleSuccess();
+      //       resetForm();
+      //     } else {
+      //       alert('Minting error');
+      //     }
+      //   });
+      // }).catch(err => {
+      //   console.log('tx canceled', err);
+      //   setIsLoading(false);
+      //   alert("Transaction error!");
+      // });
     } else {
       alert("Please connect your wallet");
     }

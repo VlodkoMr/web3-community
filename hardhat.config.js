@@ -30,7 +30,7 @@ module.exports = {
     hardhat: {
       mining: {
         auto: false,
-        interval: [3000, 6000]
+        interval: [1000, 3000]
       }
     },
     mumbai_testnet: {

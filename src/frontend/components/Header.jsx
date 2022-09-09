@@ -9,14 +9,12 @@ import { Dropdown, Modal } from "flowbite-react";
 import { useDispatch, useSelector } from 'react-redux';
 import { setCurrentCommunity } from '../store/communitySlice';
 import { EditCommunity } from './Community/EditCommunity';
-import { loadCommunityList } from '../utils/requests';
 
-export const Header = ({ contract, isInner }) => {
+export const Header = ({ isInner, reloadCommunityList }) => {
   const dispatch = useDispatch();
   const [scroll, setScroll] = useState(false);
   const [communityPopupVisible, setCommunityPopupVisible] = useState(false);
   const { isConnected } = useAccount();
-  const { address } = useAccount();
   const communityList = useSelector(state => state.community.list);
   const currentCommunity = useSelector(state => state.community.current);
 
@@ -45,7 +43,7 @@ export const Header = ({ contract, isInner }) => {
   }
 
   const handleSuccessCreate = async () => {
-    loadCommunityList(contract, dispatch, address, true);
+    reloadCommunityList();
   }
 
   return (
@@ -154,7 +152,6 @@ export const Header = ({ contract, isInner }) => {
           </div>
           <div className="space-y-6 px-6 pb-4 sm:pb-6 lg:px-8 xl:pb-8">
             <EditCommunity
-              contract={contract}
               handleTxStart={() => handleTxStart()}
               handleSuccess={() => handleSuccessCreate()}
             />

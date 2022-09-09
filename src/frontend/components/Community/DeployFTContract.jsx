@@ -5,7 +5,7 @@ import { addTransaction } from '../../store/transactionSlice';
 import { loadCommunityList } from '../../utils/requests';
 import { useAccount } from 'wagmi';
 
-export function DeployFTContract({ contract }) {
+export function DeployFTContract() {
   const dispatch = useDispatch();
   const { address } = useAccount();
   const [isLoadingCreate, setIsLoadingCreate] = useState(false);
@@ -33,7 +33,7 @@ export function DeployFTContract({ contract }) {
     }
 
     setIsLoadingCreate(true);
-    contract.deployFTContract(currentCommunity.id, formData.name, formData.symbol.toUpperCase(), formData.supply).then(tx => {
+    window.contracts.factory.deployFTContract(currentCommunity.id, formData.name, formData.symbol.toUpperCase(), formData.supply).then(tx => {
       dispatch(addTransaction({
         hash: tx.hash,
         description: `Create your Fungible Token`
@@ -42,7 +42,7 @@ export function DeployFTContract({ contract }) {
       tx.wait().then(receipt => {
         setIsLoadingCreate(false);
         if (receipt.status === 1) {
-          loadCommunityList(contract, dispatch, address);
+          loadCommunityList(dispatch, address);
         }
       });
     }).catch(err => {

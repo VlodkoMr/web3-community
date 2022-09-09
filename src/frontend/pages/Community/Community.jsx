@@ -8,33 +8,78 @@ import { EditCommunity } from '../../components/Community/EditCommunity';
 import { useAccount } from 'wagmi';
 import { Outlet } from "react-router-dom";
 import { Spinner } from 'flowbite-react';
-import { loadCommunityList } from '../../utils/requests';
+import { useContractRead } from 'wagmi'
+import { setCommunityList, setCurrentCommunity } from '../../store/communitySlice';
+import { transformCommunity } from '../../utils/transform';
+import { mainContract } from '../../utils/requests';
 
-export const Community = ({ contract }) => {
+export const Community = () => {
   const dispatch = useDispatch();
-  const { address, isConnected } = useAccount();
+  const { address } = useAccount();
   const [isReady, setIsReady] = useState(false);
-  const communityList = useSelector(state => state.community.list);
+  const {
+    data: communityList,
+    isError,
+    isLoading,
+    refetch: RefetchCommunityList
+  } = useContractRead({
+    ...mainContract,
+    functionName: 'getUserCommunities',
+    args: [address]
+  })
 
   useEffect(() => {
-    if (contract) {
-      loadCommunityList(contract, dispatch, address).then(() => {
-        setIsReady(true);
+    console.log('isError', isError);
+  }, [isError]);
+
+
+  useEffect(() => {
+    console.log('isLoading', isLoading);
+  }, [isLoading]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      loadCommunityList(communityList);
+    }
+  }, [isLoading])
+
+  const loadCommunityList = (communityList) => {
+    setIsReady(false);
+    if (communityList.length) {
+      // if (setLastByDefault) {
+      //   const lastCommunity = communityList[communityList.length - 1];
+      //   localStorage.setItem("communityId", lastCommunity.id);
+      // }
+      let selectedCommunity = parseInt(localStorage.getItem("communityId"));
+      if (!selectedCommunity) {
+        selectedCommunity = parseInt(communityList[0].id);
+      }
+
+      const transformedCommunity = communityList.map(item => {
+        const community = transformCommunity(item);
+        if (community.id === selectedCommunity) {
+          // select active community
+          dispatch(setCurrentCommunity({ community }));
+        }
+        return community;
       });
-    } else if (!isConnected) {
+      dispatch(setCommunityList({ list: transformedCommunity }));
+      setIsReady(true);
+    } else {
       setIsReady(true);
     }
-  }, [contract]);
+  }
 
-  const onCommunityCreated = () => {
-    loadCommunityList(contract, dispatch, address).then(() => {
-      setIsReady(true);
+  const reloadCommunityList = () => {
+    RefetchCommunityList().then(result => {
+      console.log('result', result);
+      loadCommunityList(result.data);
     });
   }
 
   return (
     <InnerPageWrapper>
-      <Header isInner={true} contract={contract} />
+      <Header isInner={true} reloadCommunityList={reloadCommunityList} />
       <div id="home" className="relative h-[80px] bg-primary mb-6" />
 
       {isReady ? (
@@ -45,7 +90,7 @@ export const Community = ({ contract }) => {
                 <DashboardLeftMenu />
               </div>
               <div className="flex-auto ml-12">
-                <Outlet />
+                <Outlet context={[reloadCommunityList]} />
               </div>
             </Container>
           ) : (
@@ -55,10 +100,7 @@ export const Community = ({ contract }) => {
                 <p className="text-sm">Look like you don't have Community, let's create first one:</p>
 
                 <div className="my-6">
-                  <EditCommunity
-                    contract={contract}
-                    handleSuccess={() => onCommunityCreated()}
-                  />
+                  <EditCommunity handleSuccess={() => reloadCommunityList()} />
                 </div>
 
                 <hr className="my-4" />

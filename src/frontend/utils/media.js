@@ -1,6 +1,6 @@
 import { File, NFTStorage } from '../assets/js/nft-storage.esm.min';
 
-export const uploadMediaToIPFS = (media, name) => {
+export const uploadMediaToIPFS = (media) => {
   return new Promise(async (resolve, reject) => {
     const name = `${+new Date()}.jpg`;
     const image = dataURLtoFile(media, name);
