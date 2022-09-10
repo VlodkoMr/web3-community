@@ -15,7 +15,7 @@ export function DeployFTContract({ reloadCommunityList }) {
     symbol: "",
     supply: ""
   });
-  const [debouncedFormData] = useDebounce(formData, 500);
+  const [debouncedFormData] = useDebounce(formData, 300);
   const [isFormDataValid, setIsFormDataValid] = useState(false);
   const [debouncedIsValid] = useDebounce(isFormDataValid, 300);
 
