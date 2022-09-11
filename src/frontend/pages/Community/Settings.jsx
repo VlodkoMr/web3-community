@@ -24,27 +24,23 @@ export const Settings = () => {
 
   return (
     <div className="flex gap-6">
-      {isReady && (
-        <>
-          <InnerBlock className={"flex-1"}>
-            <InnerBlock.Header className="flex justify-between">
-              <span>General Settings</span>
-            </InnerBlock.Header>
-            <div className="mt-4">
-              <EditCommunity editCommunity={currentCommunity} />
-            </div>
-          </InnerBlock>
+      <InnerBlock className={"flex-1"}>
+        <InnerBlock.Header className="flex justify-between">
+          <span>General Settings</span>
+        </InnerBlock.Header>
+        <div className="mt-4">
+          <EditCommunity editCommunity={currentCommunity} />
+        </div>
+      </InnerBlock>
 
-          <InnerBlock className={"flex-1"}>
-            <InnerBlock.Header className="flex justify-between">
-              <span>Community Links</span>
-            </InnerBlock.Header>
-            <div className="mt-4">
-              ...
-            </div>
-          </InnerBlock>
-        </>
-      )}
+      <InnerBlock className={"flex-1"}>
+        <InnerBlock.Header className="flex justify-between">
+          <span>Community Links</span>
+        </InnerBlock.Header>
+        <div className="mt-4">
+          ...
+        </div>
+      </InnerBlock>
     </div>
   );
 }

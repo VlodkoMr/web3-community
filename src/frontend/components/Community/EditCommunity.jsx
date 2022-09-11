@@ -16,19 +16,28 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
     category: editCommunity?.category || "",
     privacy: editCommunity?.privacy || "0",
     logo: editCommunity?.logo || "",
-    logoURL: "",
+    logoData: "",
     description: editCommunity?.description || ""
   });
   const [debouncedFormData] = useDebounce(formData, 500);
   const [isFormDataValid, setIsFormDataValid] = useState(false);
 
+
+  useEffect(() => {
+    console.log('editCommunity', editCommunity)
+  }, [editCommunity]);
+
+  useEffect(() => {
+    console.log('formData', formData)
+  }, [formData]);
+
   // ------------- Create Community Methods -------------
 
   const { config: configAdd, error: errorAdd } = usePrepareContractWrite({
     ...mainContract,
-    enabled: isFormDataValid,
+    enabled: isFormDataValid && !editCommunity,
     functionName: 'createCommunity',
-    args: [debouncedFormData.name, debouncedFormData.category, debouncedFormData.privacy, debouncedFormData.description, debouncedFormData.logoURL]
+    args: [debouncedFormData.name, debouncedFormData.category, debouncedFormData.privacy, debouncedFormData.description, debouncedFormData.logo]
   });
 
   const { data: addCommunityData, write: addCommunityWrite } = useContractWrite({
@@ -41,7 +50,8 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
       }));
     },
     onError: ({ message }) => {
-      console.log('onError message', message)
+      console.log('onError message', message);
+      setIsLoading(false);
     },
   });
 
@@ -52,7 +62,8 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
     },
     onSuccess: data => {
       if (data) {
-        handleSuccess();
+        handleSuccess?.();
+        setIsLoading(false);
         resetForm();
       }
     },
@@ -62,24 +73,26 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
 
   const { config: configEdit, error: errorEdit } = usePrepareContractWrite({
     ...mainContract,
-    enabled: isFormDataValid,
+    enabled: isFormDataValid && !!editCommunity,
     functionName: 'updateCommunity',
-    args: [debouncedFormData.name, debouncedFormData.category, debouncedFormData.privacy, debouncedFormData.description, debouncedFormData.logoURL]
+    args: [editCommunity?.id, debouncedFormData.name, debouncedFormData.category, debouncedFormData.privacy, debouncedFormData.description, debouncedFormData.logo]
   });
 
-  const { data: editCommunityData, write: editCommunityWrite } = useContractWrite({
+  const { data: editCommunityData, writeAsync: editCommunityWrite } = useContractWrite({
     ...configEdit,
     onSuccess: ({ hash }) => {
+      console.log('---- save formData', debouncedFormData)
       dispatch(addTransaction({
         hash: hash,
         description: `Save Community "${formData.name}"`
       }));
     },
     onError: ({ message }) => {
-      console.log('onError message', message)
+      console.log('onError message', message);
+      setIsLoading(false);
     },
   });
-
+  
   useWaitForTransaction({
     hash: editCommunityData?.hash,
     onError: error => {
@@ -87,7 +100,8 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
     },
     onSuccess: data => {
       if (data) {
-        handleSuccess();
+        handleSuccess?.();
+        setIsLoading(false);
       }
     },
   });
@@ -102,7 +116,7 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
     setFormData({
       name: "",
       logo: "",
-      logoURL: "",
+      logoData: "",
       category: "",
       privacy: "",
       description: ""
@@ -113,7 +127,7 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
     if (formData.name.length < 3) {
       return "Error: Community name should be longer than 3 chars";
     }
-    if (!formData.category.length) {
+    if (!formData.category.toString().length) {
       return "Error: Please select Community category";
     }
     return false;
@@ -124,24 +138,25 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
   const resizeImage = (e) => {
     const image = e.target.files[0];
     resizeFileImage(image, 256, 256).then(result => {
-      setFormData({ ...formData, logo: result })
+      setFormData({ ...formData, logoData: result })
     });
   }
 
   const handleSave = (e) => {
     e.preventDefault();
-
-    if (formData.logo.length) {
+    if (formData.logoData.length) {
       setIsLoading(true);
-      uploadMediaToIPFS(formData.logo, formData.name).then(logoURL => {
-        setFormData({ ...formData, logoURL })
-        _saveCommunity(logoURL);
+      uploadMediaToIPFS(formData.logoData, formData.name).then(logoURL => {
+        setFormData({ ...formData, logo: logoURL })
+        setTimeout(() => {
+          _saveCommunity();
+        }, 500);
       }).catch(e => {
         alert(e);
         setIsLoading(false);
       })
     } else {
-      _saveCommunity("");
+      _saveCommunity();
     }
   }
 
@@ -183,9 +198,10 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
             </div>
             <select name="category" id="category"
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    defaultValue={formData.category}
                     className="w-full block w-full border disabled:cursor-not-allowed disabled:opacity-50 bg-gray-50 border-gray-300
                   text-gray-900 focus:border-blue-500 focus:ring-blue-500 rounded-lg p-2.5 text-sm">
-              <option key="-">&nbsp;</option>
+              <option value="">&nbsp;</option>
               {communityTypes.map((oneType, index) => (
                 <option value={index + 1} key={index}>{oneType}</option>
               ))}
@@ -196,6 +212,7 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
               <Label htmlFor="privacy" value="Privacy Level" />
             </div>
             <select name="privacy" id="privacy"
+                    defaultValue={formData.privacy}
                     className="w-full block w-full border disabled:cursor-not-allowed disabled:opacity-50 bg-gray-50 border-gray-300
                   text-gray-900 focus:border-blue-500 focus:ring-blue-500 rounded-lg p-2.5 text-sm">
               <option value={0}>Public</option>

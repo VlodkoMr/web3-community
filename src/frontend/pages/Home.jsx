@@ -5,6 +5,7 @@ import { Btn, ScrollLink } from '../assets/css/common.style';
 import { Feature } from '../components/Home/Feature';
 import { useAccount } from 'wagmi';
 import { useNavigate } from 'react-router-dom';
+import { ConnectKitButton } from 'connectkit';
 
 const dashboardURL = "/community/dashboard";
 
@@ -16,11 +17,11 @@ export const Home = () => {
     }
   });
 
-  const redirectOrConnect = () => {
+  const redirectOrConnect = (isConnected, show) => {
     if (isConnected) {
       navigate(dashboardURL);
     } else {
-      alert("Please connect your wallet.");
+      show();
     }
   }
 
@@ -54,9 +55,11 @@ export const Home = () => {
                 </p>
                 <ul className="flex flex-wrap items-center justify-center mb-10">
                   <li>
-                    <Btn onClick={() => redirectOrConnect()}>
-                      Create Community
-                    </Btn>
+                    <ConnectKitButton.Custom>
+                      {({ isConnected, show }) => (
+                        <Btn onClick={() => redirectOrConnect(isConnected, show)}>Create Community</Btn>
+                      )}
+                    </ConnectKitButton.Custom>
                   </li>
                   <li>
                     <ScrollLink to={"features"} smooth={true}>

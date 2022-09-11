@@ -14,9 +14,9 @@ export function DeployNFTContract({ reloadCommunityList }) {
     name: "",
     symbol: "",
   });
-  const [debouncedFormData] = useDebounce(formData, 300);
+  const [debouncedFormData] = useDebounce(formData, 500);
   const [isFormDataValid, setIsFormDataValid] = useState(false);
-  const [debouncedIsValid] = useDebounce(isFormDataValid, 300);
+  const [debouncedIsValid] = useDebounce(isFormDataValid, 500);
 
   // ------------- Update Community Methods -------------
 

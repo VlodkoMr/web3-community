@@ -3,12 +3,12 @@ import { Container, InnerPageWrapper, Wrapper } from '../../assets/css/common.st
 import { Header } from "../../components/Header";
 import { Footer } from "../../components/Footer";
 import { DashboardLeftMenu } from '../../components/Community/LeftMenu';
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { EditCommunity } from '../../components/Community/EditCommunity';
 import { useAccount } from 'wagmi';
 import { Outlet } from "react-router-dom";
 import { Spinner } from 'flowbite-react';
-import { useContractRead } from 'wagmi'
+import { useContractRead } from 'wagmi';
 import { setCommunityList, setCurrentCommunity } from '../../store/communitySlice';
 import { transformCommunity } from '../../utils/transform';
 import { mainContract } from '../../utils/requests';
@@ -46,6 +46,7 @@ export const Community = () => {
       }
 
       const transformedCommunity = communityList.map(item => {
+        console.log('item', item)
         const community = transformCommunity(item);
         if (community.id === selectedCommunity) {
           // select active community
