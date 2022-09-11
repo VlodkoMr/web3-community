@@ -15,15 +15,15 @@ export function DeployFTContract({ reloadCommunityList }) {
     symbol: "",
     supply: ""
   });
-  const [debouncedFormData] = useDebounce(formData, 500);
+  const [debouncedFormData] = useDebounce(formData, 300);
   const [isFormDataValid, setIsFormDataValid] = useState(false);
-  const [debouncedIsValid] = useDebounce(isFormDataValid, 500);
+  const [debouncedFormDataValid] = useDebounce(isFormDataValid, 200);
 
   // ------------- Update Community Methods -------------
 
   const { config: configDeploy, error: errorDeploy } = usePrepareContractWrite({
     ...factoryContract,
-    enabled: debouncedIsValid,
+    enabled: debouncedFormDataValid,
     functionName: 'deployFTContract',
     args: [currentCommunity.id, debouncedFormData.name, debouncedFormData.symbol.toUpperCase(), debouncedFormData.supply]
   });
@@ -57,10 +57,6 @@ export function DeployFTContract({ reloadCommunityList }) {
   // ------------- Form -------------
 
   useEffect(() => {
-    console.log('errorDeploy', errorDeploy)
-  }, [errorDeploy]);
-
-  useEffect(() => {
     setIsFormDataValid(!isFormErrors());
   }, [formData]);
 
@@ -71,7 +67,7 @@ export function DeployFTContract({ reloadCommunityList }) {
     if (formData.symbol.length < 3 || formData.symbol.length > 5) {
       return "Error: Token symbol should be 3-5 chars";
     }
-    if (parseInt(formData.supply) < 1) {
+    if (formData.supply.length === 0 || parseInt(formData.supply) < 1) {
       return "Error: Wrong token supply";
     }
     if (!isNaN(formData.symbol.charAt(0))) {
@@ -94,51 +90,6 @@ export function DeployFTContract({ reloadCommunityList }) {
     setIsLoadingCreate(true);
     deployWrite?.();
   }
-  // const dispatch = useDispatch();
-  // const { address } = useAccount();
-  // const [isLoadingCreate, setIsLoadingCreate] = useState(false);
-  // const currentCommunity = useSelector(state => state.community.current);
-  // const [formData, setFormData] = useState({
-  //   name: "",
-  //   symbol: "",
-  //   supply: ""
-  // });
-  //
-  // const deployFTContract = async (e) => {
-  //   e.preventDefault();
-  //
-  //   if (formData.name.length < 3) {
-  //     alert("Error: Token name should be longer than 3 chars");
-  //     return;
-  //   }
-  //   if (formData.symbol.length < 3 || formData.symbol.length > 5) {
-  //     alert("Error: Token symbol should be 3-5 chars");
-  //     return;
-  //   }
-  //   if (parseInt(formData.supply) < 1) {
-  //     alert("Error: Wrong token supply");
-  //     return;
-  //   }
-  //
-  //   setIsLoadingCreate(true);
-  //   window.contracts.factory.deployFTContract(currentCommunity.id, formData.name, formData.symbol.toUpperCase(), formData.supply).then(tx => {
-  //     dispatch(addTransaction({
-  //       hash: tx.hash,
-  //       description: `Create your Fungible Token`
-  //     }));
-  //
-  //     tx.wait().then(receipt => {
-  //       setIsLoadingCreate(false);
-  //       if (receipt.status === 1) {
-  //         loadCommunityList(dispatch, address);
-  //       }
-  //     });
-  //   }).catch(err => {
-  //     console.log('tx canceled', err);
-  //     setIsLoadingCreate(false);
-  //     alert("Transaction error!");
-  //   });
-  // }
 
   return (
     <>

@@ -19,14 +19,15 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
     // logoData: "",
     description: editCommunity?.description || ""
   });
-  const [debouncedFormData] = useDebounce(formData, 500);
+  const [debouncedFormData] = useDebounce(formData, 300);
   const [isFormDataValid, setIsFormDataValid] = useState(false);
+  const [debouncedFormDataValid] = useDebounce(isFormDataValid, 200);
 
   // ------------- Create Community Methods -------------
 
   const { config: configAdd, error: errorAdd } = usePrepareContractWrite({
     ...mainContract,
-    enabled: isFormDataValid && !editCommunity,
+    enabled: debouncedFormDataValid && !editCommunity,
     functionName: 'createCommunity',
     args: [debouncedFormData.name, debouncedFormData.category, debouncedFormData.privacy, debouncedFormData.description]
   });
@@ -64,7 +65,7 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
 
   const { config: configEdit, error: errorEdit } = usePrepareContractWrite({
     ...mainContract,
-    enabled: isFormDataValid && !!editCommunity,
+    enabled: debouncedFormDataValid && !!editCommunity,
     functionName: 'updateCommunity',
     args: [editCommunity?.id, debouncedFormData.name, debouncedFormData.category, debouncedFormData.privacy, debouncedFormData.description]
   });
