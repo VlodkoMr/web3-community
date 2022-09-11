@@ -74,6 +74,9 @@ export function DeployFTContract({ reloadCommunityList }) {
     if (parseInt(formData.supply) < 1) {
       return "Error: Wrong token supply";
     }
+    if (!isNaN(formData.symbol.charAt(0))) {
+      return "Error: Token symbol should start from letter";
+    }
     return false;
   }
 

@@ -15,21 +15,12 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
     name: editCommunity?.name || "",
     category: editCommunity?.category || "",
     privacy: editCommunity?.privacy || "0",
-    logo: editCommunity?.logo || "",
-    logoData: "",
+    // logo: editCommunity?.logo || "",
+    // logoData: "",
     description: editCommunity?.description || ""
   });
   const [debouncedFormData] = useDebounce(formData, 500);
   const [isFormDataValid, setIsFormDataValid] = useState(false);
-
-
-  useEffect(() => {
-    console.log('editCommunity', editCommunity)
-  }, [editCommunity]);
-
-  useEffect(() => {
-    console.log('formData', formData)
-  }, [formData]);
 
   // ------------- Create Community Methods -------------
 
@@ -37,7 +28,7 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
     ...mainContract,
     enabled: isFormDataValid && !editCommunity,
     functionName: 'createCommunity',
-    args: [debouncedFormData.name, debouncedFormData.category, debouncedFormData.privacy, debouncedFormData.description, debouncedFormData.logo]
+    args: [debouncedFormData.name, debouncedFormData.category, debouncedFormData.privacy, debouncedFormData.description]
   });
 
   const { data: addCommunityData, write: addCommunityWrite } = useContractWrite({
@@ -75,13 +66,12 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
     ...mainContract,
     enabled: isFormDataValid && !!editCommunity,
     functionName: 'updateCommunity',
-    args: [editCommunity?.id, debouncedFormData.name, debouncedFormData.category, debouncedFormData.privacy, debouncedFormData.description, debouncedFormData.logo]
+    args: [editCommunity?.id, debouncedFormData.name, debouncedFormData.category, debouncedFormData.privacy, debouncedFormData.description]
   });
 
   const { data: editCommunityData, writeAsync: editCommunityWrite } = useContractWrite({
     ...configEdit,
     onSuccess: ({ hash }) => {
-      console.log('---- save formData', debouncedFormData)
       dispatch(addTransaction({
         hash: hash,
         description: `Save Community "${formData.name}"`
@@ -92,7 +82,7 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
       setIsLoading(false);
     },
   });
-  
+
   useWaitForTransaction({
     hash: editCommunityData?.hash,
     onError: error => {
@@ -115,8 +105,8 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
   const resetForm = () => {
     setFormData({
       name: "",
-      logo: "",
-      logoData: "",
+      // logo: "",
+      // logoData: "",
       category: "",
       privacy: "",
       description: ""
@@ -135,32 +125,31 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
 
   // ------------- Actions -------------
 
-  const resizeImage = (e) => {
-    const image = e.target.files[0];
-    resizeFileImage(image, 256, 256).then(result => {
-      setFormData({ ...formData, logoData: result })
-    });
-  }
+  // const resizeImage = (e) => {
+  //   const image = e.target.files[0];
+  //   resizeFileImage(image, 256, 256).then(result => {
+  //     setFormData({ ...formData, logoData: result })
+  //   });
+  // }
 
-  const handleSave = (e) => {
+  // const handleSave = (e) => {
+  //   e.preventDefault();
+  //   if (formData.logoData.length) {
+  //     setIsLoading(true);
+  //     uploadMediaToIPFS(formData.logoData, formData.name).then(logoURL => {
+  //       setFormData({ ...formData, logo: logoURL })
+  //       _saveCommunity();
+  //     }).catch(e => {
+  //       alert(e);
+  //       setIsLoading(false);
+  //     })
+  //   } else {
+  //     _saveCommunity();
+  //   }
+  // }
+
+  const saveCommunity = (e) => {
     e.preventDefault();
-    if (formData.logoData.length) {
-      setIsLoading(true);
-      uploadMediaToIPFS(formData.logoData, formData.name).then(logoURL => {
-        setFormData({ ...formData, logo: logoURL })
-        setTimeout(() => {
-          _saveCommunity();
-        }, 500);
-      }).catch(e => {
-        alert(e);
-        setIsLoading(false);
-      })
-    } else {
-      _saveCommunity();
-    }
-  }
-
-  const _saveCommunity = () => {
     const formError = isFormErrors();
     if (formError) {
       alert(formError);
@@ -177,7 +166,7 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
 
   return (
     <>
-      <form className="flex flex-col gap-4 relative" onSubmit={handleSave}>
+      <form className="flex flex-col gap-4 relative" onSubmit={saveCommunity}>
         <div>
           <div className="mb-1 block text-left">
             <Label htmlFor="name" value="Community Name" />
@@ -220,15 +209,15 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
             </select>
           </div>
         </div>
-        <div>
-          <div className="mb-1 block text-left">
-            <Label htmlFor="logo" value="Logo" />
-          </div>
-          <FileInput id="logo"
-                     accept="image/*"
-                     onChange={(e) => resizeImage(e)}
-          />
-        </div>
+        {/*<div>*/}
+        {/*  <div className="mb-1 block text-left">*/}
+        {/*    <Label htmlFor="logo" value="Logo" />*/}
+        {/*  </div>*/}
+        {/*  <FileInput id="logo"*/}
+        {/*             accept="image/*"*/}
+        {/*             onChange={(e) => resizeImage(e)}*/}
+        {/*  />*/}
+        {/*</div>*/}
         <div>
           <div className="mb-1 block text-left">
             <Label htmlFor="description" value="Description" />

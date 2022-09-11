@@ -141,7 +141,7 @@ export const Header = ({ isInner, reloadCommunityList }) => {
       </Container>
 
 
-      <Modal size="md"
+      <Modal size="lg"
              popup={true}
              show={communityPopupVisible}
              onClose={() => setCommunityPopupVisible(false)}>

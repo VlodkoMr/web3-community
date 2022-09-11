@@ -71,6 +71,9 @@ export function DeployNFTContract({ reloadCommunityList }) {
     if (formData.symbol.length < 3 || formData.symbol.length > 5) {
       return "Error: Token symbol should be 3-5 chars";
     }
+    if (!isNaN(formData.symbol.charAt(0))) {
+      return "Error: Token symbol should start from letter";
+    }
     return false;
   }
 

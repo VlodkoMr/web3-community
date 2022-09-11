@@ -32,18 +32,8 @@
       "kind": "uups"
     },
     {
-      "address": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
-      "txHash": "0xd3815adc7fb9bd89ed503051c644e4ff295c144bdca8fce53186c609084fefce",
-      "kind": "uups"
-    },
-    {
       "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
       "txHash": "0x5c6a49656803679499bfdd260d849c06d217102522938d0c2c93c9d3ed637cd8",
-      "kind": "uups"
-    },
-    {
-      "address": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
-      "txHash": "0x532dd91f640bbb2fafdec236b004b14ae96688e734d471e3dc9f5f4398cafede",
       "kind": "uups"
     },
     {
@@ -82,16 +72,6 @@
       "kind": "uups"
     },
     {
-      "address": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
-      "txHash": "0x42f183e1478376680c8ebbce9f4c7b0b1d79353a7748e2b3a9078f955beadb16",
-      "kind": "uups"
-    },
-    {
-      "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-      "txHash": "0xaecd7972d36f49268c015d73c8daaf26a07369084fb16570eda66878d59cf654",
-      "kind": "uups"
-    },
-    {
       "address": "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e",
       "txHash": "0x8c88a0f2f15413d0a8f03ee68ce8cfe12cd4a847710be27d4fdfa2f135d6bbad",
       "kind": "uups"
@@ -109,6 +89,26 @@
     {
       "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
       "txHash": "0xc877230ab4a2ca6d67c860b37da4a181c63dceade9cc301bc858d0ae5776d6ae",
+      "kind": "uups"
+    },
+    {
+      "address": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
+      "txHash": "0x62993a7e6c086fa32dfc9a3ec0b9f7c85dbfbbdb9c97a9ab07ff3e6057c060e4",
+      "kind": "uups"
+    },
+    {
+      "address": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+      "txHash": "0x31ee9083a34c699ca469c4a5b0064a1c7cf067230788ab11a92dab6f1f461203",
+      "kind": "uups"
+    },
+    {
+      "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
+      "txHash": "0x3fc68627646f599ea460a8f0213687e0787a2c3d7090aeb75bcb5fcce8bcb636",
+      "kind": "uups"
+    },
+    {
+      "address": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
+      "txHash": "0x6e809b3f4124caba15dc1803abc3dc99b3fbb2eb4dbab86aeb33b7cb42eb6f5b",
       "kind": "uups"
     }
   ],
@@ -1402,9 +1402,9 @@
         }
       }
     },
-    "634d94b94d4509e800a517c189ab14bd2f6732c4558a9f2bf14efa03b2e2d94d": {
-      "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-      "txHash": "0x9af84981ce64adb111553867774a04910853b668ecb050f978cc716b49de4dd9",
+    "890b6cc0e143b97124b5f1ea2962b22c0ad60b22ebddf08941818111c74d5b48": {
+      "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      "txHash": "0xf8a2190ce71ff5fd3702b72bacc51d1cfb2d5b11d77797b3395f96a67bf9eb7a",
       "layout": {
         "storage": [
           {
@@ -1484,7 +1484,7 @@
             "label": "communityList",
             "offset": 0,
             "slot": "203",
-            "type": "t_mapping(t_address,t_array(t_struct(Community)4576_storage)dyn_storage)",
+            "type": "t_mapping(t_address,t_array(t_struct(Community)4577_storage)dyn_storage)",
             "contract": "MainContract",
             "src": "src/backend/contracts/MainContract.sol:13"
           },
@@ -1492,7 +1492,7 @@
             "label": "communityCategory",
             "offset": 0,
             "slot": "204",
-            "type": "t_mapping(t_enum(CommunityCategory)4555,t_array(t_uint256)dyn_storage)",
+            "type": "t_mapping(t_enum(CommunityCategory)4556,t_array(t_uint256)dyn_storage)",
             "contract": "MainContract",
             "src": "src/backend/contracts/MainContract.sol:14"
           }
@@ -1502,7 +1502,7 @@
             "label": "address",
             "numberOfBytes": "20"
           },
-          "t_array(t_struct(Community)4576_storage)dyn_storage": {
+          "t_array(t_struct(Community)4577_storage)dyn_storage": {
             "label": "struct MainContract.Community[]",
             "numberOfBytes": "32"
           },
@@ -1522,9 +1522,10 @@
             "label": "bool",
             "numberOfBytes": "1"
           },
-          "t_enum(CommunityCategory)4555": {
+          "t_enum(CommunityCategory)4556": {
             "label": "enum MainContract.CommunityCategory",
             "members": [
+              "None",
               "Animals",
               "Art",
               "Brand",
@@ -1556,11 +1557,11 @@
             ],
             "numberOfBytes": "1"
           },
-          "t_mapping(t_address,t_array(t_struct(Community)4576_storage)dyn_storage)": {
+          "t_mapping(t_address,t_array(t_struct(Community)4577_storage)dyn_storage)": {
             "label": "mapping(address => struct MainContract.Community[])",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_enum(CommunityCategory)4555,t_array(t_uint256)dyn_storage)": {
+          "t_mapping(t_enum(CommunityCategory)4556,t_array(t_uint256)dyn_storage)": {
             "label": "mapping(enum MainContract.CommunityCategory => uint256[])",
             "numberOfBytes": "32"
           },
@@ -1568,7 +1569,7 @@
             "label": "string",
             "numberOfBytes": "32"
           },
-          "t_struct(Community)4576_storage": {
+          "t_struct(Community)4577_storage": {
             "label": "struct MainContract.Community",
             "members": [
               {
@@ -1579,7 +1580,7 @@
               },
               {
                 "label": "category",
-                "type": "t_enum(CommunityCategory)4555",
+                "type": "t_enum(CommunityCategory)4556",
                 "offset": 0,
                 "slot": "1"
               },
@@ -1639,9 +1640,9 @@
         }
       }
     },
-    "890b6cc0e143b97124b5f1ea2962b22c0ad60b22ebddf08941818111c74d5b48": {
-      "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      "txHash": "0xf8a2190ce71ff5fd3702b72bacc51d1cfb2d5b11d77797b3395f96a67bf9eb7a",
+    "d93bf4b9edebcb911485cf07f45afe5c90831121f12ed16efb6721465e4040e4": {
+      "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+      "txHash": "0x9dd9b6d0c5b7a013683eadb2ca9c6e619e2b061ba6c9b7097d5d027d5d44875a",
       "layout": {
         "storage": [
           {

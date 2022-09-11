@@ -72,21 +72,21 @@ contract MainContract is Initializable, OwnableUpgradeable, UUPSUpgradeable, Uti
 
   // Add new community
   function createCommunity(
-    string memory _name, CommunityCategory _category, CommunityPrivacy _privacy, string memory _description, string memory _logo
+    string memory _name, CommunityCategory _category, CommunityPrivacy _privacy, string memory _description
   ) public {
     require(bytes(_name).length > 3, "Community name too short");
 
     communityCount += 1;
     communityList[msg.sender].push(
       Community(
-        communityCount, _category, _privacy, _name, _description, _logo, msg.sender, address(0), address(0)
+        communityCount, _category, _privacy, _name, _description, "", msg.sender, address(0), address(0)
       )
     );
   }
 
   // Update community
   function updateCommunity(
-    uint _id, string memory _name, CommunityCategory _category, CommunityPrivacy _privacy, string memory _description, string memory _logo
+    uint _id, string memory _name, CommunityCategory _category, CommunityPrivacy _privacy, string memory _description
   ) public {
     require(bytes(_name).length > 3, "Community name too short");
 
@@ -98,7 +98,6 @@ contract MainContract is Initializable, OwnableUpgradeable, UUPSUpgradeable, Uti
     userCommunity.category = _category;
     userCommunity.privacy = _privacy;
     userCommunity.description = _description;
-    userCommunity.logo = _logo;
   }
 
   function getUserCommunities(address _owner) public view returns (Community[] memory) {
