@@ -131,7 +131,7 @@ export function DeployFTContract({ reloadCommunityList }) {
           />
         </div>
 
-        <Button disabled={isLoadingCreate} type="Submit" gradientDuoTone="purpleToPink">
+        <Button disabled={isLoadingCreate || !debouncedFormDataValid} type="Submit" gradientDuoTone="purpleToPink">
           Create Fungible Token
           {isLoadingCreate && (
             <span className="ml-2">

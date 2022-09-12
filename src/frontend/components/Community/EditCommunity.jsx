@@ -230,7 +230,7 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
         </div>
 
         <div className={"flex justify-end"}>
-          <Button type="Submit" gradientDuoTone="purpleToPink" disabled={isLoading}>
+          <Button type="Submit" gradientDuoTone="purpleToPink" disabled={isLoading || !debouncedFormDataValid}>
             <span className="uppercase">{editCommunity ? "Save" : "Create Community"}</span>
             <img src={require("../../assets/images/home/arrow.svg")} alt="->" className={"w-4 h-2 ml-2"} />
           </Button>

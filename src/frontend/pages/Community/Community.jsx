@@ -46,7 +46,6 @@ export const Community = () => {
       }
 
       const transformedCommunity = communityList.map(item => {
-        console.log('item', item)
         const community = transformCommunity(item);
         if (community.id === selectedCommunity) {
           // select active community

@@ -117,7 +117,7 @@ export function DeployNFTContract({ reloadCommunityList }) {
           />
         </div>
 
-        <Button disabled={isLoadingCreate} type="Submit" gradientDuoTone="purpleToPink">
+        <Button disabled={isLoadingCreate || !debouncedFormDataValid} type="Submit" gradientDuoTone="purpleToPink">
           Create NFT Collection
           {isLoadingCreate && (
             <span className="ml-2">

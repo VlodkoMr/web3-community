@@ -1,26 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { InnerBlock } from '../../assets/css/common.style';
-import { convertFromEther, FormatNumber, isContractAddress } from '../../utils/format';
-import { Button, Card } from 'flowbite-react';
-import { DeployNFTContract } from '../../components/Community/DeployNFTContract';
 import { EditCommunity } from '../../components/Community/EditCommunity';
+import { useOutletContext } from 'react-router-dom';
 
 export const Settings = () => {
-  const dispatch = useDispatch();
-  const [isReady, setIsReady] = useState(false);
+  const [reloadCommunityList] = useOutletContext();
   const currentCommunity = useSelector(state => state.community.current);
 
   useEffect(() => {
     console.log('currentCommunity');
   }, [currentCommunity]);
-
-  useEffect(() => {
-    if (window.contracts) {
-      console.log('Settings load')
-      setIsReady(true);
-    }
-  }, [window.contracts]);
 
   return (
     <div className="flex gap-6">
@@ -29,7 +19,7 @@ export const Settings = () => {
           <span>General Settings</span>
         </InnerBlock.Header>
         <div className="mt-4">
-          <EditCommunity editCommunity={currentCommunity} />
+          <EditCommunity editCommunity={currentCommunity} handleSuccess={() => reloadCommunityList()} />
         </div>
       </InnerBlock>
 

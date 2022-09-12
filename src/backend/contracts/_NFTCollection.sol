@@ -67,6 +67,11 @@ contract NFTCollection is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, 
       ));
   }
 
+  function getCollectionItems() public view returns (Collection[] memory) {
+    return collectionItems;
+  }
+
+
   // Update NFT in collection
   function updateCollectionItem(uint _collectionId, uint _price, uint _supply) public onlyOwner {
     require(_collectionId <= collectionItemsTotal, "Wrong Collection");
