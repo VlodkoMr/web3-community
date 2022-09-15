@@ -88,7 +88,7 @@ contract MainContract is Initializable, OwnableUpgradeable, UUPSUpgradeable, Uti
   function updateCommunity(
     uint _id, string memory _name, CommunityCategory _category, CommunityPrivacy _privacy, string memory _description
   ) public {
-    require(bytes(_name).length > 3, "Community name too short");
+    require(bytes(_name).length >= 3, "Community name too short");
 
     (uint _index,,) = getCommunityDetailsById(msg.sender, _id);
     Community storage userCommunity = communityList[msg.sender][_index];

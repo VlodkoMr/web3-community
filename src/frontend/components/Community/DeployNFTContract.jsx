@@ -59,6 +59,7 @@ export function DeployNFTContract({ reloadCommunityList }) {
     setIsFormDataValid(!isFormErrors());
   }, [formData]);
 
+  // Check form errors
   const isFormErrors = () => {
     if (formData.name.length < 3) {
       return "Error: Collection name should be more than 3 chars";

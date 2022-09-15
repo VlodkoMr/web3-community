@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { InnerBlock } from '../../assets/css/common.style';
 import { EditCommunity } from '../../components/Community/EditCommunity';
 import { useOutletContext } from 'react-router-dom';

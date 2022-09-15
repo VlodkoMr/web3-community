@@ -1,30 +1,45 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.12;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
-contract NFTCollection is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, Ownable {
-  using Counters for Counters.Counter;
-  Collection[] public collectionItems;
-  uint public collectionItemsTotal;
+contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply {
+  string public name;
+  string public symbol;
+  uint public collectionsTotal;
+  Collection[] public collections;
 
   struct Collection {
-    string uri;
     uint id;
     uint price;
     uint supply;
-    uint mintedAmount;
+    uint mintedTotal;
+    string uri;
   }
 
-  Counters.Counter private _tokenIdCounter;
-
-  constructor(string memory _name, string memory _symbol, address _owner) ERC721(_name, _symbol) {
+  constructor(address _owner) ERC1155("") {
     transferOwnership(_owner);
+  }
+
+  function uri(uint _tokenId) override public view returns (string memory) {
+    string memory collectionURI = collections[_tokenId - 1].uri;
+    return string(
+      abi.encodePacked(
+        "https://ipfs.io/ipfs/",
+        collectionURI,
+        "/",
+        Strings.toString(_tokenId),
+        ".json"
+      )
+    );
+  }
+
+  function setURI(string memory _newUri) public onlyOwner {
+    _setURI(_newUri);
   }
 
   function pause() public onlyOwner {
@@ -35,108 +50,86 @@ contract NFTCollection is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, 
     _unpause();
   }
 
-  // Mint NFT and send to address
-  function safeMint(address _to, uint _collectionId) public onlyOwner {
-    _requireNotPaused();
-    require(_collectionId <= collectionItemsTotal, "Wrong Collection");
-    require(_to != address(0), "Wrong wallet Address");
-
-    uint _tokenId = _tokenIdCounter.current();
-    Collection storage collectionItem = collectionItems[_collectionId - 1];
-    collectionItem.mintedAmount += 1;
-
-    _tokenIdCounter.increment();
-    _safeMint(_to, _tokenId);
-    _setTokenURI(_tokenId, collectionItem.uri);
-  }
-
   // Add NFT to collection
   function newCollectionItem(string memory _uri, uint _price, uint _supply) public onlyOwner {
     require(bytes(_uri).length > 0, "Wrong URI");
     require(_price >= 0, "Wrong Price");
     require(_supply >= 0, "Wrong Supply");
 
-    collectionItemsTotal += 1;
-    collectionItems.push(
+    collectionsTotal += 1;
+    collections.push(
       Collection(
-        _uri,
-        collectionItemsTotal,
+        collectionsTotal,
         _price,
         _supply,
-        0
-      ));
+        0,
+        _uri
+      )
+    );
   }
 
-  function getCollectionItems() public view returns (Collection[] memory) {
-    return collectionItems;
-  }
-
-
-  // Update NFT in collection
   function updateCollectionItem(uint _collectionId, uint _price, uint _supply) public onlyOwner {
-    require(_collectionId <= collectionItemsTotal, "Wrong Collection");
+    require(_collectionId <= collectionsTotal, "Wrong Collection");
     require(_price >= 0, "Wrong Price");
     require(_supply >= 0, "Wrong Supply");
 
-    Collection storage collectionItem = collectionItems[_collectionId - 1];
-    // Allow unlimited supply, but check minted amount
+    Collection storage collection = collections[_collectionId - 1];
     if (_supply > 0) {
-      require(_supply >= collectionItem.mintedAmount, "Supply is less that already minted");
+      // Allow unlimited supply, but check minted amount
+      require(_supply >= collection.mintedTotal, "Supply is less that already minted");
     }
 
-    collectionItem.price = _price;
-    collectionItem.supply = _supply;
+    collection.price = _price;
+    collection.supply = _supply;
   }
 
-  function payToMint(uint _collectionId) public payable {
-    _requireNotPaused();
-    require(_collectionId <= collectionItemsTotal, "Wrong Collection");
-    Collection storage collectionItem = collectionItems[_collectionId - 1];
-
-    if (collectionItem.price > 0) {
-      require(collectionItem.price == msg.value, "Wrong payment amount to mint");
-    }
-    if (collectionItem.supply > 0) {
-      require(collectionItem.supply > collectionItem.mintedAmount, "All NFT was minted");
-    }
-
-    collectionItem.mintedAmount += 1;
-    uint256 _tokenId = _tokenIdCounter.current();
-    _tokenIdCounter.increment();
-    _safeMint(msg.sender, _tokenId);
-    _setTokenURI(_tokenId, collectionItem.uri);
+  function getCollections() public view returns (Collection[] memory) {
+    return collections;
   }
 
-  function _beforeTokenTransfer(address from, address to, uint256 tokenId)
+  // Mint NFTs for owner
+  function mint(address _account, uint256 _collectionId, uint256 _amount) public onlyOwner {
+    require(_amount > 0, "Wrong mint amount");
+    require(_collectionId > 0, "Wrong Collection");
+    require(_collectionId <= collectionsTotal, "Wrong Collection");
+    require(_account != address(0), "Wrong destination wallet Address");
+
+    Collection storage collection = collections[_collectionId - 1];
+    if (collection.supply > 0) {
+      require(collection.supply >= collection.mintedTotal + _amount, "Not enough supply left");
+    }
+
+    collection.mintedTotal += _amount;
+    _mint(_account, _collectionId, _amount, "");
+  }
+
+  // Mint NFTs for other
+  function payToMint(uint _collectionId, uint256 _amount) public whenNotPaused payable {
+    require(_amount > 0, "Wrong mint amount");
+    require(_collectionId > 0, "Wrong Collection");
+    require(_collectionId <= collectionsTotal, "Wrong Collection");
+
+    Collection storage collection = collections[_collectionId - 1];
+    if (collection.supply > 0) {
+      require(collection.supply >= collection.mintedTotal + _amount, "Not enough supply left");
+    }
+    if (collection.price > 0) {
+      uint totalPrice = _amount * collection.price;
+      require(msg.value >= totalPrice, "Wrong payment amount");
+    } else {
+      require(_amount == 1, "You can't mint more than 1 NFT");
+      // TODO: limit free NFT to mint 1 per acc
+    }
+
+    collection.mintedTotal += _amount;
+    _mint(msg.sender, _collectionId, _amount, "");
+  }
+
+  function _beforeTokenTransfer(address _operator, address _from, address _to, uint256[] memory _ids, uint256[] memory _amounts, bytes memory _data)
   internal
   whenNotPaused
-  override(ERC721, ERC721Enumerable)
+  override(ERC1155, ERC1155Supply)
   {
-    super._beforeTokenTransfer(from, to, tokenId);
-  }
-
-  // The following functions are overrides required by Solidity.
-
-  function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
-    _requireNotPaused();
-    super._burn(tokenId);
-  }
-
-  function tokenURI(uint256 tokenId)
-  public
-  view
-  override(ERC721, ERC721URIStorage)
-  returns (string memory)
-  {
-    return super.tokenURI(tokenId);
-  }
-
-  function supportsInterface(bytes4 interfaceId)
-  public
-  view
-  override(ERC721, ERC721Enumerable)
-  returns (bool)
-  {
-    return super.supportsInterface(interfaceId);
+    super._beforeTokenTransfer(_operator, _from, _to, _ids, _amounts, _data);
   }
 }

@@ -25,7 +25,6 @@ export const FungibleToken = () => {
   //   balance: 0,
   // });
 
-
   const myFTContract = {
     addressOrName: currentCommunity?.ftContract,
     contractInterface: NFTCollectionABI.abi,

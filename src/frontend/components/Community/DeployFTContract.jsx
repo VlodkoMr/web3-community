@@ -90,7 +90,7 @@ export function DeployFTContract({ reloadCommunityList }) {
     setIsLoadingCreate(true);
     deployWrite?.();
   }
-
+  
   return (
     <>
       <p className="text-sm opacity-80 mb-4">

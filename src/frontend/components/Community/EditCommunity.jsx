@@ -103,17 +103,27 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
     setIsFormDataValid(!isFormErrors());
   }, [formData]);
 
+  // Load community for edit
+  useEffect(() => {
+    setFormData({
+      name: editCommunity?.name || "",
+      category: editCommunity?.category || "",
+      privacy: editCommunity?.privacy || "0",
+      description: editCommunity?.description || ""
+    });
+  }, [editCommunity]);
+
+  // Reset form
   const resetForm = () => {
     setFormData({
       name: "",
-      // logo: "",
-      // logoData: "",
       category: "",
       privacy: "",
       description: ""
     });
   }
 
+  // Check form errors
   const isFormErrors = () => {
     if (formData.name.length < 3) {
       return "Error: Community name should be longer than 3 chars";
@@ -149,6 +159,7 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
   //   }
   // }
 
+  // Save community
   const saveCommunity = (e) => {
     e.preventDefault();
     const formError = isFormErrors();
