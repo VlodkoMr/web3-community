@@ -63,10 +63,7 @@ export const Home = () => {
                   </li>
                   <li>
                     <ScrollLink to={"features"} smooth={true}>
-                      <span className=" px-6">All Features</span>
-                      <span className="pt-2">
-                        <img src={require("../assets/images/home/arrow.svg")} alt="->" className={"w-5 h-2"} />
-                      </span>
+                      <span className=" px-6">All Features &raquo;</span>
                     </ScrollLink>
                   </li>
                 </ul>

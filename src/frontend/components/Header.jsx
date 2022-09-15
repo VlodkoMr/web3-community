@@ -147,10 +147,10 @@ export const Header = ({ isInner, reloadCommunityList }) => {
              onClose={() => setCommunityPopupVisible(false)}>
         <Modal.Header />
         <Modal.Body>
-          <div className="text-lg pb-6 text-center w-full">
+          <div className="text-lg pb-4 mb-8 -mt-8 text-center w-full border-b text-gray-500 font-semibold">
             Create New Community
           </div>
-          <div className="space-y-6 px-6 pb-4 sm:pb-6 lg:px-8 xl:pb-8">
+          <div className="space-y-6 px-6 lg:px-8">
             <EditCommunity
               handleTxStart={() => handleTxStart()}
               handleSuccess={() => handleSuccessCreate()}

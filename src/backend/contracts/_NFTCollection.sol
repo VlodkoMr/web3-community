@@ -21,8 +21,10 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply {
     string uri;
   }
 
-  constructor(address _owner) ERC1155("") {
+  constructor(string memory _name, string memory _symbol, address _owner) ERC1155("") {
     transferOwnership(_owner);
+    name = _name;
+    symbol = _symbol;
   }
 
   function uri(uint _tokenId) override public view returns (string memory) {

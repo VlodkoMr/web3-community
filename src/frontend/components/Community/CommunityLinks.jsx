@@ -116,8 +116,7 @@ export function CommunityLinks() {
 
         <div className={"flex justify-end"}>
           <Button type="Submit" gradientDuoTone="purpleToPink">
-            <span className="uppercase">Create</span>
-            <img src={require("../../assets/images/home/arrow.svg")} alt="->" className={"w-4 h-2 ml-2"} />
+            <span className="uppercase">Create &raquo;</span>
           </Button>
         </div>
 

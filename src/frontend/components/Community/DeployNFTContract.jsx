@@ -62,13 +62,13 @@ export function DeployNFTContract({ reloadCommunityList }) {
   // Check form errors
   const isFormErrors = () => {
     if (formData.name.length < 3) {
-      return "Error: Collection name should be more than 3 chars";
+      return "Collection name should be more than 3 chars";
     }
     if (formData.symbol.length < 3 || formData.symbol.length > 5) {
-      return "Error: Token symbol should be 3-5 chars";
+      return "Token symbol should be 3-5 chars";
     }
     if (!isNaN(formData.symbol.charAt(0))) {
-      return "Error: Token symbol should start from letter";
+      return "Token symbol should start from letter";
     }
     return false;
   }
@@ -118,13 +118,13 @@ export function DeployNFTContract({ reloadCommunityList }) {
           />
         </div>
 
-        <Button disabled={isLoadingCreate || !debouncedFormDataValid} type="Submit" gradientDuoTone="purpleToPink">
-          Create NFT Collection
+        <Button disabled={isLoadingCreate} type="Submit" gradientDuoTone="purpleToPink">
           {isLoadingCreate && (
-            <span className="ml-2">
-            <Spinner size="sm" />
-          </span>
+            <span className="mr-2">
+              <Spinner size="sm" />
+            </span>
           )}
+          Create NFT Collection
         </Button>
       </form>
     </>

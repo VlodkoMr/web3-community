@@ -25,10 +25,10 @@ export const NftCollection = () => {
     functionName: "getCollectionItems",
   });
 
-  const { data: totalSupply } = useContractRead({
+  const { data: collectionsTotal } = useContractRead({
     ...myNFTContract,
     enabled: isContractAddress(currentCommunity?.nftContract),
-    functionName: "totalSupply",
+    functionName: "collectionsTotal",
   });
   const { data: totalNFT } = useContractRead({
     ...myNFTContract,
@@ -50,6 +50,10 @@ export const NftCollection = () => {
     console.log('collectionItems', collectionItems);
   }, [collectionItems])
 
+  useEffect(() => {
+    console.log('myNFTContract', myNFTContract);
+  }, [])
+
   return (
     <div className="flex flex-row">
       <InnerBlock>
@@ -70,17 +74,17 @@ export const NftCollection = () => {
                   <span className="opacity-80">Collection Name:</span> <b>{tokenName}</b>
                 </div>
                 <div>
-                  <span className="opacity-80">Total Minted:</span>
-                  <b className="ml-1">{parseInt(totalSupply)} NFT</b>
+                  <span className="opacity-80">Total:</span>
+                  <b className="ml-1">{parseInt(collectionsTotal)} NFT</b>
                 </div>
               </div>
 
               <hr className="mb-6" />
               <div className="flex justify-between text-sm mb-6">
-                <div>
-                  Unique items: <b
-                  className="ml-1">{parseInt(totalNFT)} NFT</b>
-                </div>
+                {/*<div>*/}
+                {/*  Unique items: <b*/}
+                {/*  className="ml-1">{parseInt(totalNFT)} NFT</b>*/}
+                {/*</div>*/}
                 <div className="-mt-2 justify-end">
                   <Button gradientDuoTone="purpleToPink" size="sm" onClick={() => setMintNFTPopupVisible(true)}>
                     + New NFT
@@ -105,9 +109,10 @@ export const NftCollection = () => {
                   ))}
                 </>
               ) : (
-                <>No NFT</>
+                <small>
+                  *No NFTs. You can <span className="underline cursor-pointer" onClick={() => setMintNFTPopupVisible(true)}>add new NFT</span>.
+                </small>
               )}
-
             </>
           ) : (
             <DeployNFTContract reloadCommunityList={reloadCommunityList} />

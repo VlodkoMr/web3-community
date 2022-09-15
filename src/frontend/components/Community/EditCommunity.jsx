@@ -126,10 +126,10 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
   // Check form errors
   const isFormErrors = () => {
     if (formData.name.length < 3) {
-      return "Error: Community name should be longer than 3 chars";
+      return "Community name should be longer than 3 chars";
     }
     if (!formData.category.toString().length) {
-      return "Error: Please select Community category";
+      return "Please select Community category";
     }
     return false;
   }
@@ -241,9 +241,8 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
         </div>
 
         <div className={"flex justify-end"}>
-          <Button type="Submit" gradientDuoTone="purpleToPink" disabled={isLoading || !debouncedFormDataValid}>
-            <span className="uppercase">{editCommunity ? "Save" : "Create Community"}</span>
-            <img src={require("../../assets/images/home/arrow.svg")} alt="->" className={"w-4 h-2 ml-2"} />
+          <Button type="Submit" gradientDuoTone="purpleToPink" disabled={isLoading}>
+            <span className="uppercase">{editCommunity ? "Save" : "Create Community"} &raquo;</span>
           </Button>
         </div>
 
