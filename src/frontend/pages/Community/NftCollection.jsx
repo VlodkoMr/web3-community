@@ -5,20 +5,24 @@ import { InnerBlock, InnerTransparentBlock } from '../../assets/css/common.style
 import { useContractRead } from 'wagmi';
 import { isContractAddress } from '../../utils/format';
 import { DeployNFTContract } from '../../components/Community/DeployNFTContract';
-import { CreateNFTPopup } from '../../components/Community/NftCollection/CreateNFTPopup';
+import { CreateNFTSeriesPopup } from '../../components/Community/NftCollection/CreateNFTSeriesPopup';
 import { useOutletContext } from "react-router-dom";
 import NFTCollectionABI from '../../contractsData/NFTCollection.json';
 import { transformCollectionNFT } from '../../utils/transform';
 import { OneNFT } from '../../components/Community/NftCollection/OneNFT';
 import { MintNFTPopup } from '../../components/Community/NftCollection/MintNFTPopup';
+import { CreateCampaignPopup } from '../../components/Community/NftCollection/CreateCampaignPopup';
 
 export const NftCollection = () => {
   const currentCommunity = useSelector(state => state.community.current);
   const [reloadCommunityList] = useOutletContext();
-  const [createNFTPopupVisible, setCreateNFTPopupVisible] = useState(false);
-  const [mintNFTPopupVisible, setMintNFTPopupVisible] = useState(false);
-  const [mintNFTCollection, setMintNFTCollection] = useState();
   const [userCollections, setUserCollections] = useState([false]);
+  const [createNFTPopupVisible, setCreateNFTPopupVisible] = useState(false);
+
+  const [mintNFTCollection, setMintNFTCollection] = useState();
+  const [mintNFTPopupVisible, setMintNFTPopupVisible] = useState(false);
+  const [createCampaign, setCreateCampaign] = useState();
+  const [campaignPopupVisible, setCampaignPopupVisible] = useState(false);
 
   const myNFTContract = {
     addressOrName: currentCommunity?.nftContract,
@@ -56,6 +60,10 @@ export const NftCollection = () => {
   const handleMint = (nft) => {
     setMintNFTCollection(nft);
     setMintNFTPopupVisible(true);
+  }
+  const handleCreateCampaign = (nft) => {
+    setCreateCampaign(nft);
+    setCampaignPopupVisible(true);
   }
 
   useEffect(() => {
@@ -120,12 +128,17 @@ export const NftCollection = () => {
       {isContractAddress(currentCommunity.nftContract) && (
         <>
           {userCollections && userCollections.length > 0 && userCollections.map((nft, index) => (
-            <OneNFT key={index} nft={nft} handleMint={() => handleMint(nft)} />
+            <OneNFT
+              key={index}
+              nft={nft}
+              handleMint={() => handleMint(nft)}
+              handleCreateCampaign={() => handleCreateCampaign(nft)}
+            />
           ))}
         </>
       )}
 
-      <CreateNFTPopup
+      <CreateNFTSeriesPopup
         popupVisible={createNFTPopupVisible}
         setPopupVisible={setCreateNFTPopupVisible}
         handleSuccess={() => reloadCollectionItems()}
@@ -135,6 +148,14 @@ export const NftCollection = () => {
         popupVisible={mintNFTPopupVisible}
         setPopupVisible={setMintNFTPopupVisible}
         collection={mintNFTCollection}
+        currentCommunity={currentCommunity}
+        handleSuccess={() => refetchCollectionItems()}
+      />
+
+      <CreateCampaignPopup
+        popupVisible={campaignPopupVisible}
+        setPopupVisible={setCampaignPopupVisible}
+        collection={createCampaign}
         currentCommunity={currentCommunity}
         handleSuccess={() => refetchCollectionItems()}
       />

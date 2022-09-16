@@ -164,8 +164,7 @@ export function MintNFTPopup({ popupVisible, setPopupVisible, handleSuccess, cur
                   <div className="text-gray-500 text-sm pt-2" />
                   <Button type="Submit"
                           disabled={!mintWrite}
-                          gradientDuoTone="purpleToPink"
-                          onClick={handleMintNFT}>
+                          gradientDuoTone="purpleToPink">
                     <span className="uppercase">
                       Mint NFT &raquo;
                     </span>

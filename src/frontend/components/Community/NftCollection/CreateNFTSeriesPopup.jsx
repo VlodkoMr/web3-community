@@ -10,7 +10,7 @@ import { MdOutlineCancel } from 'react-icons/md';
 import { convertToEther } from '../../../utils/format';
 import { getTokenName } from '../../../utils/settings';
 
-export function CreateNFTPopup({ popupVisible, setPopupVisible, handleSuccess }) {
+export function CreateNFTSeriesPopup({ popupVisible, setPopupVisible, handleSuccess }) {
   const dispatch = useDispatch();
   const { chain } = useNetwork();
   const currentCommunity = useSelector(state => state.community.current);

@@ -5,12 +5,12 @@ import { InnerBlock } from '../../../assets/css/common.style';
 import { getTokenName } from '../../../utils/settings';
 import { useNetwork } from 'wagmi';
 
-export function OneNFT({ nft, handleMint }) {
+export function OneNFT({ nft, handleMint, handleCreateCampaign }) {
   const { chain } = useNetwork();
 
   return (
     <InnerBlock className="mb-4 flex-row gap-8">
-      <div className="w-48 relative bg-gray-50 rounded-lg">
+      <div className="w-48 relative bg-gray-50 rounded-lg overflow-hidden">
         <div className="absolute top-0 bottom-0 left-0 right-0 flex justify-center items-center z-0 opacity-50">
           <Spinner size="lg" color="gray" />
         </div>
@@ -42,7 +42,7 @@ export function OneNFT({ nft, handleMint }) {
 
         <div className="flex flex-row mt-4">
           <div className="opacity-80 hover:opacity-100 inline-block mr-2">
-            <Button outline={true} gradientDuoTone="purpleToPink">
+            <Button outline={true} gradientDuoTone="purpleToPink" onClick={handleCreateCampaign}>
               Create Campaign
             </Button>
           </div>
