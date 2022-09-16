@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Label, TextInput, Button, Textarea, FileInput, Spinner } from 'flowbite-react';
-import { resizeFileImage, uploadMediaToIPFS } from '../../utils/media';
+import { Label, TextInput, Button, Textarea, Spinner } from 'flowbite-react';
 import { useDispatch } from 'react-redux';
 import { useDebounce } from 'use-debounce';
 import { addTransaction } from '../../store/transactionSlice';
@@ -176,6 +175,23 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
     }
   }
 
+  const isSubmitActive = () => {
+    if (isLoading) {
+      return false;
+    }
+    if (editCommunity) {
+      if (!editCommunityWrite) {
+        return false;
+      }
+    } else {
+      if (!addCommunityWrite) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   return (
     <>
       <form className="flex flex-col gap-4 relative" onSubmit={saveCommunity}>
@@ -241,7 +257,7 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
         </div>
 
         <div className={"flex justify-end"}>
-          <Button type="Submit" gradientDuoTone="purpleToPink" disabled={isLoading}>
+          <Button type="Submit" gradientDuoTone="purpleToPink" disabled={!isSubmitActive()}>
             <span className="uppercase">{editCommunity ? "Save" : "Create Community"} &raquo;</span>
           </Button>
         </div>

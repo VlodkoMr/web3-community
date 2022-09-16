@@ -1,18 +1,47 @@
 import { File, NFTStorage } from '../assets/js/nft-storage.esm.min';
 
-export const uploadMediaToIPFS = (media) => {
-  return new Promise(async (resolve, reject) => {
-    const name = `${+new Date()}.jpg`;
-    const image = dataURLtoFile(media, name);
-    const nftStorage = new NFTStorage({ token: process.env.NFT_STORAGE_KEY });
-    const token = await nftStorage.store({
-      image,
-      name,
-      description: `Web3 Community ${name}`,
-    });
+// export const uploadMediaToIPFS = (media) => {
+//   return new Promise(async (resolve, reject) => {
+//     const name = `${+new Date()}.jpg`;
+//     const image = dataURLtoFile(media, name);
+//     const nftStorage = new NFTStorage({ token: process.env.NFT_STORAGE_KEY });
+//     const token = await nftStorage.store({
+//       image,
+//       name,
+//       description: `Web3 Community ${name}`,
+//     });
+//
+//     if (token.url) {
+//       resolve(token.data.image.pathname.replace('//', ''));
+//     }
+//     reject("Error: IPFS Upload failed");
+//   })
+// }
 
-    if (token.url) {
-      resolve(token.data.image.pathname.replace('//', ''));
+export const uploadNFTtoIPFS = (formData) => {
+  return new Promise(async (resolve, reject) => {
+    let nftMetadata = {
+      image: formData.media,
+      name: formData.name,
+      description: formData.description
+    };
+
+    if (formData.attributes.length) {
+      nftMetadata.attributes = [];
+      formData.attributes.map(attr => {
+        if (attr.type.length && attr.value.length) {
+          nftMetadata.attributes.push({
+            "trait_type": attr.type,
+            "value": attr.value
+          })
+        }
+      })
+    }
+
+    const client = new NFTStorage({ token: process.env.NFT_STORAGE_KEY });
+    const metadata = await client.store(nftMetadata);
+    if (metadata.url) {
+      resolve(metadata);
     }
     reject("Error: IPFS Upload failed");
   })
@@ -36,7 +65,7 @@ export function dataURLtoFile(dataUrl, fileName) {
 }
 
 export const resizeFileImage = (file, max_width, max_height) => {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = function (e) {
       const img = document.createElement("img");
@@ -65,7 +94,13 @@ export const resizeFileImage = (file, max_width, max_height) => {
         canvas.height = height;
         ctx = canvas.getContext("2d");
         ctx.drawImage(img, 0, 0, width, height);
-        resolve(canvas.toDataURL(file.type));
+        canvas.toBlob(result => {
+          if (result) {
+            resolve(result);
+          } else {
+            reject("Can't read image")
+          }
+        }, file.type);
       }, 300);
     };
     reader.readAsDataURL(file);

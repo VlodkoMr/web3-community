@@ -5,7 +5,6 @@ import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
-import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply {
   string public name;
@@ -13,12 +12,20 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply {
   uint public collectionsTotal;
   Collection[] public collections;
 
+  struct CollectionRoyalty {
+    address account;
+    uint percent;
+  }
+
   struct Collection {
+    string title;
+    string jsonUri;
+    string mediaUri;
     uint id;
     uint price;
     uint supply;
     uint mintedTotal;
-    string uri;
+    CollectionRoyalty royalty;
   }
 
   constructor(string memory _name, string memory _symbol, address _owner) ERC1155("") {
@@ -28,16 +35,8 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply {
   }
 
   function uri(uint _tokenId) override public view returns (string memory) {
-    string memory collectionURI = collections[_tokenId - 1].uri;
-    return string(
-      abi.encodePacked(
-        "https://ipfs.io/ipfs/",
-        collectionURI,
-        "/",
-        Strings.toString(_tokenId),
-        ".json"
-      )
-    );
+    Collection storage collection = collections[_tokenId - 1];
+    return collection.jsonUri;
   }
 
   function setURI(string memory _newUri) public onlyOwner {
@@ -53,24 +52,32 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply {
   }
 
   // Add NFT to collection
-  function newCollectionItem(string memory _uri, uint _price, uint _supply) public onlyOwner {
-    require(bytes(_uri).length > 0, "Wrong URI");
+  function newCollectionItem(
+    string memory _jsonUri, string memory _mediaUri, string memory _title, uint _price, uint _supply, CollectionRoyalty memory _royalty
+  ) public onlyOwner {
+    require(bytes(_jsonUri).length > 0, "Wrong json URI");
+    require(bytes(_mediaUri).length > 0, "Wrong media URI");
     require(_price >= 0, "Wrong Price");
     require(_supply >= 0, "Wrong Supply");
+    if (_royalty.account != address(0)) {
+      require(_royalty.percent > 0, "Please provide royalty percent");
+      require(_royalty.percent <= 90, "Royalty percent can't be more than 90%");
+    }
 
     collectionsTotal += 1;
-    collections.push(
-      Collection(
+    collections.push(Collection(
+        _title,
+        _jsonUri,
+        _mediaUri,
         collectionsTotal,
         _price,
         _supply,
         0,
-        _uri
-      )
-    );
+        _royalty
+      ));
   }
 
-  function updateCollectionItem(uint _collectionId, uint _price, uint _supply) public onlyOwner {
+  function updateCollectionItem(uint _collectionId, uint _price, uint _supply, CollectionRoyalty memory _royalty) public onlyOwner {
     require(_collectionId <= collectionsTotal, "Wrong Collection");
     require(_price >= 0, "Wrong Price");
     require(_supply >= 0, "Wrong Supply");
@@ -80,9 +87,14 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply {
       // Allow unlimited supply, but check minted amount
       require(_supply >= collection.mintedTotal, "Supply is less that already minted");
     }
+    if (_royalty.account != address(0)) {
+      require(_royalty.percent > 0, "Please provide royalty percent");
+      require(_royalty.percent <= 90, "Royalty percent can't be more than 90%");
+    }
 
     collection.price = _price;
     collection.supply = _supply;
+    collection.royalty = _royalty;
   }
 
   function getCollections() public view returns (Collection[] memory) {

@@ -15,6 +15,14 @@ export const isContractAddress = (address) => {
   return !/^0x0+$/.test(address);
 }
 
+export const shortAddress = (address) => {
+  return address.slice(0, 5) + '...' + address.slice(38, 42);
+}
+
 export const FormatNumber = (number) => {
   return new Intl.NumberFormat().format(number);
+}
+
+export const MediaURL = (uri) => {
+  return `https://ipfs.io/ipfs/${uri}`;
 }

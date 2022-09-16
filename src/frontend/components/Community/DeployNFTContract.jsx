@@ -91,8 +91,7 @@ export function DeployNFTContract({ reloadCommunityList }) {
   return (
     <>
       <p className="text-sm opacity-80 mb-4">
-        This section allow you create unique NFT for your community, sell it, transfer or enable minting for
-        free. <br />
+        This section allow you create unique NFT Series for your community, create distribution campaign to sell or minting NFT for free. <br />
         To start using NFT Collections, let's enable this feature (deploy your own Smart Contract): <br />
       </p>
 
@@ -113,12 +112,12 @@ export function DeployNFTContract({ reloadCommunityList }) {
                      maxLength={5}
                      required={true}
                      value={formData.symbol}
-                     placeholder={`Collection Symbol`}
+                     placeholder={`Symbol`}
                      onChange={(e) => setFormData({ ...formData, symbol: e.target.value })}
           />
         </div>
 
-        <Button disabled={isLoadingCreate} type="Submit" gradientDuoTone="purpleToPink">
+        <Button disabled={isLoadingCreate || !deployWrite} type="Submit" gradientDuoTone="purpleToPink">
           {isLoadingCreate && (
             <span className="mr-2">
               <Spinner size="sm" />

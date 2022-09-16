@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Button } from 'flowbite-react';
-import { InnerBlock } from '../../assets/css/common.style';
+import { InnerBlock, InnerTransparentBlock } from '../../assets/css/common.style';
 import { useAccount, useContractRead, useSigner } from 'wagmi';
 import { convertFromEther, FormatNumber, isContractAddress } from '../../utils/format';
 import { ethers } from 'ethers';
@@ -95,16 +95,21 @@ export const FungibleToken = () => {
   //   }
   // }
 
+  const pauseContract = () => {
+    if (confirm("Paused contract don't allow minting or transfer NFT. Are you sure?")) {
+      // pause
+    }
+  }
+
   return (
     <div className="flex flex-row">
-      <InnerBlock>
+      <InnerTransparentBlock>
         <InnerBlock.Header className="flex justify-between">
           <span>Fungible Token</span>
           {isContractAddress(currentCommunity.ftContract) && (
-            <span className="text-sm bg-gray-50 rounded px-3 py-1 font-normal text-slate-500">
-                <span className="font-semibold mr-1">Contract:</span>
-                <small className="opacity-80">{currentCommunity.ftContract}</small>
-              </span>
+            <Button size="xsm" color="light" onClick={pauseContract}>
+              <span className="text-sm px-2 font-medium text-red-500">Pause Contract</span>
+            </Button>
           )}
         </InnerBlock.Header>
         <div>
@@ -112,12 +117,13 @@ export const FungibleToken = () => {
             <>
               <div className="flex justify-between text-sm mb-3 -mt-1">
                 <div className="mr-10">
-                  <span className="opacity-80">Token Name:</span> <b>{tokenName}</b>
+                  <span className="opacity-80">Token Name:</span>
+                  <b className="font-medium ml-1">{tokenName}</b>
                 </div>
-                <div>
-                  <span className="opacity-80">Total Supply:</span>
+                <span className="text-sm font-normal text-slate-500">
+                  <span className="font-medium mr-1">Total Supply:</span>
                   <b className="ml-1">{FormatNumber(convertFromEther(totalSupply, 0))} {tokenSymbol}</b>
-                </div>
+                </span>
               </div>
 
               <hr className="mb-6" />
@@ -135,7 +141,7 @@ export const FungibleToken = () => {
             <DeployFTContract reloadCommunityList={reloadCommunityList} />
           )}
         </div>
-      </InnerBlock>
+      </InnerTransparentBlock>
     </div>
   );
 }

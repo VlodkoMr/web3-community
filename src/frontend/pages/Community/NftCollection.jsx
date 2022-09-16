@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Button, Card } from 'flowbite-react';
-import { InnerBlock } from '../../assets/css/common.style';
+import { Button } from 'flowbite-react';
+import { InnerBlock, InnerTransparentBlock } from '../../assets/css/common.style';
 import { useContractRead } from 'wagmi';
 import { isContractAddress } from '../../utils/format';
 import { DeployNFTContract } from '../../components/Community/DeployNFTContract';
 import { CreateNFTPopup } from '../../components/Community/CreateNFTPopup';
 import { useOutletContext } from "react-router-dom";
 import NFTCollectionABI from '../../contractsData/NFTCollection.json';
+import { transformCollectionNFT } from '../../utils/transform';
+import { OneNFT } from '../../components/Community/NftCollection/OneNFT';
 
 export const NftCollection = () => {
   const currentCommunity = useSelector(state => state.community.current);
   const [reloadCommunityList] = useOutletContext();
   const [mintNFTPopupVisible, setMintNFTPopupVisible] = useState(false);
+  const [userCollections, setUserCollections] = useState([false]);
 
   const myNFTContract = {
     addressOrName: currentCommunity?.nftContract,
@@ -22,48 +25,47 @@ export const NftCollection = () => {
   const { data: collectionItems, refetch: refetchCollectionItems } = useContractRead({
     ...myNFTContract,
     enabled: isContractAddress(currentCommunity?.nftContract),
-    functionName: "getCollectionItems",
+    functionName: "getCollections",
   });
-
-  const { data: collectionsTotal } = useContractRead({
+  const { data: totalCollections } = useContractRead({
     ...myNFTContract,
-    enabled: isContractAddress(currentCommunity?.nftContract),
     functionName: "collectionsTotal",
-  });
-  const { data: totalNFT } = useContractRead({
-    ...myNFTContract,
-    functionName: "collectionItemsTotal",
+    watch: true
   });
   const { data: tokenName } = useContractRead({
     ...myNFTContract,
-    functionName: "name",
+    functionName: "name"
   });
+
+  const pauseContract = () => {
+    if (confirm("Paused contract don't allow minting or transfer NFT. Are you sure?")) {
+      // pause
+    }
+  }
 
   const reloadCollectionItems = () => {
     refetchCollectionItems().then(result => {
-      console.log('refetch result', result);
-      // loadCommunityList(result.data, setLastByDefault);
+      const transformedCollection = result.data.map(collection => transformCollectionNFT(collection));
+      setUserCollections(transformedCollection);
     });
   }
 
   useEffect(() => {
-    console.log('collectionItems', collectionItems);
+    if (collectionItems) {
+      const transformedCollection = collectionItems.map(collection => transformCollectionNFT(collection));
+      setUserCollections(transformedCollection);
+    }
   }, [collectionItems])
 
-  useEffect(() => {
-    console.log('myNFTContract', myNFTContract);
-  }, [])
-
   return (
-    <div className="flex flex-row">
-      <InnerBlock>
+    <div>
+      <InnerTransparentBlock>
         <InnerBlock.Header className="flex justify-between">
           <span>NFT Collection</span>
           {isContractAddress(currentCommunity.nftContract) && (
-            <span className="text-sm bg-gray-50 rounded px-3 py-1 font-normal text-slate-500">
-                <span className="font-semibold mr-1">Contract:</span>
-                <small className="opacity-80">{currentCommunity.nftContract}</small>
-              </span>
+            <Button size="xsm" color="light" onClick={pauseContract}>
+              <span className="text-sm px-2 font-medium text-red-500">Pause Contract</span>
+            </Button>
           )}
         </InnerBlock.Header>
         <div>
@@ -71,61 +73,55 @@ export const NftCollection = () => {
             <>
               <div className="flex justify-between text-sm mb-3 -mt-1">
                 <div className="mr-10">
-                  <span className="opacity-80">Collection Name:</span> <b>{tokenName}</b>
+                  <span className="opacity-80">Collection Name:</span>
+                  <b className="font-medium ml-1">{tokenName}</b>
                 </div>
-                <div>
-                  <span className="opacity-80">Total:</span>
-                  <b className="ml-1">{parseInt(collectionsTotal)} NFT</b>
-                </div>
+                <span className="text-sm font-normal text-slate-500">
+                  <span className="font-medium mr-1">Contract:</span>
+                  <small className="opacity-80">{currentCommunity.nftContract}</small>
+                </span>
               </div>
 
               <hr className="mb-6" />
-              <div className="flex justify-between text-sm mb-6">
-                {/*<div>*/}
-                {/*  Unique items: <b*/}
-                {/*  className="ml-1">{parseInt(totalNFT)} NFT</b>*/}
-                {/*</div>*/}
+              <div className="flex justify-between text-sm mb-4">
+
+                <div>
+                  {(parseInt(totalCollections) === 0) ? (
+                    <>*No NFT Series</>
+                  ) : (
+                    <div className="pt-1">
+                      <span className="opacity-80">Total NFT Series:</span>
+                      <b className="ml-1">{parseInt(totalCollections)} NFT</b>
+                    </div>
+                  )}
+                </div>
+
                 <div className="-mt-2 justify-end">
                   <Button gradientDuoTone="purpleToPink" size="sm" onClick={() => setMintNFTPopupVisible(true)}>
-                    + New NFT
+                    Create NFT Series
                   </Button>
                 </div>
               </div>
-
-              {collectionItems && collectionItems.length > 0 ? (
-                <>
-                  {collectionItems.map(nft => (
-                    <div className="w-72 relative text-sm mb-6">
-                  <span className="text-gray-700 absolute top-3 left-3 bg-white/80 px-3 py-1 rounded-md ">
-                    Free
-                  </span>
-                      <Card imgSrc="https://flowbite.com/docs/images/blog/image-1.jpg">
-                        <p className="text-center font-semibold">
-                          <span>Minted: 0/9999 NFTs</span>
-                          {nft.uri}
-                        </p>
-                      </Card>
-                    </div>
-                  ))}
-                </>
-              ) : (
-                <small>
-                  *No NFTs. You can <span className="underline cursor-pointer" onClick={() => setMintNFTPopupVisible(true)}>add new NFT</span>.
-                </small>
-              )}
             </>
           ) : (
             <DeployNFTContract reloadCommunityList={reloadCommunityList} />
           )}
         </div>
-      </InnerBlock>
+      </InnerTransparentBlock>
+
+      {isContractAddress(currentCommunity.nftContract) && (
+        <>
+          {userCollections && userCollections.length > 0 && userCollections.map((nft, index) => (
+            <OneNFT key={index} nft={nft} />
+          ))}
+        </>
+      )}
 
       <CreateNFTPopup
         popupVisible={mintNFTPopupVisible}
         setPopupVisible={setMintNFTPopupVisible}
         handleSuccess={() => reloadCollectionItems()}
       />
-
     </div>
   );
 }

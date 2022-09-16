@@ -1,16 +1,17 @@
-import React, { memo, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Label, TextInput, Button, Modal, FileInput, Spinner, Textarea } from 'flowbite-react';
-import { resizeFileImage, uploadMediaToIPFS } from '../../utils/media';
+import { resizeFileImage, uploadNFTtoIPFS } from '../../utils/media';
 import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
 import { useDebounce } from 'use-debounce';
 import NFTCollectionABI from '../../contractsData/NFTCollection.json';
 import { useDispatch, useSelector } from 'react-redux';
 import { addTransaction } from '../../store/transactionSlice';
 import { MdOutlineCancel } from 'react-icons/md';
+import { convertToEther } from '../../utils/format';
 
 export function CreateNFTPopup({ popupVisible, setPopupVisible, handleSuccess }) {
   const dispatch = useDispatch();
-  const [isResizeLoading, setIsResizeLoading] = useState(false);
+  const currentCommunity = useSelector(state => state.community.current);
   const [isSubmitLoading, setIsSubmitLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -18,29 +19,37 @@ export function CreateNFTPopup({ popupVisible, setPopupVisible, handleSuccess })
     description: "",
     price: "",
     supply: "",
+    media: "",
     mediaURL: "",
     jsonFileURL: "",
+    royaltyAddress: "",
+    royaltyPct: "",
+    attributes: []
   });
-  const [formDataAttributes, setFormDataAttributes] = useState([]);
-  const [debouncedFormData] = useDebounce(formData, 300);
-  const [isFormDataValid, setIsFormDataValid] = useState(false);
-  const [debouncedFormDataValid] = useDebounce(isFormDataValid, 200);
-  const currentCommunity = useSelector(state => state.community.current);
 
+  const [submitFormData, setSubmitFormData] = useState({});
+  const [debouncedFormData] = useDebounce(submitFormData, 300);
   const { config: configUpload, error: errorUpload } = usePrepareContractWrite({
     addressOrName: currentCommunity?.nftContract,
     contractInterface: NFTCollectionABI.abi,
-    enabled: debouncedFormDataValid,
+    enabled: debouncedFormData?.jsonFileURL?.length > 0,
     functionName: 'newCollectionItem',
-    args: [debouncedFormData.jsonFileURL, debouncedFormData.price, debouncedFormData.supply]
+    args: [debouncedFormData.jsonFileURL, debouncedFormData.mediaURL, debouncedFormData.name, debouncedFormData.price, debouncedFormData.supply, [
+      debouncedFormData.royaltyAddress,
+      debouncedFormData.royaltyPct,
+    ]]
   });
 
   const { data: uploadData, write: uploadWrite } = useContractWrite({
     ...configUpload,
     onSuccess: ({ hash }) => {
+      setPopupVisible(false);
+      setIsSubmitLoading(false);
+      resetForm();
+
       dispatch(addTransaction({
         hash: hash,
-        description: `Create new NFT`
+        description: `Create NFT Series`
       }));
     },
     onError: ({ message }) => {
@@ -56,45 +65,78 @@ export function CreateNFTPopup({ popupVisible, setPopupVisible, handleSuccess })
     },
     onSuccess: data => {
       if (data) {
-        setPopupVisible(false);
-        setIsSubmitLoading(false);
-        resetForm();
         handleSuccess?.();
       }
     },
   });
 
-
   const handleCreateNFT = (e) => {
     e.preventDefault();
+    const formError = isFormErrors();
+    if (formError) {
+      alert(formError);
+      return;
+    }
+
     setIsSubmitLoading(true);
-    uploadWrite?.();
+    uploadNFTtoIPFS(formData).then((metadata) => {
+      const royaltyAddress = formData.royaltyAddress.length > 1 ? formData.royaltyAddress : "0x0000000000000000000000000000000000000000";
+      const royaltyPct = parseInt(formData.royaltyPct) > 0 ? parseInt(formData.royaltyPct) : 0;
+      const price = convertToEther(formData.price);
+
+      setSubmitFormData({
+        ...formData,
+        mediaURL: metadata.data.image.pathname.replace('//', ''),
+        jsonFileURL: metadata.url,
+        price,
+        royaltyAddress,
+        royaltyPct,
+      });
+    }).catch(e => {
+      alert(e);
+      setIsSubmitLoading(false);
+    });
   }
 
   const resetForm = () => {
+    setSubmitFormData({});
     setFormData({
       name: "",
       description: "",
       price: "",
       supply: "",
+      media: "",
       mediaURL: "",
       jsonFileURL: "",
+      royaltyAddress: "",
+      royaltyPct: "",
+      attributes: []
     });
+    setCurrentStep(1);
   }
 
   useEffect(() => {
-    console.log('errorUpload', errorUpload);
+    if (errorUpload) {
+      console.log('errorUpload', errorUpload);
+    }
   }, [errorUpload]);
 
   useEffect(() => {
-    setIsFormDataValid(!isFormErrors());
-  }, [formData]);
+    // submit data if we receive json result URL
+    if (uploadWrite && submitFormData?.jsonFileURL.length > 0) {
+      uploadWrite();
+    }
+  }, [uploadWrite]);
+
+  // useEffect(() => {
+  //   setIsFormDataValid(!isFormErrors());
+  // }, [formData]);
 
   const isFormErrors = () => {
     if (formData.name.length < 3) {
       return "NFT Title should be longer than 3 chars";
     }
-    if (!formData.mediaURL.length) {
+    if (!formData.media || !formData.media.size) {
       return "No media, please select media file and wait till upload";
     }
     if (!formData.price.length) {
@@ -103,21 +145,22 @@ export function CreateNFTPopup({ popupVisible, setPopupVisible, handleSuccess })
     if (!formData.supply.length) {
       return "Please provide supply or set 0 for unlimited supply";
     }
+
+    if (formData.royaltyAddress.length > 0) {
+      if (parseInt(formData.royaltyPct) <= 0) {
+        return "Please provide royalty percent";
+      }
+      if (parseInt(formData.royaltyPct) > 90) {
+        return "Royalty percent can't be more than 90%";
+      }
+    }
     return false;
   }
 
   const resizeImage = (e) => {
-    setIsResizeLoading(true);
     const image = e.target.files[0];
     resizeFileImage(image, 1280, 1280).then(result => {
-      uploadMediaToIPFS(result).then(mediaURL => {
-        console.log('mediaURL', mediaURL)
-        setFormData({ ...formData, mediaURL: mediaURL });
-        setIsResizeLoading(false);
-      }).catch(e => {
-        alert(e);
-        setIsResizeLoading(false);
-      });
+      setFormData({ ...formData, media: result });
     });
   }
 
@@ -132,49 +175,23 @@ export function CreateNFTPopup({ popupVisible, setPopupVisible, handleSuccess })
   }
 
   const removeAttribute = (index) => {
-    const values = [...formDataAttributes];
+    const values = [...formData.attributes];
     values.splice(index, 1);
-    setFormDataAttributes(values);
+    setFormData({ ...formData, attributes: values })
   }
 
   const updateAttribute = (index, event) => {
-    const values = [...formDataAttributes];
+    const values = [...formData.attributes];
     const updatedValue = event.target.name;
     values[index][updatedValue] = event.target.value;
-    setFormDataAttributes(values);
+    setFormData({ ...formData, attributes: values })
   }
 
   const addNFTAttribute = () => {
-    const values = [...formDataAttributes];
-    values.push({ type: "", name: "" });
-    setFormDataAttributes(values);
+    const values = [...formData.attributes];
+    values.push({ type: "", value: "" });
+    setFormData({ ...formData, attributes: values })
   }
-
-  const NFTAttribute = memo(({ attr, index }) => (
-    <div className="flex gap-2 mb-2">
-      <div className="w-5">
-        <MdOutlineCancel
-          onClick={() => removeAttribute(index)}
-          className="w-5 h-5 mt-3 text-red-500 hover:text-red-600 cursor-pointer" />
-      </div>
-      <div className="flex-1">
-        <TextInput type="text"
-                   placeholder="Type"
-                   name="type"
-                   value={attr.type}
-                   onChange={(event) => updateAttribute(index, event)}
-        />
-      </div>
-      <div className="flex-1">
-        <TextInput type="text"
-                   name="name"
-                   placeholder="Name"
-                   value={attr.name}
-                   onChange={(event) => updateAttribute(index, event)}
-        />
-      </div>
-    </div>
-  ));
 
   return (
     <>
@@ -186,14 +203,14 @@ export function CreateNFTPopup({ popupVisible, setPopupVisible, handleSuccess })
         <Modal.Header />
         <Modal.Body>
           <div className="text-lg pb-4 mb-8 -mt-8 text-center w-full border-b text-gray-500 font-semibold">
-            Create New NFT
+            Create NFT Series
           </div>
           <form className="space-y-6 flex flex-col gap-4 relative px-6" onSubmit={handleCreateNFT}>
             {currentStep === 1 ? (
               <div>
                 <div className="mb-3">
                   <div className="mb-1 block text-left">
-                    <Label htmlFor="name" value={`NFT Title`} />
+                    <Label htmlFor="name" value={`Title`} />
                     <sup className={"text-red-400"}>*</sup>
                   </div>
                   <TextInput id="name"
@@ -205,7 +222,7 @@ export function CreateNFTPopup({ popupVisible, setPopupVisible, handleSuccess })
                 </div>
                 <div className="mb-3">
                   <div className="mb-1 block text-left">
-                    <Label htmlFor="media" value="Select media file" />
+                    <Label htmlFor="media" value="Media File" />
                   </div>
                   <FileInput id="media"
                              accept="image/*"
@@ -222,7 +239,7 @@ export function CreateNFTPopup({ popupVisible, setPopupVisible, handleSuccess })
                     <TextInput id="price"
                                type="number"
                                min={0}
-                               step={0.01}
+                               step={0.001}
                                required={true}
                                helperText="*set zero to enable free mint"
                                value={formData.price}
@@ -252,25 +269,12 @@ export function CreateNFTPopup({ popupVisible, setPopupVisible, handleSuccess })
                   </div>
                   <Button type="Button"
                           gradientDuoTone="purpleToPink"
-                          onClick={handleNextStep}
-                          disabled={isResizeLoading}>
+                          onClick={handleNextStep}>
                     <span className="uppercase">
                       Next Step &raquo;
                     </span>
                   </Button>
                 </div>
-
-                {isResizeLoading && (
-                  <div className="bg-white/80 absolute top-0 bottom-0 right-0 left-0 z-10">
-                    <div className={"w-12 mx-auto mt-10"}>
-                      <Spinner size={10} />
-                    </div>
-                    <div className="text-gray-500 text-center mt-3">
-                      Uploading media...
-                    </div>
-                  </div>
-                )}
-
               </div>
             ) : (
               <div>
@@ -284,17 +288,31 @@ export function CreateNFTPopup({ popupVisible, setPopupVisible, handleSuccess })
                   />
                 </div>
 
-                <div className="mb-3">
-                  <div className="mb-1 block text-left">
-                    <Label htmlFor="external_url" value={`External URL`} />
+                {parseFloat(formData.price) > 0 && (
+                  <div className="mb-3">
+                    <div className="mb-1 block text-left">
+                      <Label value={`Royalty`} />
+                    </div>
+                    <div className="flex gap-4">
+                      <div className="flex-auto">
+                        <TextInput type="text"
+                                   placeholder="Wallet Address"
+                                   value={formData.royaltyAddress}
+                                   onChange={(e) => setFormData({ ...formData, royaltyAddress: e.target.value })}
+                        />
+                      </div>
+                      <div className="w-1/4">
+                        <TextInput type="number"
+                                   min={0}
+                                   className="flex-1"
+                                   placeholder="Percentage"
+                                   value={formData.royaltyPct}
+                                   onChange={(e) => setFormData({ ...formData, royaltyPct: e.target.value })}
+                        />
+                      </div>
+                    </div>
                   </div>
-                  <TextInput id="external_url"
-                             type="text"
-                             required={true}
-                             value={formData.url}
-                             onChange={(e) => setFormData({ ...formData, url: e.target.value })}
-                  />
-                </div>
+                )}
 
                 <div className="mb-3 mt-6 bg-gray-50 rounded-md px-8 pt-4 pb-3">
                   <div className="mb-1 block text-left flex justify-between">
@@ -309,8 +327,30 @@ export function CreateNFTPopup({ popupVisible, setPopupVisible, handleSuccess })
                     </Button>
                   </div>
                   {
-                    formDataAttributes.length > 0 && formDataAttributes.map((attr, index) => (
-                      <NFTAttribute attr={attr} index={index} key={index} />
+                    formData.attributes.length > 0 && formData.attributes.map((attr, index) => (
+                      <div className="flex gap-2 mb-2" key={index}>
+                        <div className="w-5">
+                          <MdOutlineCancel
+                            onClick={() => removeAttribute(index)}
+                            className="w-5 h-5 mt-3 text-red-500 hover:text-red-600 cursor-pointer" />
+                        </div>
+                        <div className="flex-1">
+                          <TextInput type="text"
+                                     placeholder="Type"
+                                     name="type"
+                                     value={attr.type}
+                                     onChange={(event) => updateAttribute(index, event)}
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <TextInput type="text"
+                                     name="value"
+                                     placeholder="Value"
+                                     value={attr.value}
+                                     onChange={(event) => updateAttribute(index, event)}
+                          />
+                        </div>
+                      </div>
                     ))
                   }
                 </div>
@@ -320,15 +360,14 @@ export function CreateNFTPopup({ popupVisible, setPopupVisible, handleSuccess })
                     <span className="uppercase">&laquo; Back</span>
                   </Button>
                   <Button type="Submit" gradientDuoTone="purpleToPink">
-                    <span className="uppercase">Create NFT &raquo;</span>
+                    <span className="uppercase">Create Series &raquo;</span>
                   </Button>
                 </div>
               </div>
             )}
 
-
             {isSubmitLoading && (
-              <div className="bg-white/80 absolute top-0 bottom-0 right-0 left-0 z-10">
+              <div className="bg-white/80 absolute top-[-20px] bottom-0 right-0 left-0 z-10">
                 <div className={"w-12 mx-auto mt-10"}>
                   <Spinner size={10} />
                 </div>

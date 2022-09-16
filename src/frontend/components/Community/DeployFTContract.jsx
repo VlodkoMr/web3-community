@@ -131,7 +131,7 @@ export function DeployFTContract({ reloadCommunityList }) {
           />
         </div>
 
-        <Button disabled={isLoadingCreate} type="Submit" gradientDuoTone="purpleToPink">
+        <Button disabled={isLoadingCreate || !deployWrite} type="Submit" gradientDuoTone="purpleToPink">
           {isLoadingCreate && (
             <span className="mr-2">
               <Spinner size="sm" />

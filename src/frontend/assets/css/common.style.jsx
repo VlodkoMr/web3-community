@@ -86,7 +86,6 @@ export const InnerBlock = styled.section.attrs({
   w-full 
   relative 
   flex 
-  flex-col 
   break-words 
   bg-white 
   rounded-xl 
@@ -94,6 +93,16 @@ export const InnerBlock = styled.section.attrs({
   shadow-lg 
   px-8 
   py-6`,
+})``;
+
+export const InnerTransparentBlock = styled.section.attrs({
+  className: `
+  w-full 
+  relative 
+  flex 
+  flex-col 
+  break-words 
+  mt-4`,
 })``;
 
 InnerBlock.Header = styled.div.attrs({

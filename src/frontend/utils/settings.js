@@ -1,5 +1,3 @@
-import { chain } from 'wagmi';
-
 export const communityTypes = [
   "Animals",
   "Art",
@@ -22,5 +20,3 @@ export const communityTypes = [
   "Virtual Worlds",
   "Other"
 ];
-
-export const chainToken = {};
