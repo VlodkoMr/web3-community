@@ -78,7 +78,7 @@ export const NftCollection = () => {
       <InnerTransparentBlock>
         <InnerBlock.Header className="flex justify-between">
           <span>NFT Collection</span>
-          {isContractAddress(currentCommunity.nftContract) && (
+          {isContractAddress(currentCommunity?.nftContract) && (
             <Button size="xsm" color="light" onClick={pauseContract}>
               <span className="text-sm px-2 font-medium text-red-500">Pause Contract</span>
             </Button>

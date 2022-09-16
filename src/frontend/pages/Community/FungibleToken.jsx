@@ -106,7 +106,7 @@ export const FungibleToken = () => {
       <InnerTransparentBlock>
         <InnerBlock.Header className="flex justify-between">
           <span>Fungible Token</span>
-          {isContractAddress(currentCommunity.ftContract) && (
+          {isContractAddress(currentCommunity?.ftContract) && (
             <Button size="xsm" color="light" onClick={pauseContract}>
               <span className="text-sm px-2 font-medium text-red-500">Pause Contract</span>
             </Button>

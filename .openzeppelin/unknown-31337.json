@@ -73,12 +73,12 @@
     },
     {
       "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-      "txHash": "0x47cf445413f6e1150ad07dffa39badc6dc7d887ce2b695a728d5b953a1496df9",
+      "txHash": "0x4f3aa0b2a69a34570fb9e78ef02c3d8c3ae8e7da10ee4140049552fe3bb2d5f5",
       "kind": "uups"
     },
     {
       "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
-      "txHash": "0x73135e8e2293968c2d19a933c1a625593341fc8f984d42eb7ace5fbac0864926",
+      "txHash": "0x1f21fd1d7572af96ab7c9f390af422383f1b555f4b3521710bff7615bc0bb8fd",
       "kind": "uups"
     },
     {
@@ -1078,7 +1078,7 @@
     },
     "9d4cf0084867d8f71d9109daccdbc54b355b24f41d329609d9700f1199099880": {
       "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      "txHash": "0x06375f5a918d7841c673aa6a73c187278b1dc1c18a0e5e327366acf3b4c9c8b2",
+      "txHash": "0x277838e21fcaea8e373f11083c8a4ec55c6cc745be6ee30b5b27ada724144273",
       "layout": {
         "storage": [
           {
@@ -1158,7 +1158,7 @@
             "label": "communityList",
             "offset": 0,
             "slot": "203",
-            "type": "t_mapping(t_address,t_array(t_struct(Community)4539_storage)dyn_storage)",
+            "type": "t_mapping(t_address,t_array(t_struct(Community)4313_storage)dyn_storage)",
             "contract": "MainContract",
             "src": "src/backend/contracts/MainContract.sol:13"
           },
@@ -1166,7 +1166,7 @@
             "label": "communityCategory",
             "offset": 0,
             "slot": "204",
-            "type": "t_mapping(t_enum(CommunityCategory)4518,t_array(t_uint256)dyn_storage)",
+            "type": "t_mapping(t_enum(CommunityCategory)4292,t_array(t_uint256)dyn_storage)",
             "contract": "MainContract",
             "src": "src/backend/contracts/MainContract.sol:14"
           }
@@ -1176,7 +1176,7 @@
             "label": "address",
             "numberOfBytes": "20"
           },
-          "t_array(t_struct(Community)4539_storage)dyn_storage": {
+          "t_array(t_struct(Community)4313_storage)dyn_storage": {
             "label": "struct MainContract.Community[]",
             "numberOfBytes": "32"
           },
@@ -1196,7 +1196,7 @@
             "label": "bool",
             "numberOfBytes": "1"
           },
-          "t_enum(CommunityCategory)4518": {
+          "t_enum(CommunityCategory)4292": {
             "label": "enum MainContract.CommunityCategory",
             "members": [
               "None",
@@ -1223,7 +1223,7 @@
             ],
             "numberOfBytes": "1"
           },
-          "t_enum(CommunityPrivacy)4496": {
+          "t_enum(CommunityPrivacy)4270": {
             "label": "enum MainContract.CommunityPrivacy",
             "members": [
               "Public",
@@ -1231,11 +1231,11 @@
             ],
             "numberOfBytes": "1"
           },
-          "t_mapping(t_address,t_array(t_struct(Community)4539_storage)dyn_storage)": {
+          "t_mapping(t_address,t_array(t_struct(Community)4313_storage)dyn_storage)": {
             "label": "mapping(address => struct MainContract.Community[])",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_enum(CommunityCategory)4518,t_array(t_uint256)dyn_storage)": {
+          "t_mapping(t_enum(CommunityCategory)4292,t_array(t_uint256)dyn_storage)": {
             "label": "mapping(enum MainContract.CommunityCategory => uint256[])",
             "numberOfBytes": "32"
           },
@@ -1243,7 +1243,7 @@
             "label": "string",
             "numberOfBytes": "32"
           },
-          "t_struct(Community)4539_storage": {
+          "t_struct(Community)4313_storage": {
             "label": "struct MainContract.Community",
             "members": [
               {
@@ -1254,13 +1254,13 @@
               },
               {
                 "label": "category",
-                "type": "t_enum(CommunityCategory)4518",
+                "type": "t_enum(CommunityCategory)4292",
                 "offset": 0,
                 "slot": "1"
               },
               {
                 "label": "privacy",
-                "type": "t_enum(CommunityPrivacy)4496",
+                "type": "t_enum(CommunityPrivacy)4270",
                 "offset": 1,
                 "slot": "1"
               },
@@ -1314,9 +1314,9 @@
         }
       }
     },
-    "b914042e73038d91a3669b0a774fbaf604cb166c49406c1a63c66f6029d6e8d3": {
+    "e2f7ef453f2448d3ed3a4e308fea070f782c6fb2f0e0840bf0a86caa1298dd67": {
       "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-      "txHash": "0x9484722b7e6ed9892236a47a784c0d9a038ca5cc3b75acf9ea5c2521862e8852",
+      "txHash": "0x26df5db4d9af93db366626b1f1baafc3c9bc2da7a05041ea3ffc8041555eca16",
       "layout": {
         "storage": [
           {
@@ -1388,7 +1388,7 @@
             "label": "mainContract",
             "offset": 0,
             "slot": "202",
-            "type": "t_contract(MainContract)4854",
+            "type": "t_contract(MainContract)4628",
             "contract": "FactoryContract",
             "src": "src/backend/contracts/FactoryContract.sol:14"
           },
@@ -1396,7 +1396,7 @@
             "label": "contractsNFTList",
             "offset": 0,
             "slot": "203",
-            "type": "t_array(t_contract(NFTCollection)5403)dyn_storage",
+            "type": "t_array(t_contract(NFTCollection)5256)dyn_storage",
             "contract": "FactoryContract",
             "src": "src/backend/contracts/FactoryContract.sol:16"
           },
@@ -1404,7 +1404,7 @@
             "label": "contractsFTList",
             "offset": 0,
             "slot": "204",
-            "type": "t_array(t_contract(FungibleToken)4932)dyn_storage",
+            "type": "t_array(t_contract(FungibleToken)4706)dyn_storage",
             "contract": "FactoryContract",
             "src": "src/backend/contracts/FactoryContract.sol:17"
           }
@@ -1414,11 +1414,11 @@
             "label": "address",
             "numberOfBytes": "20"
           },
-          "t_array(t_contract(FungibleToken)4932)dyn_storage": {
+          "t_array(t_contract(FungibleToken)4706)dyn_storage": {
             "label": "contract FungibleToken[]",
             "numberOfBytes": "32"
           },
-          "t_array(t_contract(NFTCollection)5403)dyn_storage": {
+          "t_array(t_contract(NFTCollection)5256)dyn_storage": {
             "label": "contract NFTCollection[]",
             "numberOfBytes": "32"
           },
@@ -1434,15 +1434,15 @@
             "label": "bool",
             "numberOfBytes": "1"
           },
-          "t_contract(FungibleToken)4932": {
+          "t_contract(FungibleToken)4706": {
             "label": "contract FungibleToken",
             "numberOfBytes": "20"
           },
-          "t_contract(MainContract)4854": {
+          "t_contract(MainContract)4628": {
             "label": "contract MainContract",
             "numberOfBytes": "20"
           },
-          "t_contract(NFTCollection)5403": {
+          "t_contract(NFTCollection)5256": {
             "label": "contract NFTCollection",
             "numberOfBytes": "20"
           },
@@ -1457,9 +1457,9 @@
         }
       }
     },
-    "632b04fbc0338d4fef932c5025377cff6cd55aa70d85f2a8a6130eab87d0d967": {
+    "6196091c23daef0ad8b7e2ab324bf92a15a930bee360215d92a41ddc98c1fa9c": {
       "address": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
-      "txHash": "0xaa41e27b002bdbae439e27df09207f20fae074a9aaa4580e15e2ca891705a277",
+      "txHash": "0xeb167dc934cd83facebdec12085cca8c5d55e2911b5db69b2c90429de7a4d172",
       "layout": {
         "storage": [
           {
@@ -1539,7 +1539,7 @@
             "label": "contractsNFTList",
             "offset": 0,
             "slot": "203",
-            "type": "t_array(t_contract(NFTCollection)5180)dyn_storage",
+            "type": "t_array(t_contract(NFTCollection)5313)dyn_storage",
             "contract": "FactoryContract",
             "src": "src/backend/contracts/FactoryContract.sol:16"
           },
@@ -1561,7 +1561,7 @@
             "label": "contract FungibleToken[]",
             "numberOfBytes": "32"
           },
-          "t_array(t_contract(NFTCollection)5180)dyn_storage": {
+          "t_array(t_contract(NFTCollection)5313)dyn_storage": {
             "label": "contract NFTCollection[]",
             "numberOfBytes": "32"
           },
@@ -1585,7 +1585,7 @@
             "label": "contract MainContract",
             "numberOfBytes": "20"
           },
-          "t_contract(NFTCollection)5180": {
+          "t_contract(NFTCollection)5313": {
             "label": "contract NFTCollection",
             "numberOfBytes": "20"
           },
@@ -1600,9 +1600,9 @@
         }
       }
     },
-    "11b9ed733f3765f92903c39502fadd05654dfc1790d391f80995e30baf9487a1": {
+    "c51e7577442c3b77fa04ead2502c871d2c2a2af82f479e99d7d16ad33a93ce7a": {
       "address": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
-      "txHash": "0x1304ccc148f8fbecb999b2d3e4308358a5e797a5d4f896a8b2fc2fa632e97dbf",
+      "txHash": "0x58aceec72ecec08e6b3dc53960b7fcbed07034e21525b555ea314b8450e8cd34",
       "layout": {
         "storage": [
           {
@@ -1674,7 +1674,7 @@
             "label": "mainContract",
             "offset": 0,
             "slot": "202",
-            "type": "t_contract(MainContract)4628",
+            "type": "t_contract(MainContract)4660",
             "contract": "FactoryContract",
             "src": "src/backend/contracts/FactoryContract.sol:14"
           },
@@ -1682,7 +1682,7 @@
             "label": "contractsNFTList",
             "offset": 0,
             "slot": "203",
-            "type": "t_array(t_contract(NFTCollection)5202)dyn_storage",
+            "type": "t_array(t_contract(NFTCollection)5378)dyn_storage",
             "contract": "FactoryContract",
             "src": "src/backend/contracts/FactoryContract.sol:16"
           },
@@ -1690,7 +1690,7 @@
             "label": "contractsFTList",
             "offset": 0,
             "slot": "204",
-            "type": "t_array(t_contract(FungibleToken)4706)dyn_storage",
+            "type": "t_array(t_contract(FungibleToken)4738)dyn_storage",
             "contract": "FactoryContract",
             "src": "src/backend/contracts/FactoryContract.sol:17"
           }
@@ -1700,11 +1700,11 @@
             "label": "address",
             "numberOfBytes": "20"
           },
-          "t_array(t_contract(FungibleToken)4706)dyn_storage": {
+          "t_array(t_contract(FungibleToken)4738)dyn_storage": {
             "label": "contract FungibleToken[]",
             "numberOfBytes": "32"
           },
-          "t_array(t_contract(NFTCollection)5202)dyn_storage": {
+          "t_array(t_contract(NFTCollection)5378)dyn_storage": {
             "label": "contract NFTCollection[]",
             "numberOfBytes": "32"
           },
@@ -1720,15 +1720,15 @@
             "label": "bool",
             "numberOfBytes": "1"
           },
-          "t_contract(FungibleToken)4706": {
+          "t_contract(FungibleToken)4738": {
             "label": "contract FungibleToken",
             "numberOfBytes": "20"
           },
-          "t_contract(MainContract)4628": {
+          "t_contract(MainContract)4660": {
             "label": "contract MainContract",
             "numberOfBytes": "20"
           },
-          "t_contract(NFTCollection)5202": {
+          "t_contract(NFTCollection)5378": {
             "label": "contract NFTCollection",
             "numberOfBytes": "20"
           },
@@ -1743,9 +1743,9 @@
         }
       }
     },
-    "32664243309779104c553022459743df2ea1c118c74d6c50e89832416142cec1": {
+    "f4443a4d3d3fdf3db232fb76a3cb6cd0deeaca55f99610aa1fc52e5416e180a5": {
       "address": "0x9A676e781A523b5d0C0e43731313A708CB607508",
-      "txHash": "0x77b852641cd424512b57b4b41619f7a4cff39926f900d218dcdac910ffaa11b2",
+      "txHash": "0xff944bcb6955054a0d17967bdd6506a6fae666b5031a540f4b8e0696ed66b307",
       "layout": {
         "storage": [
           {
@@ -1817,7 +1817,7 @@
             "label": "mainContract",
             "offset": 0,
             "slot": "202",
-            "type": "t_contract(MainContract)4628",
+            "type": "t_contract(MainContract)4660",
             "contract": "FactoryContract",
             "src": "src/backend/contracts/FactoryContract.sol:14"
           },
@@ -1825,7 +1825,7 @@
             "label": "contractsNFTList",
             "offset": 0,
             "slot": "203",
-            "type": "t_array(t_contract(NFTCollection)5240)dyn_storage",
+            "type": "t_array(t_contract(NFTCollection)5378)dyn_storage",
             "contract": "FactoryContract",
             "src": "src/backend/contracts/FactoryContract.sol:16"
           },
@@ -1833,7 +1833,7 @@
             "label": "contractsFTList",
             "offset": 0,
             "slot": "204",
-            "type": "t_array(t_contract(FungibleToken)4706)dyn_storage",
+            "type": "t_array(t_contract(FungibleToken)4738)dyn_storage",
             "contract": "FactoryContract",
             "src": "src/backend/contracts/FactoryContract.sol:17"
           }
@@ -1843,11 +1843,11 @@
             "label": "address",
             "numberOfBytes": "20"
           },
-          "t_array(t_contract(FungibleToken)4706)dyn_storage": {
+          "t_array(t_contract(FungibleToken)4738)dyn_storage": {
             "label": "contract FungibleToken[]",
             "numberOfBytes": "32"
           },
-          "t_array(t_contract(NFTCollection)5240)dyn_storage": {
+          "t_array(t_contract(NFTCollection)5378)dyn_storage": {
             "label": "contract NFTCollection[]",
             "numberOfBytes": "32"
           },
@@ -1863,15 +1863,15 @@
             "label": "bool",
             "numberOfBytes": "1"
           },
-          "t_contract(FungibleToken)4706": {
+          "t_contract(FungibleToken)4738": {
             "label": "contract FungibleToken",
             "numberOfBytes": "20"
           },
-          "t_contract(MainContract)4628": {
+          "t_contract(MainContract)4660": {
             "label": "contract MainContract",
             "numberOfBytes": "20"
           },
-          "t_contract(NFTCollection)5240": {
+          "t_contract(NFTCollection)5378": {
             "label": "contract NFTCollection",
             "numberOfBytes": "20"
           },

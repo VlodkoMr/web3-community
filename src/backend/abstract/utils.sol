@@ -7,4 +7,8 @@ abstract contract Utils {
   //    for (uint i = 0; i < length; ++i) if (self[i] == value) return (i, true);
   //    return (0, false);
   //  }
+	function randomNumber(uint _max, uint8 _shift) internal view returns (uint) {
+		return uint(keccak256(abi.encodePacked(_shift, msg.sender, block.difficulty, block.timestamp, uint(1)))) % _max;
+	}
+
 }
