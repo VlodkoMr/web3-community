@@ -2,8 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Button, Spinner, Badge } from 'flowbite-react';
 import { shortAddress } from '../../../utils/format';
 import { InnerBlock } from '../../../assets/css/common.style';
+import { getTokenName } from '../../../utils/settings';
+import { useNetwork } from 'wagmi';
 
-export function OneNFT({ nft }) {
+export function OneNFT({ nft, handleMint }) {
+  const { chain } = useNetwork();
 
   return (
     <InnerBlock className="mb-4 flex-row gap-8">
@@ -25,20 +28,29 @@ export function OneNFT({ nft }) {
         </div>
 
         <div className="mt-4 text-sm">
-          <span className="font-semibold">Price:</span> Free
+          <span className="font-semibold mr-1">Price:</span>
+          {nft.price > 0 ? `${nft.price} ${getTokenName(chain)}` : "Free"}
         </div>
         <div className="text-sm">
           <span className="font-semibold mr-1">Royalty:</span>
           {nft.royalty ? (
             <>
-              {nft.royalty.percent}% for {shortAddress(nft.royalty.address)}
+              <b>{nft.royalty.percent}%</b> for {shortAddress(nft.royalty.address)}
             </>
           ) : "No"}
         </div>
-        <div className="mt-4 opacity-80 hover:opacity-100 inline-block">
-          <Button outline={true} gradientDuoTone="purpleToPink">
-            Create Campaign
-          </Button>
+
+        <div className="flex flex-row mt-4">
+          <div className="opacity-80 hover:opacity-100 inline-block mr-2">
+            <Button outline={true} gradientDuoTone="purpleToPink">
+              Create Campaign
+            </Button>
+          </div>
+          <div className="opacity-80 hover:opacity-100 inline-block">
+            <Button outline={true} gradientDuoTone="purpleToPink" onClick={handleMint}>
+              Mint NFT
+            </Button>
+          </div>
         </div>
       </div>
     </InnerBlock>

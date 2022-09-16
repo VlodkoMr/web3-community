@@ -26,6 +26,7 @@
     "@openzeppelin/contracts-upgradeable": "^4.7.3",
     "@openzeppelin/hardhat-upgrades": "^1.19.1",
     "@reduxjs/toolkit": "^1.8.5",
+    "@tableland/sdk": "^3.1.2",
     "connectkit": "^0.0.2",
     "ethers": "^5.7.0",
     "flowbite": "^1.5.3",

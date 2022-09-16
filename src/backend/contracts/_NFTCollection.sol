@@ -12,6 +12,10 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply {
   uint public collectionsTotal;
   Collection[] public collections;
 
+  enum DistributionCampaign {
+
+  }
+
   struct CollectionRoyalty {
     address account;
     uint percent;

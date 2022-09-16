@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Label, TextInput, Button, Modal, FileInput, Spinner, Textarea } from 'flowbite-react';
-import { resizeFileImage, uploadNFTtoIPFS } from '../../utils/media';
-import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
+import { resizeFileImage, uploadNFTtoIPFS } from '../../../utils/media';
+import { useContractWrite, useNetwork, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
 import { useDebounce } from 'use-debounce';
-import NFTCollectionABI from '../../contractsData/NFTCollection.json';
+import NFTCollectionABI from '../../../contractsData/NFTCollection.json';
 import { useDispatch, useSelector } from 'react-redux';
-import { addTransaction } from '../../store/transactionSlice';
+import { addTransaction } from '../../../store/transactionSlice';
 import { MdOutlineCancel } from 'react-icons/md';
-import { convertToEther } from '../../utils/format';
+import { convertToEther } from '../../../utils/format';
+import { getTokenName } from '../../../utils/settings';
 
 export function CreateNFTPopup({ popupVisible, setPopupVisible, handleSuccess }) {
   const dispatch = useDispatch();
+  const { chain } = useNetwork();
   const currentCommunity = useSelector(state => state.community.current);
   const [isSubmitLoading, setIsSubmitLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
@@ -233,7 +235,7 @@ export function CreateNFTPopup({ popupVisible, setPopupVisible, handleSuccess })
                 <div className="flex gap-6">
                   <div className="flex-1">
                     <div className="mb-1 block text-left">
-                      <Label htmlFor="price" value={`Price`} />
+                      <Label htmlFor="price" value={`Price (${getTokenName(chain)})`} />
                       <sup className={"text-red-400"}>*</sup>
                     </div>
                     <TextInput id="price"
