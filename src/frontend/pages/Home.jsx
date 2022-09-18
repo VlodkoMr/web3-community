@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { ConnectKitButton } from 'connectkit';
 import { MdKeyboardArrowRight } from 'react-icons/md';
 
-const dashboardURL = "/community/dashboard";
+const dashboardURL = "/my/dashboard";
 
 export const Home = () => {
   const navigate = useNavigate();

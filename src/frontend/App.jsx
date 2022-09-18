@@ -32,7 +32,7 @@ export default function App() {
         {isReady && (
           <Routes>
             <Route exact path="/" element={<Home />} />
-            <Route exact path="/community" element={<Community />}>
+            <Route exact path="/my" element={<Community />}>
               <Route exact path="dashboard" element={<Dashboard />} />
               <Route exact path="nft" element={<NftCollection />} />
               <Route exact path="token" element={<FungibleToken />} />

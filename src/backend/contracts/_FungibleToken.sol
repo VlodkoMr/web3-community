@@ -21,6 +21,8 @@ contract FungibleToken is ERC20, Pausable, Ownable, Utils {
 
 	struct DistributionCampaign {
 		uint id;
+		uint tokensTotal;
+		uint tokensMinted;
 		uint dateStart;
 		uint dateEnd;
 		uint eventCode;
@@ -52,7 +54,7 @@ contract FungibleToken is ERC20, Pausable, Ownable, Utils {
 
 	// New distribution campaign
 	function createDistributionCampaign(
-		DistributionType _distType, uint _dateStart, uint _dateEnd, address[] memory _whitelist, bool _isProtected
+		DistributionType _distType, uint _dateStart, uint _dateEnd, address[] memory _whitelist, bool _isProtected, uint _tokensTotal
 	) public onlyOwner {
 		uint _randomNumber = 0;
 		if (_distType == DistributionType.Event) {
@@ -63,6 +65,8 @@ contract FungibleToken is ERC20, Pausable, Ownable, Utils {
 		distributionCampaigns.push(
 			DistributionCampaign(
 				campaignLastId,
+				_tokensTotal,
+				0,
 				_dateStart,
 				_dateEnd,
 				_randomNumber,

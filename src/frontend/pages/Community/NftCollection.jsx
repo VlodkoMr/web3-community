@@ -8,9 +8,9 @@ import { CreateNFTSeriesPopup } from '../../components/Community/NftCollection/C
 import { useOutletContext } from "react-router-dom";
 import NFTCollectionABI from '../../contractsData/NFTCollection.json';
 import { transformCollectionNFT } from '../../utils/transform';
-import { OneNFT } from '../../components/Community/NftCollection/OneNFT';
+import { OneNFTSeries } from '../../components/Community/NftCollection/OneNFTSeries';
 import { MintNFTPopup } from '../../components/Community/NftCollection/MintNFTPopup';
-import { DistributionCampaignPopup } from '../../components/Community/NftCollection/DistributionCampaignPopup';
+import { DistributionCampaignNFTPopup } from '../../components/Community/NftCollection/DistributionCampaignNFTPopup';
 import { Button } from '@material-tailwind/react';
 
 export const NftCollection = () => {
@@ -93,7 +93,7 @@ export const NftCollection = () => {
             <>
               <div className="flex justify-between text-sm mb-3 -mt-1">
                 <div className="mr-10">
-                  <span className="opacity-80">Collection Name:</span>
+                  <span>Collection Name:</span>
                   <b className="font-medium ml-1">{tokenName}</b>
                 </div>
                 <span className="text-sm font-normal text-slate-500">
@@ -131,7 +131,7 @@ export const NftCollection = () => {
       {isContractAddress(currentCommunity.nftContract) && (
         <>
           {userCollections && userCollections.length > 0 && userCollections.map((nft, index) => (
-            <OneNFT
+            <OneNFTSeries
               key={index}
               nft={nft}
               handleMint={() => handleMint(nft)}
@@ -155,7 +155,7 @@ export const NftCollection = () => {
         handleSuccess={() => refetchCollectionItems()}
       />
 
-      <DistributionCampaignPopup
+      <DistributionCampaignNFTPopup
         popupVisible={campaignPopupVisible}
         setPopupVisible={setCampaignPopupVisible}
         collection={createCampaign}

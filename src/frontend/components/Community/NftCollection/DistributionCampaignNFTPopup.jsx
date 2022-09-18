@@ -9,7 +9,7 @@ import { Checkbox, Textarea, Input, Radio, Button } from '@material-tailwind/rea
 import { Popup } from '../../Popup';
 import { MdKeyboardArrowRight } from 'react-icons/md';
 
-export function DistributionCampaignPopup({
+export function DistributionCampaignNFTPopup({
   popupVisible,
   setPopupVisible,
   handleSuccess,
@@ -21,9 +21,9 @@ export function DistributionCampaignPopup({
   const [isSubmitLoading, setIsSubmitLoading] = useState(false);
   const [submitFormData, setSubmitFormData] = useState({});
   const [formData, setFormData] = useState({
-    distribution_type: "",
-    date_from: "",
-    date_to: "",
+    distributionType: "",
+    dateFrom: "",
+    dateTo: "",
     whitelisted: "",
     isLimit: false
   });
@@ -31,9 +31,9 @@ export function DistributionCampaignPopup({
   const { config: configCreate, error: errorCreate } = usePrepareContractWrite({
     addressOrName: currentCommunity?.nftContract,
     contractInterface: NFTCollectionABI.abi,
-    enabled: submitFormData?.distribution_type > 0,
+    enabled: submitFormData?.distributionType > 0,
     functionName: 'createDistributionCampaign',
-    args: [collection?.id, submitFormData.distribution_type, submitFormData.date_from, submitFormData.date_to, submitFormData.whitelisted, submitFormData.isLimit]
+    args: [collection?.id, submitFormData.distributionType, submitFormData.dateFrom, submitFormData.dateTo, submitFormData.whitelisted, submitFormData.isLimit]
   });
 
   const { data: createData, write: createWrite } = useContractWrite({
@@ -78,13 +78,13 @@ export function DistributionCampaignPopup({
 
     let dateFrom = 0;
     let dateTo = 0;
-    if (formData.date_from.length) {
-      dateFrom = new Date(formData.date_from).getTime();
+    if (formData.dateFrom.length) {
+      dateFrom = new Date(formData.dateFrom).getTime();
     }
-    if (formData.date_to.length) {
-      dateTo = new Date(formData.date_to).getTime();
+    if (formData.dateTo.length) {
+      dateTo = new Date(formData.dateTo).getTime();
     }
-    const distributionType = parseInt(formData.distribution_type);
+    const distributionType = parseInt(formData.distributionType);
     let whitelisted = [];
     if (distributionType === 4) {
       formData.whitelisted.replace("\n", ",").split(",").map(address => {
@@ -97,9 +97,9 @@ export function DistributionCampaignPopup({
     console.log('whitelisted', whitelisted)
 
     setSubmitFormData({
-      distribution_type: distributionType,
-      date_from: dateFrom,
-      date_to: dateTo,
+      distributionType,
+      dateFrom,
+      dateTo,
       whitelisted: whitelisted,
       isLimit: formData.isLimit
     });
@@ -109,7 +109,7 @@ export function DistributionCampaignPopup({
   useEffect(() => {
     console.log('submitFormData', submitFormData)
     // submit data if we receive json result URL
-    if (createWrite && submitFormData?.distribution_type > 0) {
+    if (createWrite && submitFormData?.distributionType > 0) {
       createWrite();
     }
   }, [createWrite]);
@@ -123,9 +123,9 @@ export function DistributionCampaignPopup({
   const resetForm = () => {
     setSubmitFormData({});
     setFormData({
-      distribution_type: "",
-      date_from: "",
-      date_to: "",
+      distributionType: "",
+      dateFrom: "",
+      dateTo: "",
       whitelisted: "",
       isLimit: false
     })
@@ -139,7 +139,7 @@ export function DistributionCampaignPopup({
   }, [errorCreate]);
 
   const isFormErrors = () => {
-    if (!parseInt(formData.distribution_type)) {
+    if (!parseInt(formData.distributionType)) {
       return "Select campaign Distribution Strategy";
     }
     return false;
@@ -153,23 +153,48 @@ export function DistributionCampaignPopup({
              setIsVisible={setPopupVisible}>
         {isReady && (
           <form className="flex flex-row gap-8 relative" onSubmit={handleCreateCampaign}>
-            <div className="w-48">
-              <img className="mt-2 h-48 w-48 bg-gray-50 rounded-lg object-cover" src={collection.mediaUri} alt="" />
+            <div className="w-1/3">
+              <img className="mt-2 h-48 w-48 bg-gray-50 rounded-lg object-cover mx-auto"
+                   src={collection.mediaUri}
+                   alt="" />
+
               <hr className="mt-6 mb-6" />
-              <div className="mb-4">
-                <Input type="date"
-                       label="Start Date"
-                       value={formData.date_from}
-                       onChange={(e) => setFormData({ ...formData, date_from: e.target.value })}
-                />
+
+              <div className="flex flex-row gap-4 mt-4">
+                <div className="flex-1 mb-4">
+                  <Input type="date"
+                         label="Start Date"
+                         value={formData.dateFrom}
+                         onChange={(e) => setFormData({ ...formData, dateFrom: e.target.value })}
+                  />
+                </div>
+                <div className="flex-1 ">
+                  <Input type="date"
+                         label="End Date"
+                         value={formData.dateTo}
+                         onChange={(e) => setFormData({ ...formData, dateTo: e.target.value })}
+                  />
+                </div>
               </div>
-              <Input type="date"
-                     label="End Date"
-                     value={formData.date_to}
-                     onChange={(e) => setFormData({ ...formData, date_to: e.target.value })}
-              />
+
+              <div className="mb-1 block text-left font-semibold mt-4">
+                Proof of Personhood by World ID
+              </div>
+              <div className="flex justify-between bg-yellow-50 text-sm font-medium pl-2 pr-6 py-2 rounded-md
+              border border-orange-200">
+                <Checkbox label="Limit: 1 NFT/person"
+                          color="amber"
+                          onChange={() => setFormData({ ...formData, isLimit: !formData.isLimit })}
+                          className="font-semibold" />
+                <a href="https://worldcoin.org/"
+                   className="underline pt-3 text-blue-500"
+                   target="_blank">
+                  read more
+                </a>
+              </div>
             </div>
-            <div className="flex-1">
+
+            <div className="w-2/3">
               <div className="mb-1 block text-left font-semibold">
                 Choose Distribution Strategy
               </div>
@@ -183,13 +208,13 @@ export function DistributionCampaignPopup({
                            disabled={!campaign.isAvailable}
                            value={campaign.id}
                            size="sm"
-                           checked={campaign.id === formData.distribution_type}
-                           onChange={() => setFormData({ ...formData, distribution_type: campaign.id })}
+                           checked={campaign.id === formData.distributionType}
+                           onChange={() => setFormData({ ...formData, distributionType: campaign.id })}
                     />
                     <div>
                       <span className="text-lg text-gray-800 font-semibold">{campaign.title}</span>
                       <p className="text-sm font-medium text-gray-600">{campaign.text}</p>
-                      {campaign.id === "4" && formData.distribution_type === campaign.id && (
+                      {campaign.id === "4" && formData.distributionType === campaign.id && (
                         <div className={"text-sm mt-3"}>
                           <Textarea label="List of addresses"
                                     placeholder="Wallet addresses separated by coma"
@@ -201,22 +226,6 @@ export function DistributionCampaignPopup({
                     </div>
                   </label>
                 ))}
-              </div>
-
-              <div className="mb-1 block text-left font-semibold mt-6">
-                Protect by Proof of Personhood
-              </div>
-              <div className="flex justify-between bg-yellow-50 text-sm font-medium pl-2 pr-6 py-2 rounded-md
-              border border-orange-200">
-                <Checkbox label="Limit minting: 1 NFT/person by World ID"
-                          color="amber"
-                          labelProps="ml-2"
-                          className="font-semibold" />
-                <a href="https://worldcoin.org/"
-                   className="underline pt-3 text-blue-500"
-                   target="_blank">
-                  read more
-                </a>
               </div>
 
               <div className="flex justify-between mt-8 ">

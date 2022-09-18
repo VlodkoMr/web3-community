@@ -6,7 +6,7 @@ import { useNetwork } from 'wagmi';
 import { Loader } from '../../Loader';
 import { Button } from '@material-tailwind/react';
 
-export function OneNFT({ nft, handleMint, handleCreateCampaign }) {
+export function OneNFTSeries({ nft, handleMint, handleCreateCampaign }) {
   const { chain } = useNetwork();
 
   return (

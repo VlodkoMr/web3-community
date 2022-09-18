@@ -26,23 +26,23 @@ export function DashboardLeftMenu() {
   return (
     <ul>
       <li className="relative">
-        <MenuItem title={"Dashboard"} link={"/community/dashboard"}>
-          <MdSpaceDashboard color={getNavLinkClass("/community/dashboard") ? "white" : ""} />
+        <MenuItem title={"Dashboard"} link={"/my/dashboard"}>
+          <MdSpaceDashboard color={getNavLinkClass("/my/dashboard") ? "white" : ""} />
         </MenuItem>
       </li>
       <li className="relative">
-        <MenuItem title={"NFT Collection"} link={"/community/nft"}>
-          <MdPermMedia color={getNavLinkClass("/community/nft") ? "white" : ""} />
+        <MenuItem title={"NFT Collection"} link={"/my/nft"}>
+          <MdPermMedia color={getNavLinkClass("/my/nft") ? "white" : ""} />
         </MenuItem>
       </li>
       <li className="relative">
-        <MenuItem title={"Fungible Token"} link={"/community/token"}>
-          <GiToken color={getNavLinkClass("/community/token") ? "white" : ""} />
+        <MenuItem title={"Fungible Token"} link={"/my/token"}>
+          <GiToken color={getNavLinkClass("/my/token") ? "white" : ""} />
         </MenuItem>
       </li>
       <li className="relative">
-        <MenuItem title={"Settings"} link={"/community/settings"}>
-          <MdSettings color={getNavLinkClass("/community/settings") ? "white" : ""} />
+        <MenuItem title={"Settings"} link={"/my/settings"}>
+          <MdSettings color={getNavLinkClass("/my/settings") ? "white" : ""} />
         </MenuItem>
       </li>
     </ul>

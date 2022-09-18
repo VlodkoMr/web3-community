@@ -157,7 +157,7 @@ export const Header = ({ isInner, reloadCommunityList }) => {
             </div>
             <div className="sm:flex justify-end hidden pr-16 lg:pr-0">
               {isConnected && !isInner && (
-                <NavLink to={"/community/dashboard"} dark={scroll ? "true" : undefined}>My Dashboard</NavLink>
+                <NavLink to={"/my/dashboard"} dark={scroll ? "true" : undefined}>My Dashboard</NavLink>
               )}
 
               <div className={`${isConnected && !isInner && "pt-4"} ml-2`}>
@@ -170,13 +170,16 @@ export const Header = ({ isInner, reloadCommunityList }) => {
 
 
       <Popup title="Create New Community"
+             size="sm"
              isVisible={communityPopupVisible}
              setIsVisible={setCommunityPopupVisible}
              closeCallback={closePopupCallback}>
-        <EditCommunity
-          handleTxStart={() => handleTxStart()}
-          handleSuccess={() => handleSuccessCreate()}
-        />
+        <div>
+          <EditCommunity
+            handleTxStart={() => handleTxStart()}
+            handleSuccess={() => handleSuccessCreate()}
+          />
+        </div>
       </Popup>
     </div>
   );

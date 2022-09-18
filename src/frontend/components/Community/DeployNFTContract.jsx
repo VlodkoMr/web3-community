@@ -85,7 +85,6 @@ export function DeployNFTContract({ reloadCommunityList }) {
       return;
     }
 
-    console.log('deployWrite', deployWrite)
     setIsLoadingCreate(true);
     deployWrite?.();
   }
