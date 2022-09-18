@@ -30,6 +30,7 @@ export const transformCollectionNFT = (item) => {
       dateEnd: parseInt(item.distribution.dateEnd),
       eventCode: parseInt(item.distribution.eventCode),
       whitelist: item.distribution.whitelist,
+      isProtected: item.distribution.isProtected
     }
   }
 
@@ -45,5 +46,19 @@ export const transformCollectionNFT = (item) => {
     mediaUri: mediaURL(item.mediaUri),
     royalty,
     distribution
+  }
+};
+
+export const transformFTCampaign = (item) => {
+  return {
+    id: parseInt(item.id),
+    distType: item.distType,
+    dateStart: parseInt(item.dateStart),
+    dateEnd: parseInt(item.dateEnd),
+    eventCode: parseInt(item.eventCode),
+    whitelist: item.whitelist,
+    tokensTotal: parseInt(item.tokensTotal),
+    tokensMinted: parseInt(item.tokensMinted),
+    isProtected: item.isProtected
   }
 };

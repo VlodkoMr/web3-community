@@ -8,6 +8,8 @@ import { Checkbox, Textarea, Input, Radio, Button } from '@material-tailwind/rea
 import { MdKeyboardArrowRight } from 'react-icons/md';
 import { Loader } from '../../Loader';
 import { Popup } from '../../Popup';
+import { convertToEther } from '../../../utils/format';
+import Big from 'big.js';
 
 export function DistributionCampaignFTPopup({
   popupVisible,
@@ -15,10 +17,11 @@ export function DistributionCampaignFTPopup({
   handleSuccess,
   currentCommunity,
   tokenSymbol,
-  collection
+  myBalance,
 }) {
   const dispatch = useDispatch();
   const [isSubmitLoading, setIsSubmitLoading] = useState(false);
+  const [isTokensApproved, setIsTokensApproved] = useState(false);
   const [submitFormData, setSubmitFormData] = useState({});
   const [formData, setFormData] = useState({
     distributionType: "",
@@ -29,24 +32,22 @@ export function DistributionCampaignFTPopup({
     tokensAmount: ""
   });
 
-  const { config: configCreate, error: errorCreate } = usePrepareContractWrite({
+  // ------------ Approve token transfer ------------
+
+  const { config: configApprove, error: errorApprove } = usePrepareContractWrite({
     addressOrName: currentCommunity?.ftContract,
     contractInterface: FungibleTokenABI.abi,
-    enabled: submitFormData?.distributionType > 0,
-    functionName: 'createDistributionCampaign',
-    args: [collection?.id, submitFormData.distributionType, submitFormData.dateFrom, submitFormData.dateTo, submitFormData.whitelisted, submitFormData.isLimit, submitFormData.tokensAmount]
+    enabled: submitFormData?.distributionType > 0 && submitFormData.tokensAmount > 0,
+    functionName: 'approve',
+    args: [currentCommunity?.ftContract, submitFormData.tokensAmount]
   });
 
-  const { data: createData, write: createWrite } = useContractWrite({
-    ...configCreate,
+  const { data: approveData, write: approveWrite } = useContractWrite({
+    ...configApprove,
     onSuccess: ({ hash }) => {
-      setPopupVisible(false);
-      setIsSubmitLoading(false);
-      resetForm();
-
       dispatch(addTransaction({
         hash: hash,
-        description: `Create Distribution Campaign`
+        description: `Approve token transfer`
       }));
     },
     onError: ({ message }) => {
@@ -56,13 +57,13 @@ export function DistributionCampaignFTPopup({
   });
 
   useWaitForTransaction({
-    hash: createData?.hash,
+    hash: approveData?.hash,
     onError: error => {
       console.log('is err', error)
     },
     onSuccess: data => {
       if (data) {
-        handleSuccess?.();
+        setIsTokensApproved(true);
       }
     },
   });
@@ -95,22 +96,68 @@ export function DistributionCampaignFTPopup({
       });
     }
 
-    console.log('whitelisted', whitelisted)
-
     setSubmitFormData({
       distributionType,
       dateFrom,
       dateTo,
       whitelisted: whitelisted,
-      isLimit: formData.isLimit
+      isLimit: formData.isLimit,
+      tokensAmount: convertToEther(formData.tokensAmount)
     });
   }
 
+  // ------------ Create Distribution Campaign ------------
+
+  const { config: configCreate, error: errorCreate } = usePrepareContractWrite({
+    addressOrName: currentCommunity?.ftContract,
+    contractInterface: FungibleTokenABI.abi,
+    enabled: isTokensApproved,
+    functionName: 'createDistributionCampaign',
+    args: [submitFormData.distributionType, submitFormData.dateFrom, submitFormData.dateTo, submitFormData.whitelisted, submitFormData.isLimit, submitFormData.tokensAmount]
+  });
+
+  const { data: createData, write: createWrite } = useContractWrite({
+    ...configCreate,
+    onSuccess: ({ hash }) => {
+      setPopupVisible(false);
+      setIsSubmitLoading(false);
+      resetForm();
+
+      dispatch(addTransaction({
+        hash: hash,
+        description: `Create Distribution Campaign`
+      }));
+    },
+    onError: ({ message }) => {
+      console.log('onError message', message);
+      setIsSubmitLoading(false);
+    },
+  });
+
+  useWaitForTransaction({
+    hash: createData?.hash,
+    onError: error => {
+      console.log('is err', error)
+    },
+    onSuccess: data => {
+      if (data) {
+        handleSuccess?.();
+      }
+    },
+  });
+
+  // ------------ Actions ------------
+
   // call contract write when all is ready
   useEffect(() => {
-    console.log('submitFormData', submitFormData)
     // submit data if we receive json result URL
-    if (createWrite && submitFormData?.distributionType > 0) {
+    if (approveWrite && submitFormData?.distributionType > 0 && submitFormData.tokensAmount > 0) {
+      approveWrite();
+    }
+  }, [approveWrite]);
+
+  useEffect(() => {
+    if (createWrite && isTokensApproved) {
       createWrite();
     }
   }, [createWrite]);
@@ -124,19 +171,18 @@ export function DistributionCampaignFTPopup({
       whitelisted: "",
       isLimit: false,
       tokensAmount: ""
-    })
-    ;
+    });
   }
-
-  useEffect(() => {
-    if (errorCreate) {
-      console.log('errorCreate', errorCreate);
-    }
-  }, [errorCreate]);
 
   const isFormErrors = () => {
     if (!parseInt(formData.distributionType)) {
       return "Select campaign Distribution Strategy";
+    }
+    if (parseInt(formData.tokensAmount) < 1) {
+      return "Please provide amount of tokens for Campaign";
+    }
+    if (Big(myBalance).lt(Big(convertToEther(formData.tokensAmount)))) {
+      return "Not enough tokens balance in your wallet";
     }
     return false;
   }
@@ -216,9 +262,10 @@ export function DistributionCampaignFTPopup({
                   <div>
                     <span className="text-lg text-gray-800 font-semibold">{campaign.title}</span>
                     <p className="text-sm font-medium text-gray-600">{campaign.text}</p>
-                    {campaign.id === "4" && formData.distributionType === campaign.id && (
-                      <div className={"text-sm mt-3"}>
-                        <Textarea label="List of addresses"
+                    {campaign.id === "2" && formData.distributionType === campaign.id && (
+                      <div className={"text-sm mt-6"}>
+                        <Textarea label="List of Addresses:"
+                                  variant={"static"}
                                   placeholder="Wallet addresses separated by coma"
                                   onChange={(e) => setFormData({ ...formData, whitelisted: e.target.value })}
                                   value={formData.whitelisted}

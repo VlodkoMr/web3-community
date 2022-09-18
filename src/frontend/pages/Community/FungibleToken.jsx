@@ -8,6 +8,8 @@ import { DeployFTContract } from '../../components/Community/DeployFTContract';
 import { useOutletContext } from 'react-router-dom';
 import { Button } from '@material-tailwind/react';
 import { DistributionCampaignFTPopup } from '../../components/Community/NftCollection/DistributionCampaignFTPopup';
+import { transformFTCampaign } from '../../utils/transform';
+import { OneFTDistribution } from '../../components/Community/NftCollection/OneFTDistribution';
 
 export const FungibleToken = () => {
   const { data: signer } = useSigner();
@@ -15,18 +17,18 @@ export const FungibleToken = () => {
   const [reloadCommunityList] = useOutletContext();
   const currentCommunity = useSelector(state => state.community.current);
   const [campaignPopupVisible, setCampaignPopupVisible] = useState(false);
+  const [myCampaigns, setMyCampaigns] = useState([false]);
 
   const myFTContract = {
     addressOrName: currentCommunity?.ftContract,
     contractInterface: FungibleTokenABI.abi,
   };
 
-  const { data: totalSupply, refetch, error } = useContractRead({
+  const { data: totalSupply } = useContractRead({
     ...myFTContract,
     enabled: isContractAddress(currentCommunity?.ftContract),
     functionName: "totalSupply",
   });
-
   const { data: tokenSymbol } = useContractRead({
     ...myFTContract,
     enabled: isContractAddress(currentCommunity?.ftContract),
@@ -40,7 +42,23 @@ export const FungibleToken = () => {
     watch: true
   });
 
+  const { data: distributionCampaigns, refetch: refetchDistributionCampaigns } = useContractRead({
+    ...myFTContract,
+    enabled: isContractAddress(currentCommunity?.ftContract),
+    functionName: "getCampaigns"
+  });
+
+  useEffect(() => {
+    if (distributionCampaigns) {
+      console.log('distributionCampaigns', distributionCampaigns)
+      setMyCampaigns(distributionCampaigns.map(camp => transformFTCampaign(camp)));
+    }
+  }, [distributionCampaigns]);
+
   const refetchCampaignsList = () => {
+    refetchDistributionCampaigns().then(result => {
+      console.log('result', result);
+    })
   }
 
   const pauseContract = () => {
@@ -92,11 +110,13 @@ export const FungibleToken = () => {
                 </div>
               </div>
 
-              <div className="flex text-sm gap-3">
-                {/*<Button onClick={() => test()}>Add Token to Metamask</Button>*/}
-                {/*<Button onClick={() => test()}>Create Tokens Airdrop</Button>*/}
-
-              </div>
+              {myCampaigns.length > 0 ? myCampaigns.map(camp => (
+                <OneFTDistribution key={camp.id} camp={camp} />
+              )) : (
+                <p>
+                  *No Distribution Campaigns
+                </p>
+              )}
             </>
           ) : (
             <DeployFTContract reloadCommunityList={reloadCommunityList} />
@@ -109,6 +129,7 @@ export const FungibleToken = () => {
         setPopupVisible={setCampaignPopupVisible}
         currentCommunity={currentCommunity}
         tokenSymbol={tokenSymbol}
+        myBalance={myBalance}
         handleSuccess={() => refetchCampaignsList()}
       />
     </div>

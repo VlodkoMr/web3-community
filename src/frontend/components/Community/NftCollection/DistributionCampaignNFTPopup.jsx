@@ -214,9 +214,10 @@ export function DistributionCampaignNFTPopup({
                     <div>
                       <span className="text-lg text-gray-800 font-semibold">{campaign.title}</span>
                       <p className="text-sm font-medium text-gray-600">{campaign.text}</p>
-                      {campaign.id === "4" && formData.distributionType === campaign.id && (
-                        <div className={"text-sm mt-3"}>
-                          <Textarea label="List of addresses"
+                      {campaign.id === "2" && formData.distributionType === campaign.id && (
+                        <div className={"text-sm mt-6"}>
+                          <Textarea label="List of Addresses:"
+                                    variant={"static"}
                                     placeholder="Wallet addresses separated by coma"
                                     onChange={(e) => setFormData({ ...formData, whitelisted: e.target.value })}
                                     value={formData.whitelisted}

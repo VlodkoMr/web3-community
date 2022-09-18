@@ -4,6 +4,7 @@ pragma solidity ^0.8.12;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../abstract/utils.sol";
 
 contract FungibleToken is ERC20, Pausable, Ownable, Utils {
@@ -55,11 +56,14 @@ contract FungibleToken is ERC20, Pausable, Ownable, Utils {
 	// New distribution campaign
 	function createDistributionCampaign(
 		DistributionType _distType, uint _dateStart, uint _dateEnd, address[] memory _whitelist, bool _isProtected, uint _tokensTotal
-	) public onlyOwner {
+	) public payable onlyOwner {
 		uint _randomNumber = 0;
 		if (_distType == DistributionType.Event) {
 			_randomNumber = Utils.randomNumber(999999, 1);
 		}
+
+		IERC20 payToken = IERC20(address(this));
+		payToken.transferFrom(msg.sender, address(this), _tokensTotal);
 
 		campaignLastId += 1;
 		distributionCampaigns.push(
@@ -75,6 +79,11 @@ contract FungibleToken is ERC20, Pausable, Ownable, Utils {
 				_isProtected
 			)
 		);
+	}
+
+	// Get all distribution campaigns
+	function getCampaigns() public view returns (DistributionCampaign[] memory) {
+		return distributionCampaigns;
 	}
 
 	// Cancel distribution campaign
