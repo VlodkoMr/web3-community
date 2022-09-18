@@ -12,12 +12,11 @@ import { transformFTCampaign } from '../../utils/transform';
 import { OneFTDistribution } from '../../components/Community/NftCollection/OneFTDistribution';
 
 export const FungibleToken = () => {
-  const { data: signer } = useSigner();
   const { address } = useAccount();
   const [reloadCommunityList] = useOutletContext();
   const currentCommunity = useSelector(state => state.community.current);
   const [campaignPopupVisible, setCampaignPopupVisible] = useState(false);
-  const [myCampaigns, setMyCampaigns] = useState([false]);
+  const [myCampaigns, setMyCampaigns] = useState([]);
 
   const myFTContract = {
     addressOrName: currentCommunity?.ftContract,
