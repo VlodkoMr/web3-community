@@ -3,7 +3,7 @@ import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from
 import FungibleTokenABI from '../../../contractsData/FungibleToken.json';
 import { useDispatch } from 'react-redux';
 import { addTransaction } from '../../../store/transactionSlice';
-import { distributionCampaigns } from '../../../utils/settings';
+import { distributionCampaignsFT } from '../../../utils/settings';
 import { Checkbox, Textarea, Input, Radio, Button } from '@material-tailwind/react';
 import { MdKeyboardArrowRight } from 'react-icons/md';
 import { Loader } from '../../Loader';
@@ -247,7 +247,7 @@ export function DistributionCampaignFTPopup({
               Choose Distribution Strategy
             </div>
             <div>
-              {distributionCampaigns.map(campaign => (
+              {distributionCampaignsFT.map(campaign => (
                 <label key={campaign.id}
                        className={`flex flex-row bg-gray-100 mb-1 pl-2 pr-6 py-2 border border-transparent 
                          hover:border-gray-200 rounded-lg cursor-pointer 

@@ -7,9 +7,9 @@ import { convertFromEther, formatNumber, isContractAddress } from '../../utils/f
 import { DeployFTContract } from '../../components/Community/DeployFTContract';
 import { useOutletContext } from 'react-router-dom';
 import { Button } from '@material-tailwind/react';
-import { DistributionCampaignFTPopup } from '../../components/Community/NftCollection/DistributionCampaignFTPopup';
+import { DistributionCampaignFTPopup } from '../../components/Community/FungibleToken/DistributionCampaignFTPopup';
 import { transformFTCampaign } from '../../utils/transform';
-import { OneFTDistribution } from '../../components/Community/NftCollection/OneFTDistribution';
+import { OneFTDistribution } from '../../components/Community/FungibleToken/OneFTDistribution';
 
 export const FungibleToken = () => {
   const { address } = useAccount();
@@ -96,26 +96,44 @@ export const FungibleToken = () => {
               </div>
 
               <hr className="mb-6" />
-              <div className="flex flex-row justify-between text-sm mb-6">
-                <div>
-                  Wallet Balance:
-                  <b className="ml-1">{formatNumber(convertFromEther(myBalance, 0))} {tokenSymbol}</b>
+
+              <div className="flex flex-row gap-12">
+                <div className="w-2/3">
+                  <div className="flex justify-between">
+                    <h4 className="mb-1 mt-3 font-semibold">Distribution Campaigns</h4>
+                    <div className="-mt-3">
+                      <Button onClick={() => setCampaignPopupVisible(true)}>
+                        New Distribution Campaign
+                      </Button>
+                    </div>
+
+                  </div>
+                  {myCampaigns.length > 0 ? myCampaigns.map(camp => (
+                    <OneFTDistribution key={camp.id} camp={camp} />
+                  )) : (
+                    <p>
+                      *No Distribution Campaigns
+                    </p>
+                  )}
+                </div>
+                <div className="w-1/3">
+                  <h4 className="mb-1 mt-3 font-semibold">My Wallet Balance</h4>
+                  <div className="bg-white rounded-xl shadow-gray-300/30 shadow-lg px-8 py-6">
+                    <b>{formatNumber(convertFromEther(myBalance, 0))} {tokenSymbol}</b>
+
+                  </div>
+
+                  <h4 className="mt-6 mb-1 font-semibold">Tokenomic</h4>
+                  <InnerBlock className={"text-center"}>
+                    <small className="text-gray-500">
+                      Describe your <b>{tokenSymbol}</b> token usage and distribution details
+                    </small>
+                  </InnerBlock>
+
                 </div>
 
-                <div className="-mt-3 justify-end">
-                  <Button onClick={() => setCampaignPopupVisible(true)}>
-                    New Distribution Campaign
-                  </Button>
-                </div>
               </div>
 
-              {myCampaigns.length > 0 ? myCampaigns.map(camp => (
-                <OneFTDistribution key={camp.id} camp={camp} />
-              )) : (
-                <p>
-                  *No Distribution Campaigns
-                </p>
-              )}
             </>
           ) : (
             <DeployFTContract reloadCommunityList={reloadCommunityList} />
