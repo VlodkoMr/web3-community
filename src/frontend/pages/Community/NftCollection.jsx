@@ -117,7 +117,7 @@ export const NftCollection = () => {
 
                 <div className="-mt-3 justify-end">
                   <Button onClick={() => setCreateNFTPopupVisible(true)}>
-                    + Create NFT Series
+                    Create NFT Series
                   </Button>
                 </div>
               </div>
