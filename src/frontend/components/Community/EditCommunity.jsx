@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Label, TextInput, Button, Textarea, Spinner } from 'flowbite-react';
 import { useDispatch } from 'react-redux';
 import { useDebounce } from 'use-debounce';
 import { addTransaction } from '../../store/transactionSlice';
 import { communityTypes } from '../../utils/settings';
 import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from 'wagmi'
 import { mainContract } from '../../utils/requests';
+import { Loader } from '../Loader';
+import { Input, Button, Option, Select, Textarea } from '@material-tailwind/react';
+import { MdKeyboardArrowRight } from 'react-icons/md';
 
 export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
   const dispatch = useDispatch();
@@ -52,7 +54,9 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
       console.log('is err', error)
     },
     onSuccess: data => {
+      console.log('success data', data)
       if (data) {
+        console.log('handleSuccess', handleSuccess)
         handleSuccess?.();
         setIsLoading(false);
         resetForm();
@@ -196,45 +200,33 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
     <>
       <form className="flex flex-col gap-4 relative" onSubmit={saveCommunity}>
         <div>
-          <div className="mb-1 block text-left">
-            <Label htmlFor="name" value="Community Name" />
-            <sup className={"text-red-400"}>*</sup>
-          </div>
-          <TextInput id="name"
-                     type="text"
-                     required={true}
-                     value={formData.name}
-                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          <Input type="text"
+                 label="Community Name*"
+                 required={true}
+                 value={formData.name}
+                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           />
         </div>
-        <div className="flex gap-6">
+        <div className="flex gap-6 text-left">
           <div className="flex-1">
-            <div className="mb-1 block text-left">
-              <Label htmlFor="category" value="Category" />
-              <sup className={"text-red-400"}>*</sup>
-            </div>
-            <select name="category" id="category"
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    defaultValue={formData.category}
-                    className="w-full block w-full border disabled:cursor-not-allowed disabled:opacity-50 bg-gray-50 border-gray-300
-                  text-gray-900 focus:border-blue-500 focus:ring-blue-500 rounded-lg p-2.5 text-sm">
-              <option value="">&nbsp;</option>
+            <Select label="Category*"
+                    value={formData.category}
+                    placeholder="Select Category"
+                    onChange={val => setFormData({ ...formData, category: val })}>
               {communityTypes.map((oneType, index) => (
-                <option value={index + 1} key={index}>{oneType}</option>
+                <Option value={(index + 1).toString()} key={index}>
+                  {oneType}
+                </Option>
               ))}
-            </select>
+            </Select>
           </div>
           <div className="flex-1">
-            <div className="mb-1 block text-left">
-              <Label htmlFor="privacy" value="Privacy Level" />
-            </div>
-            <select name="privacy" id="privacy"
-                    defaultValue={formData.privacy}
-                    className="w-full block w-full border disabled:cursor-not-allowed disabled:opacity-50 bg-gray-50 border-gray-300
-                  text-gray-900 focus:border-blue-500 focus:ring-blue-500 rounded-lg p-2.5 text-sm">
-              <option value={0}>Public</option>
-              <option value={1}>Private (whitelisted)</option>
-            </select>
+            <Select label="Privacy Level*"
+                    value={formData.privacy}
+                    onChange={val => setFormData({ ...formData, privacy: val })}>
+              <Option value={"0"}>Public</Option>
+              <Option value={"1"}>Private (whitelisted)</Option>
+            </Select>
           </div>
         </div>
         {/*<div>*/}
@@ -246,26 +238,22 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
         {/*             onChange={(e) => resizeImage(e)}*/}
         {/*  />*/}
         {/*</div>*/}
-        <div>
-          <div className="mb-1 block text-left">
-            <Label htmlFor="description" value="Description" />
-          </div>
-          <Textarea id="description"
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-          />
-        </div>
+        <Textarea label="Description"
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  value={formData.description}
+        />
 
         <div className={"flex justify-end"}>
-          <Button type="Submit" gradientDuoTone="purpleToPink" disabled={!isSubmitActive()}>
-            <span className="uppercase">{editCommunity ? "Save" : "Create Community"} &raquo;</span>
+          <Button type="Submit" variant="gradient" disabled={!isSubmitActive()}>
+            {editCommunity ? "Save" : "Create Community"}
+            <MdKeyboardArrowRight className="text-lg align-bottom ml-1 inline-block" />
           </Button>
         </div>
 
         {isLoading && (
-          <div className="bg-white/80 absolute top-0 bottom-0 right-0 left-0 z-10">
+          <div className="bg-white/80 absolute top-[-10px] bottom-0 right-0 left-0 z-10">
             <div className={"w-12 mx-auto mt-10"}>
-              <Spinner size={10} />
+              <Loader />
             </div>
           </div>
         )}

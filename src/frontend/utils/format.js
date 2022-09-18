@@ -19,10 +19,21 @@ export const shortAddress = (address) => {
   return address.slice(0, 5) + '...' + address.slice(38, 42);
 }
 
-export const FormatNumber = (number) => {
+export const formatNumber = (number) => {
   return new Intl.NumberFormat().format(number);
 }
 
-export const MediaURL = (uri) => {
+export const mediaURL = (uri) => {
   return `https://ipfs.io/ipfs/${uri}`;
+}
+
+export const formatPrice = (price) => {
+  const checkPrice = +ethers.utils.formatEther(price.toString());
+  if (checkPrice < 1) {
+    return convertFromEther(price, 4);
+  } else if (checkPrice < 10) {
+    return convertFromEther(price, 2);
+  } else {
+    return convertFromEther(price, 1);
+  }
 }

@@ -1,22 +1,16 @@
-module.exports = {
-  content: ["./*.html", "./src/**/*.{js,jsx,ts,tsx}", 'node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}'],
+const withMT = require("@material-tailwind/react/utils/withMT");
+
+
+module.exports = withMT({
+  content: ["./*.html", "./src/**/*.{js,jsx,ts,tsx}"],
 
   theme: {
     screens: {
-      sm: "540px",
-      // => @media (min-width: 576px) { ... }
-
-      md: "720px",
-      // => @media (min-width: 768px) { ... }
-
-      lg: "960px",
-      // => @media (min-width: 992px) { ... }
-
-      xl: "1140px",
-      // => @media (min-width: 1200px) { ... }
-
+      "sm": "540px",
+      "md": "720px",
+      "lg": "960px",
+      "xl": "1140px",
       "2xl": "1320px",
-      // => @media (min-width: 1400px) { ... }
     },
     container: {
       center: true,
@@ -24,13 +18,13 @@ module.exports = {
     },
     extend: {
       colors: {
-        black: "#212b36",
-        dark: "#090E34",
+        "black": "#212b36",
+        "dark": "#090E34",
         "dark-700": "#090e34b3",
-        primary: "#3056D3",
-        secondary: "#13C296",
+        "primary": "#3056D3",
+        "secondary": "#13C296",
         "body-color": "#637381",
-        warning: "#FBBF24",
+        "warning": "#FBBF24",
       },
       boxShadow: {
         input: "0px 7px 20px rgba(0, 0, 0, 0.03)",
@@ -41,13 +35,14 @@ module.exports = {
       zIndex: {
         '60': '60',
         '70': '70',
-      }
+      },
+      fontFamily: {
+        sans: ["Inter", "sans-serif"],
+      },
     },
   },
   variants: {
     extend: {},
   },
-  plugins: [
-    require('flowbite/plugin')
-  ],
-};
+  plugins: [],
+});

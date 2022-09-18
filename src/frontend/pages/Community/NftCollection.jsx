@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Button } from 'flowbite-react';
 import { InnerBlock, InnerTransparentBlock } from '../../assets/css/common.style';
 import { useContractRead } from 'wagmi';
 import { isContractAddress } from '../../utils/format';
@@ -11,12 +10,13 @@ import NFTCollectionABI from '../../contractsData/NFTCollection.json';
 import { transformCollectionNFT } from '../../utils/transform';
 import { OneNFT } from '../../components/Community/NftCollection/OneNFT';
 import { MintNFTPopup } from '../../components/Community/NftCollection/MintNFTPopup';
-import { CreateCampaignPopup } from '../../components/Community/NftCollection/CreateCampaignPopup';
+import { DistributionCampaignPopup } from '../../components/Community/NftCollection/DistributionCampaignPopup';
+import { Button } from '@material-tailwind/react';
 
 export const NftCollection = () => {
   const currentCommunity = useSelector(state => state.community.current);
   const [reloadCommunityList] = useOutletContext();
-  const [userCollections, setUserCollections] = useState([false]);
+  const [userCollections, setUserCollections] = useState([]);
   const [createNFTPopupVisible, setCreateNFTPopupVisible] = useState(false);
 
   const [mintNFTCollection, setMintNFTCollection] = useState();
@@ -79,8 +79,12 @@ export const NftCollection = () => {
         <InnerBlock.Header className="flex justify-between">
           <span>NFT Collection</span>
           {isContractAddress(currentCommunity?.nftContract) && (
-            <Button size="xsm" color="light" onClick={pauseContract}>
-              <span className="text-sm px-2 font-medium text-red-500">Pause Contract</span>
+            <Button size="sm"
+                    color="red"
+                    variant="outlined"
+                    className={"px-3 py-0.5"}
+                    onClick={pauseContract}>
+              Pause Contract
             </Button>
           )}
         </InnerBlock.Header>
@@ -100,21 +104,20 @@ export const NftCollection = () => {
 
               <hr className="mb-6" />
               <div className="flex justify-between text-sm mb-4">
-
                 <div>
                   {(parseInt(totalCollections) === 0) ? (
                     <>*No NFT Series</>
                   ) : (
                     <div className="pt-1">
-                      <span className="opacity-80">Total NFT Series:</span>
+                      <span className="opacity-80">Total Series:</span>
                       <b className="ml-1">{parseInt(totalCollections)} NFT</b>
                     </div>
                   )}
                 </div>
 
-                <div className="-mt-2 justify-end">
-                  <Button gradientDuoTone="purpleToPink" size="sm" onClick={() => setCreateNFTPopupVisible(true)}>
-                    Create NFT Series
+                <div className="-mt-3 justify-end">
+                  <Button onClick={() => setCreateNFTPopupVisible(true)}>
+                    + Create NFT Series
                   </Button>
                 </div>
               </div>
@@ -152,7 +155,7 @@ export const NftCollection = () => {
         handleSuccess={() => refetchCollectionItems()}
       />
 
-      <CreateCampaignPopup
+      <DistributionCampaignPopup
         popupVisible={campaignPopupVisible}
         setPopupVisible={setCampaignPopupVisible}
         collection={createCampaign}

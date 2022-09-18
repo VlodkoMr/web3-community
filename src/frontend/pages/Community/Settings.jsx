@@ -9,26 +9,30 @@ export const Settings = () => {
   const currentCommunity = useSelector(state => state.community.current);
 
   useEffect(() => {
-    console.log('currentCommunity');
+    console.log('currentCommunity', currentCommunity);
   }, [currentCommunity]);
 
   return (
     <div className="flex gap-6">
       <InnerBlock className={"flex-1"}>
-        <InnerBlock.Header className="flex justify-between">
-          <span>General Settings</span>
-        </InnerBlock.Header>
-        <div className="mt-4">
-          <EditCommunity editCommunity={currentCommunity} handleSuccess={() => reloadCommunityList()} />
+        <div className="flex-auto">
+          <InnerBlock.Header className="flex justify-between">
+            <span>General Settings</span>
+          </InnerBlock.Header>
+          <div className="mt-8">
+            <EditCommunity editCommunity={currentCommunity} handleSuccess={() => reloadCommunityList()} />
+          </div>
         </div>
       </InnerBlock>
 
       <InnerBlock className={"flex-1"}>
-        <InnerBlock.Header className="flex justify-between">
-          <span>Community Links</span>
-        </InnerBlock.Header>
-        <div className="mt-4">
-          ...
+        <div className="flex-auto">
+          <InnerBlock.Header className="flex justify-between">
+            <span>Community Links</span>
+          </InnerBlock.Header>
+          <div className="mt-8">
+            ...
+          </div>
         </div>
       </InnerBlock>
     </div>

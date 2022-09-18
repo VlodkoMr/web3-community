@@ -5,7 +5,8 @@ import { Link as ReactLink, NavLink as ReactNavLink } from "react-router-dom";
 export const Wrapper = styled.section.attrs({
   className: `
   relative
-  mb-auto`,
+  mb-auto
+  text-gray-600`,
 })``;
 
 export const InnerPageWrapper = styled.section.attrs({
@@ -15,7 +16,7 @@ export const InnerPageWrapper = styled.section.attrs({
   min-h-screen 
   justify-between
   bg-gray-50 
-  text-slate-500`,
+  text-gray-600`,
 })``;
 
 export const Btn = styled.button.attrs({
@@ -110,5 +111,5 @@ InnerBlock.Header = styled.div.attrs({
   text-xl 
   font-semibold 
   mb-2
-  text-gray-600`,
+  text-gray-800`,
 })``

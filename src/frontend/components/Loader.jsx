@@ -1,11 +1,19 @@
 import React from "react";
 
-export function Loader() {
+export function Loader({ size }) {
+  const sizeMap = {
+    'sm': "w-4 h-4",
+    'md': "w-6 h-6",
+    'lg': "w-8 h-8",
+    'xl': "w-10 h-10",
+    '2xl': "w-12 h-12",
+  }
+
   return (
-    <div className="text-center">
+    <div className={`text-center inline-block`}>
       <svg
         role="status"
-        className="inline mr-2 w-10 h-10 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+        className={`inline text-gray-200 animate-spin dark:text-gray-600 fill-blue-600 ${sizeMap[size || "lg"]}`}
         viewBox="0 0 100 101"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"

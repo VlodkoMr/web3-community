@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Button, Spinner, TextInput } from 'flowbite-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addTransaction } from '../../store/transactionSlice';
 import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
-import { factoryContract } from '../../utils/requests';
+import { factoryNFTContract } from '../../utils/requests';
 import { useDebounce } from 'use-debounce';
+import { Loader } from '../Loader';
+import { Input, Button } from '@material-tailwind/react';
 
 export function DeployNFTContract({ reloadCommunityList }) {
   const dispatch = useDispatch();
@@ -21,7 +22,7 @@ export function DeployNFTContract({ reloadCommunityList }) {
   // ------------- Update Community Methods -------------
 
   const { config: configDeploy, error: errorDeploy } = usePrepareContractWrite({
-    ...factoryContract,
+    ...factoryNFTContract,
     enabled: debouncedFormDataValid,
     functionName: 'deployNFTCollectionContract',
     args: [currentCommunity.id, debouncedFormData.name, debouncedFormData.symbol.toUpperCase()]
@@ -84,6 +85,7 @@ export function DeployNFTContract({ reloadCommunityList }) {
       return;
     }
 
+    console.log('deployWrite', deployWrite)
     setIsLoadingCreate(true);
     deployWrite?.();
   }
@@ -91,36 +93,38 @@ export function DeployNFTContract({ reloadCommunityList }) {
   return (
     <>
       <p className="text-sm opacity-80 mb-4">
-        This section allow you create unique NFT Series for your community, create distribution campaign to sell or minting NFT for free. <br />
+        This section allow you create unique NFT Series for your community, create distribution campaign to sell or
+        minting NFT for free. <br />
         To start using NFT Collections, let's enable this feature (deploy your own Smart Contract): <br />
       </p>
 
       <form className="flex gap-4 relative" onSubmit={deployNFTContract}>
         <div className="w-48">
-          <TextInput id="name"
-                     type="text"
-                     required={true}
-                     maxLength={50}
-                     value={formData.name}
-                     placeholder={`Collection Name`}
-                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          <Input type="text"
+                 label="Collection Name"
+                 className="w-48"
+                 required={true}
+                 maxLength={50}
+                 value={formData.name}
+                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+
           />
         </div>
         <div className="w-36">
-          <TextInput id="symbol"
-                     type="text"
-                     maxLength={5}
-                     required={true}
-                     value={formData.symbol}
-                     placeholder={`Symbol`}
-                     onChange={(e) => setFormData({ ...formData, symbol: e.target.value })}
+          <Input type="text"
+                 label="Symbol"
+                 className="w-36"
+                 required={true}
+                 maxLength={5}
+                 value={formData.symbol}
+                 onChange={(e) => setFormData({ ...formData, symbol: e.target.value })}
           />
         </div>
 
-        <Button disabled={isLoadingCreate || !deployWrite} type="Submit" gradientDuoTone="purpleToPink">
+        <Button disabled={isLoadingCreate || !deployWrite} type="Submit" variant="gradient">
           {isLoadingCreate && (
-            <span className="mr-2">
-              <Spinner size="sm" />
+            <span className="mr-2 align-bottom">
+              <Loader size={"sm"} />
             </span>
           )}
           Create NFT Collection

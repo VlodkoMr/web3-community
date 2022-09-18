@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Label, TextInput, Button, Modal, Spinner } from 'flowbite-react';
 import { useAccount, useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
 import { useDebounce } from 'use-debounce';
 import NFTCollectionABI from '../../../contractsData/NFTCollection.json';
 import { useDispatch } from 'react-redux';
 import { addTransaction } from '../../../store/transactionSlice';
 import { ImInfinite } from 'react-icons/im';
+import { Loader } from '../../Loader';
+import { Button, Input, Dialog, DialogBody, DialogHeader } from '@material-tailwind/react';
+import { Popup } from '../../Popup';
+import { MdKeyboardArrowRight } from 'react-icons/md';
 
 export function MintNFTPopup({ popupVisible, setPopupVisible, handleSuccess, currentCommunity, collection }) {
   const dispatch = useDispatch();
   const { address } = useAccount();
+  const [isReady, setIsReady] = useState(false);
   const [isSubmitLoading, setIsSubmitLoading] = useState(false);
   const [formData, setFormData] = useState({
     account: "",
@@ -75,6 +79,12 @@ export function MintNFTPopup({ popupVisible, setPopupVisible, handleSuccess, cur
   }
 
   useEffect(() => {
+    if (collection) {
+      setIsReady(true);
+    }
+  }, [collection]);
+
+  useEffect(() => {
     if (errorMint) {
       console.log('errorUpload', errorMint);
     }
@@ -105,84 +115,69 @@ export function MintNFTPopup({ popupVisible, setPopupVisible, handleSuccess, cur
 
   return (
     <>
-      <Modal
-        popup={true}
-        show={popupVisible}
-        onClose={() => setPopupVisible(false)}
-      >
-        <Modal.Header />
-        {collection && (
-          <Modal.Body>
-            <div className="text-lg pb-4 mb-8 -mt-8 text-center w-full border-b text-gray-500 font-semibold">
-              Mint NFT
+      <Popup isVisible={popupVisible}
+             setIsVisible={setPopupVisible}
+             title="Mint NFT">
+        {isReady && (
+          <form className="flex flex-row gap-8 relative" onSubmit={handleMintNFT}>
+            <div className="w-36">
+              <img className="mt-2 h-36 w-36 bg-gray-50 rounded-lg object-cover" src={collection.mediaUri} alt="" />
             </div>
-
-            <form className="flex flex-row px-4 gap-8 relative" onSubmit={handleMintNFT}>
-              <div className="w-36">
-                <img className="mt-2 h-36 w-36 bg-gray-50 rounded-lg object-cover" src={collection.mediaUri} alt="" />
-              </div>
-              <div className="flex-1">
-                <div className="mb-3">
-                  <div className="mb-1 block text-left flex justify-between">
-                    <div>
-                      <Label htmlFor="account" value={`Send to wallet`} />
-                      <sup className={"text-red-400"}>*</sup>
-                    </div>
-                    <div className="text-sm text-gray-500 underline cursor-pointer" onClick={() => setMyAddress()}>
-                      set my wallet address
-                    </div>
+            <div className="flex-1">
+              <div className="mb-3">
+                <div className="mb-1 block text-left flex justify-between">
+                  <div />
+                  <div className="text-sm text-gray-500 underline cursor-pointer" onClick={() => setMyAddress()}>
+                    set my wallet
                   </div>
-                  <TextInput id="account"
-                             type="text"
-                             required={true}
-                             value={formData.account}
-                             onChange={(e) => setFormData({ ...formData, account: e.target.value })}
+                </div>
+
+                <Input type="text"
+                       label="Send to wallet"
+                       required={true}
+                       value={formData.account}
+                       onChange={(e) => setFormData({ ...formData, account: e.target.value })}
+                />
+              </div>
+
+              <div className="flex flex-row mb-3">
+                <div className="w-48">
+                  <Input type="number"
+                         label="NFT Amount"
+                         required={true}
+                         min={0}
+                         max={1000000000}
+                         value={formData.amount}
+                         onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
                   />
                 </div>
-
-                <div className="flex flex-row mb-3">
-                  <div className="w-48">
-                    <div className="mb-1 block text-left">
-                      <Label htmlFor="amount" value="NFT Amount" />
-                      <sup className={"text-red-400"}>*</sup>
-                    </div>
-                    <TextInput id="amount"
-                               type="number"
-                               min={0}
-                               max={1000000000}
-                               required={true}
-                               value={formData.amount}
-                               onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                    />
-                  </div>
-                  <div className="text-sm text-gray-500 ml-6 pt-10 -mt-1">
-                    Total Supply: {collection.supply === 0 ? <ImInfinite size="16" className="inline" /> : `${collection.supply} NFT`}
-                  </div>
-                </div>
-
-                <div className="flex justify-between mt-8 pt-5 border-t">
-                  <div className="text-gray-500 text-sm pt-2" />
-                  <Button type="Submit"
-                          disabled={!mintWrite}
-                          gradientDuoTone="purpleToPink">
-                    <span className="uppercase">
-                      Mint NFT &raquo;
-                    </span>
-                  </Button>
+                <div className="text-sm text-gray-500 ml-6 pt-2.5">
+                  Total Supply: {collection.supply === 0 ?
+                  <ImInfinite size="16" className="inline" /> : `${collection.supply} NFT`}
                 </div>
               </div>
 
-              {isSubmitLoading && (
-                <div className="bg-white/80 absolute top-[-20px] bottom-0 right-0 left-0 z-10">
-                  <div className={"w-12 mx-auto mt-10"}>
-                    <Spinner size={10} />
-                  </div>
+              <div className="flex justify-between mt-8">
+                <div className="text-gray-500 text-sm pt-2" />
+                <Button type="Submit"
+                        variant="gradient"
+                        disabled={!mintWrite}>
+                  Mint NFT
+                  <MdKeyboardArrowRight className="text-lg align-bottom ml-1 inline-block" />
+                </Button>
+              </div>
+            </div>
+
+            {isSubmitLoading && (
+              <div className="bg-white/80 absolute top-[-20px] bottom-0 right-0 left-0 z-10">
+                <div className={"w-12 mx-auto mt-10"}>
+                  <Loader />
                 </div>
-              )}
-            </form>
-          </Modal.Body>
+              </div>
+            )}
+          </form>
         )}
-      </Modal>
+      </Popup>
     </>
   );
 }

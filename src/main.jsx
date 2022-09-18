@@ -1,4 +1,3 @@
-import 'flowbite'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './frontend/App'
@@ -8,7 +7,7 @@ import { createClient, WagmiConfig } from 'wagmi'
 import { ConnectKitProvider, getDefaultClient } from 'connectkit'
 import { chain } from "wagmi"
 import { Provider } from "react-redux"
-
+import { ThemeProvider } from "@material-tailwind/react";
 
 // const chains = [chain.mainnet, chain.polygon, chain.optimism, chain.arbitrum]
 const chains = [chain.hardhat, chain.polygonMumbai, chain.optimismGoerli]
@@ -25,7 +24,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <WagmiConfig client={client}>
     <ConnectKitProvider>
       <Provider store={store}>
-        <App />
+        <ThemeProvider>
+          <App />
+        </ThemeProvider>
       </Provider>
     </ConnectKitProvider>
   </WagmiConfig>

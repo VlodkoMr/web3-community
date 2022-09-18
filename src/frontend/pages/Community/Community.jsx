@@ -7,11 +7,11 @@ import { useDispatch } from "react-redux";
 import { EditCommunity } from '../../components/Community/EditCommunity';
 import { useAccount } from 'wagmi';
 import { Outlet } from "react-router-dom";
-import { Spinner } from 'flowbite-react';
 import { useContractRead } from 'wagmi';
 import { setCommunityList, setCurrentCommunity } from '../../store/communitySlice';
 import { transformCommunity } from '../../utils/transform';
 import { mainContract } from '../../utils/requests';
+import { Loader } from '../../components/Loader';
 
 export const Community = () => {
   const dispatch = useDispatch();
@@ -29,6 +29,7 @@ export const Community = () => {
 
   useEffect(() => {
     if (!isLoading) {
+      console.log('communityList', communityList)
       loadCommunityList(communityList);
     }
   }, [isLoading])
@@ -38,11 +39,11 @@ export const Community = () => {
     if (communityList.length) {
       if (setLastByDefault) {
         const lastCommunity = communityList[communityList.length - 1];
-        localStorage.setItem("communityId", lastCommunity.id);
+        localStorage.setItem("communityId", lastCommunity.id.toString());
       }
-      let selectedCommunity = parseInt(localStorage.getItem("communityId"));
+      let selectedCommunity = localStorage.getItem("communityId");
       if (!selectedCommunity) {
-        selectedCommunity = parseInt(communityList[0].id);
+        selectedCommunity = communityList[0].id.toString();
       }
 
       const transformedCommunity = communityList.map(item => {
@@ -86,7 +87,7 @@ export const Community = () => {
             <Container>
               <div className="text-center bg-white py-6 px-12 rounded-lg shadow w-1/2 mx-auto mt-6">
                 <h2 className="text-2xl font-semibold text-gray-700">New Community</h2>
-                <p className="text-sm">Look like you don't have Community, let's create first one:</p>
+                <p className="text-sm mb-10">Look like you don't have Community, let's create first one:</p>
 
                 <div className="my-6">
                   <EditCommunity handleSuccess={() => reloadCommunityList()} />
@@ -106,7 +107,7 @@ export const Community = () => {
         </Wrapper>
       ) : (
         <div className="w-10 mx-auto">
-          <Spinner size="xl" />
+          <Loader />
         </div>
       )}
 

@@ -13,9 +13,23 @@ body {
 }
 
 .left-nav.active {
-    @apply shadow-gray-300/30 shadow-md bg-white font-semibold text-slate-600 hover:bg-white;
+    @apply shadow-gray-300/30 shadow-md bg-white font-semibold text-gray-800 hover:bg-white;
 }
 
 .left-nav.active > div {
     @apply bg-gradient-to-tl from-primary to-pink-400 !shadow-none;
+}
+
+/* fix MD input width issue */
+.min-w-\[200px\] {
+    min-width: auto !important;
+}
+
+/* fix MD labels */
+.font-light {
+    @apply font-medium text-gray-600;
+}
+
+.font-medium {
+    font-weight: 500 !important;
 }

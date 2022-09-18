@@ -12,11 +12,10 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply, Utils {
 	string public symbol;
 	uint public collectionsTotal;
 	Collection[] public collections;
-	mapping(uint => DistributionCampaign) distributionCampaigns;
 
 	enum DistributionType {
 		None,
-		PublicLink,
+		Public,
 		Whitelist,
 		Email,
 		Event,
@@ -24,11 +23,12 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply, Utils {
 	}
 
 	struct DistributionCampaign {
-		uint date_start;
-		uint date_end;
-		DistributionType distribution_type;
-		address[] whitelisted;
-		uint event_code;
+		uint dateStart;
+		uint dateEnd;
+		uint eventCode;
+		DistributionType distType;
+		address[] whitelist;
+		bool isProtected;
 	}
 
 	struct CollectionRoyalty {
@@ -45,6 +45,7 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply, Utils {
 		uint supply;
 		uint mintedTotal;
 		CollectionRoyalty royalty;
+		DistributionCampaign distribution;
 	}
 
 	constructor(string memory _name, string memory _symbol, address _owner) ERC1155("") {
@@ -58,10 +59,6 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply, Utils {
 		return collection.jsonUri;
 	}
 
-	function setURI(string memory _newUri) public onlyOwner {
-		_setURI(_newUri);
-	}
-
 	function pause() public onlyOwner {
 		_pause();
 	}
@@ -70,7 +67,15 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply, Utils {
 		_unpause();
 	}
 
-	// Add NFT to collection
+	// ------------ Collection Series ------------
+
+	// Validate and get collection index
+	function _getCollectionIndex(uint _id) internal view returns (uint){
+		require(_id > 0 && _id <= collectionsTotal, "Wrong Collection");
+		return _id - 1;
+	}
+
+	// Add Collection Series
 	function newCollectionItem(
 		string memory _jsonUri, string memory _mediaUri, string memory _title, uint _price, uint _supply, CollectionRoyalty memory _royalty
 	) public onlyOwner {
@@ -79,32 +84,24 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply, Utils {
 		require(_price >= 0, "Wrong Price");
 		require(_supply >= 0, "Wrong Supply");
 		if (_royalty.account != address(0)) {
-			require(_royalty.percent > 0, "Please provide royalty percent");
-			require(_royalty.percent <= 90, "Royalty percent can't be more than 90%");
+			require(_royalty.percent > 0 && _royalty.percent <= 90, "Please provide correct royalty percent");
 		}
 
 		collectionsTotal += 1;
-		collections.push(Collection(
-				_title,
-				_jsonUri,
-				_mediaUri,
-				collectionsTotal,
-				_price,
-				_supply,
-				0,
-				_royalty
-			));
+		collections.push(
+			Collection(_title, _jsonUri, _mediaUri, collectionsTotal, _price, _supply, 0, _royalty, _getEmptyDistribution())
+		);
 	}
 
+	// Update Collection Series
 	function updateCollectionItem(uint _collectionId, uint _price, uint _supply, CollectionRoyalty memory _royalty) public onlyOwner {
-		require(_collectionId <= collectionsTotal, "Wrong Collection");
+		Collection storage collection = collections[_getCollectionIndex(_collectionId)];
 		require(_price >= 0, "Wrong Price");
 		require(_supply >= 0, "Wrong Supply");
 
-		Collection storage collection = collections[_collectionId - 1];
 		if (_supply > 0) {
 			// Allow unlimited supply, but check minted amount
-			require(_supply >= collection.mintedTotal, "Supply is less that already minted");
+			require(_supply >= collection.mintedTotal, "Supply is less that minted amount");
 		}
 		if (_royalty.account != address(0)) {
 			require(_royalty.percent > 0, "Please provide royalty percent");
@@ -116,27 +113,41 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply, Utils {
 		collection.royalty = _royalty;
 	}
 
+	// ------------ Distribution ------------
 
-	function createCampaign(
-		uint _collectionId, DistributionType _distribution_type, uint _date_start, uint _date_end, address[] memory _whitelisted
+	// Validate and get collection index
+	function _getEmptyDistribution() internal pure returns (DistributionCampaign memory){
+		return DistributionCampaign(0, 0, 0, DistributionType.None, new address[](0), false);
+	}
+
+	// New distribution campaign
+	function createDistributionCampaign(
+		uint _collectionId, DistributionType _distType, uint _dateStart, uint _dateEnd, address[] memory _whitelist, bool _isProtected
 	) public onlyOwner {
-		require(_collectionId > 0, "Wrong Collection");
-		require(_collectionId <= collectionsTotal, "Wrong Collection");
+		Collection storage collection = collections[_getCollectionIndex(_collectionId)];
 
-		uint _random_number = 0;
-		if (_distribution_type == DistributionType.Event) {
-			_random_number = Utils.randomNumber(999999, 0);
+		uint _randomNumber = 0;
+		if (_distType == DistributionType.Event) {
+			_randomNumber = Utils.randomNumber(999999, 1);
 		}
 
-		distributionCampaigns[_collectionId] = DistributionCampaign(
-			_date_start,
-			_date_end,
-			_distribution_type,
-			_whitelisted,
-			_random_number
+		collection.distribution = DistributionCampaign(
+			_dateStart,
+			_dateEnd,
+			_randomNumber,
+			_distType,
+			_whitelist,
+			_isProtected
 		);
 	}
 
+	// Cancel distribution campaign
+	function cancelDistributionCampaign(uint _collectionId) public onlyOwner {
+		Collection storage collection = collections[_getCollectionIndex(_collectionId)];
+		collection.distribution = _getEmptyDistribution();
+	}
+
+	// Get all collections with distribution details
 	function getCollections() public view returns (Collection[] memory) {
 		return collections;
 	}
@@ -144,11 +155,9 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply, Utils {
 	// Mint NFTs for owner
 	function mint(address _account, uint256 _collectionId, uint256 _amount) public onlyOwner {
 		require(_amount > 0, "Wrong mint amount");
-		require(_collectionId > 0, "Wrong Collection");
-		require(_collectionId <= collectionsTotal, "Wrong Collection");
 		require(_account != address(0), "Wrong destination wallet Address");
 
-		Collection storage collection = collections[_collectionId - 1];
+		Collection storage collection = collections[_getCollectionIndex(_collectionId)];
 		if (collection.supply > 0) {
 			require(collection.supply >= collection.mintedTotal + _amount, "Not enough supply left");
 		}
@@ -158,12 +167,9 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply, Utils {
 	}
 
 	// Mint NFTs for other
-	function payToMint(uint _collectionId, uint256 _amount) public whenNotPaused payable {
+	function payToMint(uint _collectionId, uint256 _amount, uint _eventCode) public whenNotPaused payable {
+		Collection storage collection = collections[_getCollectionIndex(_collectionId)];
 		require(_amount > 0, "Wrong mint amount");
-		require(_collectionId > 0, "Wrong Collection");
-		require(_collectionId <= collectionsTotal, "Wrong Collection");
-
-		Collection storage collection = collections[_collectionId - 1];
 		if (collection.supply > 0) {
 			require(collection.supply >= collection.mintedTotal + _amount, "Not enough supply left");
 		}
@@ -172,8 +178,11 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply, Utils {
 			require(msg.value >= totalPrice, "Wrong payment amount");
 		} else {
 			require(_amount == 1, "You can't mint more than 1 NFT");
-			// TODO: limit free NFT to mint 1 per acc
 		}
+
+		// check _eventCode
+
+		// pay royalty
 
 		collection.mintedTotal += _amount;
 		_mint(msg.sender, _collectionId, _amount, "");

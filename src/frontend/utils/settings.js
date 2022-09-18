@@ -1,4 +1,5 @@
 import { chain } from 'wagmi';
+import React from 'react';
 
 export const communityTypes = [
   "Animals",
@@ -21,6 +22,39 @@ export const communityTypes = [
   "Technology",
   "Virtual Worlds",
   "Other"
+];
+
+export const distributionCampaigns = [
+  {
+    id: "1",
+    title: "Public Access",
+    text: "Get public page URL and share this link with your audience. All users will be able to mint NFT on this page.",
+    isAvailable: true
+  },
+  {
+    id: "2",
+    title: "Whitelisted Only",
+    text: "Get public page URL and share this link to whitelisted wallet addresses. Only whitelisted users will be able to mint NFT on this page.",
+    isAvailable: true
+  },
+  {
+    id: "3",
+    title: "Email Verification",
+    text: "Get public page URL and share this link with your audience. User should confirm email to mint NFT.",
+    isAvailable: true
+  },
+  {
+    id: "4",
+    title: "Event",
+    text: "You will receive unique 6 digits code that is required to mint NFT. Can be used to limit access on local or online events.",
+    isAvailable: true
+  },
+  {
+    id: "5",
+    title: "Credit Card",
+    text: "(coming soon)",
+    isAvailable: false
+  },
 ];
 
 export const getTokenName = (currentChain) => {

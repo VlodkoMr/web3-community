@@ -4,11 +4,15 @@ import logoWhite from '../assets/images/logo/logo-white.png';
 import logoColor from '../assets/images/logo/logo.png';
 import { Container, Link, NavLink, ScrollLink } from '../assets/css/common.style';
 import { animateScroll } from "react-scroll";
-import { Dropdown, Modal } from "flowbite-react";
 import { useDispatch, useSelector } from 'react-redux';
 import { setCurrentCommunity } from '../store/communitySlice';
 import { EditCommunity } from './Community/EditCommunity';
 import { useAccount } from 'wagmi';
+import { Popup } from './Popup';
+import { communityTypes } from '../utils/settings';
+import { Option, Select } from '@material-tailwind/react';
+import { IoChevronDownSharp, MdKeyboardArrowLeft } from 'react-icons/all';
+import { MdKeyboardArrowRight } from 'react-icons/md';
 
 export const Header = ({ isInner, reloadCommunityList }) => {
   const dispatch = useDispatch();
@@ -25,17 +29,29 @@ export const Header = ({ isInner, reloadCommunityList }) => {
     });
   }, []);
 
+  useEffect(() => {
+    console.log('header currentCommunity', currentCommunity)
+  }, [currentCommunity]);
+
+  const closePopupCallback = () => {
+    selectCommunity(localStorage.getItem("communityId"));
+  };
+
   const toggleHome = () => {
     animateScroll.scrollToTop();
   };
 
-  const selectCommunity = (community) => {
-    dispatch(setCurrentCommunity({
-      community: community
-    }));
+  const selectCommunity = (communityId) => {
+    communityList.map(item => {
+      if (item.id.toString() === communityId) {
+        dispatch(setCurrentCommunity({
+          community: item
+        }));
+      }
+    });
 
     // save in local storage
-    localStorage.setItem("communityId", community.id);
+    localStorage.setItem("communityId", communityId);
   }
 
   const handleTxStart = async () => {
@@ -44,6 +60,7 @@ export const Header = ({ isInner, reloadCommunityList }) => {
 
   const handleSuccessCreate = async () => {
     reloadCommunityList(true);
+    console.log('reloadCommunityList')
   }
 
   return (
@@ -98,27 +115,38 @@ export const Header = ({ isInner, reloadCommunityList }) => {
                 ) : (
                   <ul className="lg:flex">
                     <li className="relative">
-                      <NavLink to={"/"} dark={scroll ? "true" : undefined}>&laquo; Home</NavLink>
+                      <NavLink to={"/"} dark={scroll ? "true" : undefined}>
+                        <MdKeyboardArrowLeft className="text-lg align-bottom mr-1 inline-block" />
+                        Home
+                      </NavLink>
                       <span className="text-white opacity-40">/</span>
                     </li>
-                    <li className="relative ml-2 mt-4">
+                    <li className="relative ml-4 mt-4 pt-0.5">
                       {communityList.length > 0 && currentCommunity ? (
-                        <Dropdown label={currentCommunity.name}>
+                        // <Select variant="static"
+                        //         arrow={<IoChevronDownSharp className="text-white" />}
+                        //         className={"text-white !border-none text-base"}
+                        //         value={currentCommunity.id}
+                        //         onChange={val => val === "new" ? setCommunityPopupVisible(true) : selectCommunity(val.id)}>
+                        //   {communityList.map(item => (
+                        //     <Option value={item.id} key={item.id}>
+                        //       {item.name}
+                        //     </Option>
+                        //   ))}
+                        // </Select>
+                        <select
+                          className={`py-2 px-2 bg-transparent text-white focus:outline-none`}
+                          value={currentCommunity.id}
+                          onChange={e => {
+                            e.target.value.length ? selectCommunity(e.target.value) : setCommunityPopupVisible(true)
+                          }}>
                           {communityList.map(item => (
-                            <Dropdown.Item
-                              onClick={() => selectCommunity(item)}
-                              key={item.id}>
-                              <span className={"whitespace-nowrap"}>
-                                {item.name}
-                              </span>
-                            </Dropdown.Item>
+                            <option key={item.id} value={item.id}>
+                              {item.name}
+                            </option>
                           ))}
-                          <Dropdown.Item onClick={() => setCommunityPopupVisible(true)}>
-                            <span className={"whitespace-nowrap"}>
-                              + New Community
-                            </span>
-                          </Dropdown.Item>
-                        </Dropdown>
+                          <option value={""}>+ New Community</option>
+                        </select>
                       ) : (
                         <div className="text-white pt-2 pl-4 opacity-50">New Community</div>
                       )}
@@ -141,24 +169,15 @@ export const Header = ({ isInner, reloadCommunityList }) => {
       </Container>
 
 
-      <Modal size="lg"
-             popup={true}
-             show={communityPopupVisible}
-             onClose={() => setCommunityPopupVisible(false)}>
-        <Modal.Header />
-        <Modal.Body>
-          <div className="text-lg pb-4 mb-8 -mt-8 text-center w-full border-b text-gray-500 font-semibold">
-            Create New Community
-          </div>
-          <div className="space-y-6 px-6 lg:px-8">
-            <EditCommunity
-              handleTxStart={() => handleTxStart()}
-              handleSuccess={() => handleSuccessCreate()}
-            />
-          </div>
-        </Modal.Body>
-      </Modal>
-
+      <Popup title="Create New Community"
+             isVisible={communityPopupVisible}
+             setIsVisible={setCommunityPopupVisible}
+             closeCallback={closePopupCallback}>
+        <EditCommunity
+          handleTxStart={() => handleTxStart()}
+          handleSuccess={() => handleSuccessCreate()}
+        />
+      </Popup>
     </div>
   );
 }

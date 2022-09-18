@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Button, Spinner, TextInput } from 'flowbite-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addTransaction } from '../../store/transactionSlice';
-import { factoryContract } from '../../utils/requests';
+import { factoryFTContract } from '../../utils/requests';
 import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
 import { useDebounce } from 'use-debounce';
+import { Loader } from '../Loader';
+import { Input, Button } from '@material-tailwind/react';
 
 export function DeployFTContract({ reloadCommunityList }) {
   const dispatch = useDispatch();
@@ -22,7 +23,7 @@ export function DeployFTContract({ reloadCommunityList }) {
   // ------------- Update Community Methods -------------
 
   const { config: configDeploy, error: errorDeploy } = usePrepareContractWrite({
-    ...factoryContract,
+    ...factoryFTContract,
     enabled: debouncedFormDataValid,
     functionName: 'deployFTContract',
     args: [currentCommunity.id, debouncedFormData.name, debouncedFormData.symbol.toUpperCase(), debouncedFormData.supply]
@@ -99,42 +100,44 @@ export function DeployFTContract({ reloadCommunityList }) {
       </p>
 
       <form className="flex gap-4 relative" onSubmit={deployFTContract}>
-        <div className="w-32">
-          <TextInput id="name"
-                     type="text"
-                     required={true}
-                     maxLength={50}
-                     value={formData.name}
-                     placeholder={`Token Name`}
-                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+        <div className="w-48">
+          <Input type="text"
+                 label="Token Name"
+                 className="w-48"
+                 required={true}
+                 maxLength={50}
+                 value={formData.name}
+                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+
+          />
+        </div>
+        <div className="w-20">
+          <Input type="text"
+                 label="Symbol"
+                 className="w-20"
+                 required={true}
+                 maxLength={5}
+                 value={formData.symbol}
+                 onChange={(e) => setFormData({ ...formData, symbol: e.target.value })}
+
           />
         </div>
         <div className="w-32">
-          <TextInput id="symbol"
-                     type="text"
-                     maxLength={5}
-                     required={true}
-                     value={formData.symbol}
-                     placeholder={`Token Symbol`}
-                     onChange={(e) => setFormData({ ...formData, symbol: e.target.value })}
-          />
-        </div>
-        <div className="w-32">
-          <TextInput id="supply"
-                     type="number"
-                     min={0}
-                     maxLength={5}
-                     required={true}
-                     value={formData.supply}
-                     placeholder={`Total Supply`}
-                     onChange={(e) => setFormData({ ...formData, supply: e.target.value })}
+          <Input type="number"
+                 label="Supply"
+                 className="w-32"
+                 required={true}
+                 min={0}
+                 value={formData.supply}
+                 onChange={(e) => setFormData({ ...formData, supply: e.target.value })}
+
           />
         </div>
 
-        <Button disabled={isLoadingCreate || !deployWrite} type="Submit" gradientDuoTone="purpleToPink">
+        <Button disabled={isLoadingCreate || !deployWrite} type="Submit" variant="gradient">
           {isLoadingCreate && (
-            <span className="mr-2">
-              <Spinner size="sm" />
+            <span className="mr-2 align-bottom">
+              <Loader size={"sm"} />
             </span>
           )}
           Create Fungible Token

@@ -6,6 +6,7 @@ import { Feature } from '../components/Home/Feature';
 import { useAccount } from 'wagmi';
 import { useNavigate } from 'react-router-dom';
 import { ConnectKitButton } from 'connectkit';
+import { MdKeyboardArrowRight } from 'react-icons/md';
 
 const dashboardURL = "/community/dashboard";
 
@@ -63,7 +64,9 @@ export const Home = () => {
                   </li>
                   <li>
                     <ScrollLink to={"features"} smooth={true}>
-                      <span className=" px-6">All Features &raquo;</span>
+                      <span className=" px-6">All Features
+                      <MdKeyboardArrowRight className="text-lg align-bottom ml-1 inline-block" />
+                      </span>
                     </ScrollLink>
                   </li>
                 </ul>

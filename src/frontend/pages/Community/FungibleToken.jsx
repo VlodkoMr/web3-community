@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Button } from 'flowbite-react';
 import { InnerBlock, InnerTransparentBlock } from '../../assets/css/common.style';
 import { useAccount, useContractRead, useSigner } from 'wagmi';
-import { convertFromEther, FormatNumber, isContractAddress } from '../../utils/format';
-import { ethers } from 'ethers';
-import FungibleTokenABI from '../../contractsData/FungibleToken.json';
+import { convertFromEther, formatNumber, isContractAddress } from '../../utils/format';
 import { DeployFTContract } from '../../components/Community/DeployFTContract';
 import { useOutletContext } from 'react-router-dom';
 import NFTCollectionABI from '../../contractsData/NFTCollection.json';
+import { Button } from '@material-tailwind/react';
 
 export const FungibleToken = () => {
   const { data: signer } = useSigner();
@@ -107,8 +105,12 @@ export const FungibleToken = () => {
         <InnerBlock.Header className="flex justify-between">
           <span>Fungible Token</span>
           {isContractAddress(currentCommunity?.ftContract) && (
-            <Button size="xsm" color="light" onClick={pauseContract}>
-              <span className="text-sm px-2 font-medium text-red-500">Pause Contract</span>
+            <Button size="sm"
+                    color="red"
+                    variant="outlined"
+                    className={"px-3 py-0.5"}
+                    onClick={pauseContract}>
+              Pause Contract
             </Button>
           )}
         </InnerBlock.Header>
@@ -122,14 +124,14 @@ export const FungibleToken = () => {
                 </div>
                 <span className="text-sm font-normal text-slate-500">
                   <span className="font-medium mr-1">Total Supply:</span>
-                  <b className="ml-1">{FormatNumber(convertFromEther(totalSupply, 0))} {tokenSymbol}</b>
+                  <b className="ml-1">{formatNumber(convertFromEther(totalSupply, 0))} {tokenSymbol}</b>
                 </span>
               </div>
 
               <hr className="mb-6" />
               <div className="flex text-sm mb-6">
                 Wallet Balance: <b
-                className="ml-1">{FormatNumber(convertFromEther(myBalance, 0))} {tokenSymbol}</b>
+                className="ml-1">{formatNumber(convertFromEther(myBalance, 0))} {tokenSymbol}</b>
               </div>
 
               <div className="flex text-sm gap-3">

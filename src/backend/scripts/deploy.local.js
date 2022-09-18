@@ -12,23 +12,32 @@ async function main() {
   })
   await mainContract.deployed();
 
-  // Deploy factory contract
-  const FactoryContract = await hre.ethers.getContractFactory("FactoryContract");
-  const factoryContract = await hre.upgrades.deployProxy(FactoryContract, [mainContract.address], {
+  // Deploy NFT factory contract
+  const FactoryNFTContract = await hre.ethers.getContractFactory("FactoryNFTContract");
+  const factoryNFTContract = await hre.upgrades.deployProxy(FactoryNFTContract, [mainContract.address], {
     initializer: "initialize"
   })
-  await factoryContract.deployed();
+  await factoryNFTContract.deployed();
+
+  // Deploy FT factory contract
+  const FactoryFTContract = await hre.ethers.getContractFactory("FactoryFTContract");
+  const factoryFTContract = await hre.upgrades.deployProxy(FactoryFTContract, [mainContract.address], {
+    initializer: "initialize"
+  })
+  await factoryFTContract.deployed();
 
   // Update main contract - add factory address
   const MainContractInstance = await hre.ethers.getContractAt("MainContract", mainContract.address);
-  await MainContractInstance.updateFactoryContractAddress(factoryContract.address);
+  await MainContractInstance.updateFactoryContractsAddress(factoryNFTContract.address, factoryFTContract.address);
 
   console.log("MainContract address: ", mainContract.address);
-  console.log("FactoryContract address: ", factoryContract.address);
+  console.log("Factory NFTContract address: ", factoryNFTContract.address);
+  console.log("Factory FTContract address: ", factoryFTContract.address);
 
   // Save ABI & Address
   saveAllFrontendFiles(mainContract, "MainContract");
-  saveAllFrontendFiles(factoryContract, "FactoryContract");
+  saveAllFrontendFiles(factoryNFTContract, "FactoryNFTContract");
+  saveAllFrontendFiles(factoryFTContract, "FactoryFTContract");
 
   // Save user contracts ABI
   saveFrontendArtifact("NFTCollection");
