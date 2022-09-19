@@ -16,7 +16,6 @@ export const FungibleToken = () => {
   const [reloadCommunityList] = useOutletContext();
   const currentCommunity = useSelector(state => state.community.current);
   const [campaignPopupVisible, setCampaignPopupVisible] = useState(false);
-  const [myCampaigns, setMyCampaigns] = useState([]);
 
   const myFTContract = {
     addressOrName: currentCommunity?.ftContract,
@@ -44,15 +43,9 @@ export const FungibleToken = () => {
   const { data: distributionCampaigns, refetch: refetchDistributionCampaigns } = useContractRead({
     ...myFTContract,
     enabled: isContractAddress(currentCommunity?.ftContract),
-    functionName: "getCampaigns"
+    functionName: "getCampaigns",
+    select: (data) => data.map(camp => transformFTCampaign(camp))
   });
-
-  useEffect(() => {
-    if (distributionCampaigns) {
-      console.log('distributionCampaigns', distributionCampaigns)
-      setMyCampaigns(distributionCampaigns.map(camp => transformFTCampaign(camp)));
-    }
-  }, [distributionCampaigns]);
 
   const refetchCampaignsList = () => {
     refetchDistributionCampaigns().then(result => {
@@ -100,36 +93,33 @@ export const FungibleToken = () => {
               <div className="flex flex-row gap-12">
                 <div className="w-2/3">
                   <div className="flex justify-between">
-                    <h4 className="mb-1 mt-3 font-semibold">Distribution Campaigns</h4>
+                    <h4 className="mb-3 mt-1 font-semibold">Distribution Campaigns</h4>
                     <div className="-mt-3">
                       <Button onClick={() => setCampaignPopupVisible(true)}>
                         New Distribution Campaign
                       </Button>
                     </div>
-
                   </div>
-                  {myCampaigns.length > 0 ? myCampaigns.map(camp => (
-                    <OneFTDistribution key={camp.id} camp={camp} />
+                  {distributionCampaigns.length > 0 ? distributionCampaigns.map(campaign => (
+                    <OneFTDistribution key={campaign.id} campaign={campaign} tokenSymbol={tokenSymbol} />
                   )) : (
-                    <p>
+                    <InnerBlock className={"text-center text-gray-500"}>
                       *No Distribution Campaigns
-                    </p>
+                    </InnerBlock>
                   )}
                 </div>
                 <div className="w-1/3">
-                  <h4 className="mb-1 mt-3 font-semibold">My Wallet Balance</h4>
-                  <div className="bg-white rounded-xl shadow-gray-300/30 shadow-lg px-8 py-6">
+                  <h4 className="mb-3 mt-1 font-semibold">My Wallet Balance</h4>
+                  <div className="bg-white rounded-xl shadow-gray-300/30 shadow-lg px-8 py-6 text-center">
                     <b>{formatNumber(convertFromEther(myBalance, 0))} {tokenSymbol}</b>
-
                   </div>
 
-                  <h4 className="mt-6 mb-1 font-semibold">Tokenomic</h4>
-                  <InnerBlock className={"text-center"}>
-                    <small className="text-gray-500">
-                      Describe your <b>{tokenSymbol}</b> token usage and distribution details
-                    </small>
-                  </InnerBlock>
-
+                  {/*<h4 className="mt-6 mb-2 font-semibold">Tokenomic</h4>*/}
+                  {/*<InnerBlock className={"text-center"}>*/}
+                  {/*  <small className="text-gray-500">*/}
+                  {/*    Describe your <b>{tokenSymbol}</b> token usage and distribution details*/}
+                  {/*  </small>*/}
+                  {/*</InnerBlock>*/}
                 </div>
 
               </div>

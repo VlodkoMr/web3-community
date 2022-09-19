@@ -85,7 +85,7 @@ export const Community = () => {
             </Container>
           ) : (
             <Container>
-              <div className="text-center bg-white py-6 px-12 rounded-lg shadow w-1/2 mx-auto mt-6">
+              <div className="text-center bg-white py-6 px-12 rounded-lg shadow-lg shadow-gray-300/80 w-1/2 mx-auto mt-6">
                 <h2 className="text-2xl font-semibold text-gray-700">New Community</h2>
                 <p className="text-sm mb-10">Look like you don't have Community, let's create first one:</p>
 

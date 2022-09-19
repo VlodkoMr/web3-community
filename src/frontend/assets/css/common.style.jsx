@@ -15,7 +15,7 @@ export const InnerPageWrapper = styled.section.attrs({
   flex-col 
   min-h-screen 
   justify-between
-  bg-gray-50 
+  bg-[#f9fafc] 
   text-gray-600`,
 })``;
 

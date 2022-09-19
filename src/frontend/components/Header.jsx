@@ -29,9 +29,9 @@ export const Header = ({ isInner, reloadCommunityList }) => {
     });
   }, []);
 
-  useEffect(() => {
-    console.log('header currentCommunity', currentCommunity)
-  }, [currentCommunity]);
+  // useEffect(() => {
+  //   console.log('header currentCommunity', currentCommunity)
+  // }, [currentCommunity]);
 
   const closePopupCallback = () => {
     selectCommunity(localStorage.getItem("communityId"));

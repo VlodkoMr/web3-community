@@ -13,7 +13,7 @@ body {
 }
 
 .left-nav.active {
-    @apply shadow-gray-300/30 shadow-md bg-white font-semibold text-gray-800 hover:bg-white;
+    @apply shadow-gray-300/50 shadow-md bg-white font-semibold text-gray-800 hover:bg-white;
 }
 
 .left-nav.active > div {

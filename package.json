@@ -23,13 +23,13 @@
     "build:polygon": "cp src/frontend/contractsData/polygon_mainnet/* src/frontend/contractsData/ && npm run cleanup && NODE_ENV=mainnet.polygon npm run parcel:build"
   },
   "dependencies": {
+    "@ethersproject/bignumber": "^5.7.0",
     "@material-tailwind/react": "^1.2.4",
     "@openzeppelin/contracts": "^4.7.3",
     "@openzeppelin/contracts-upgradeable": "^4.7.3",
     "@openzeppelin/hardhat-upgrades": "^1.19.1",
     "@reduxjs/toolkit": "^1.8.5",
     "@tableland/sdk": "^3.1.2",
-    "big.js": "^6.2.1",
     "connectkit": "^0.0.2",
     "ethers": "^5.7.0",
     "parcel": "^2.6.2",

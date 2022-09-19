@@ -9,7 +9,7 @@ import { MdKeyboardArrowRight } from 'react-icons/md';
 import { Loader } from '../../Loader';
 import { Popup } from '../../Popup';
 import { convertToEther } from '../../../utils/format';
-import Big from 'big.js';
+import { BigNumber } from '@ethersproject/bignumber';
 
 export function DistributionCampaignFTPopup({
   popupVisible,
@@ -21,6 +21,7 @@ export function DistributionCampaignFTPopup({
 }) {
   const dispatch = useDispatch();
   const [isSubmitLoading, setIsSubmitLoading] = useState(false);
+  const [isApproveLoading, setIsApproveLoading] = useState(false);
   const [isTokensApproved, setIsTokensApproved] = useState(false);
   const [submitFormData, setSubmitFormData] = useState({});
   const [formData, setFormData] = useState({
@@ -29,7 +30,8 @@ export function DistributionCampaignFTPopup({
     dateTo: "",
     whitelisted: "",
     isLimit: false,
-    tokensAmount: ""
+    tokensAmount: "",
+    tokensPerUser: ""
   });
 
   // ------------ Approve token transfer ------------
@@ -63,6 +65,7 @@ export function DistributionCampaignFTPopup({
     },
     onSuccess: data => {
       if (data) {
+        console.log('setIsTokensApproved')
         setIsTokensApproved(true);
       }
     },
@@ -88,7 +91,7 @@ export function DistributionCampaignFTPopup({
     }
     const distributionType = parseInt(formData.distributionType);
     let whitelisted = [];
-    if (distributionType === 4) {
+    if (distributionType === 2) {
       formData.whitelisted.replace("\n", ",").split(",").map(address => {
         if (address.length > 3) {
           whitelisted.push(address.trim());
@@ -100,9 +103,10 @@ export function DistributionCampaignFTPopup({
       distributionType,
       dateFrom,
       dateTo,
-      whitelisted: whitelisted,
+      whitelisted,
       isLimit: formData.isLimit,
-      tokensAmount: convertToEther(formData.tokensAmount)
+      tokensAmount: convertToEther(formData.tokensAmount),
+      tokensPerUser: convertToEther(formData.tokensPerUser)
     });
   }
 
@@ -113,7 +117,7 @@ export function DistributionCampaignFTPopup({
     contractInterface: FungibleTokenABI.abi,
     enabled: isTokensApproved,
     functionName: 'createDistributionCampaign',
-    args: [submitFormData.distributionType, submitFormData.dateFrom, submitFormData.dateTo, submitFormData.whitelisted, submitFormData.isLimit, submitFormData.tokensAmount]
+    args: [submitFormData.distributionType, submitFormData.dateFrom, submitFormData.dateTo, submitFormData.whitelisted, submitFormData.isLimit, submitFormData.tokensAmount, submitFormData.tokensPerUser]
   });
 
   const { data: createData, write: createWrite } = useContractWrite({
@@ -121,6 +125,8 @@ export function DistributionCampaignFTPopup({
     onSuccess: ({ hash }) => {
       setPopupVisible(false);
       setIsSubmitLoading(false);
+      setIsTokensApproved(false);
+      setIsApproveLoading(false);
       resetForm();
 
       dispatch(addTransaction({
@@ -131,13 +137,15 @@ export function DistributionCampaignFTPopup({
     onError: ({ message }) => {
       console.log('onError message', message);
       setIsSubmitLoading(false);
+      setIsApproveLoading(false);
+      setIsTokensApproved(false);
     },
   });
 
   useWaitForTransaction({
     hash: createData?.hash,
     onError: error => {
-      console.log('is err', error)
+      console.log('is err', error);
     },
     onSuccess: data => {
       if (data) {
@@ -151,8 +159,11 @@ export function DistributionCampaignFTPopup({
   // call contract write when all is ready
   useEffect(() => {
     // submit data if we receive json result URL
-    if (approveWrite && submitFormData?.distributionType > 0 && submitFormData.tokensAmount > 0) {
-      approveWrite();
+    if (approveWrite && submitFormData?.distributionType > 0 && submitFormData.tokensPerUser > 0) {
+      if (!isApproveLoading) {
+        setIsApproveLoading(true);
+        approveWrite();
+      }
     }
   }, [approveWrite]);
 
@@ -160,7 +171,11 @@ export function DistributionCampaignFTPopup({
     if (createWrite && isTokensApproved) {
       createWrite();
     }
-  }, [createWrite]);
+  }, [createWrite, isTokensApproved]);
+
+  useEffect(() => {
+    console.log('errorCreate', errorCreate)
+  }, [errorCreate]);
 
   const resetForm = () => {
     setSubmitFormData({});
@@ -170,7 +185,8 @@ export function DistributionCampaignFTPopup({
       dateTo: "",
       whitelisted: "",
       isLimit: false,
-      tokensAmount: ""
+      tokensAmount: "",
+      tokensPerUser: ""
     });
   }
 
@@ -181,10 +197,25 @@ export function DistributionCampaignFTPopup({
     if (parseInt(formData.tokensAmount) < 1) {
       return "Please provide amount of tokens for Campaign";
     }
-    if (Big(myBalance).lt(Big(convertToEther(formData.tokensAmount)))) {
+    if (parseInt(formData.tokensPerUser) < 1) {
+      return "Please provide amount of tokens per claim (one user)";
+    }
+    if (parseInt(formData.tokensPerUser) > parseInt(formData.tokensAmount)) {
+      return "Please provide correct amount for token distribution";
+    }
+    if (BigNumber.from(myBalance).lt(BigNumber.from(convertToEther(formData.tokensAmount)))) {
       return "Not enough tokens balance in your wallet";
     }
     return false;
+  }
+
+  const totalUsersClaim = () => {
+    const tokensPerUser = parseInt(formData.tokensPerUser || "0");
+    const tokensAmount = parseInt(formData.tokensAmount || "0");
+    if (tokensPerUser > 0) {
+      return parseInt(tokensAmount / tokensPerUser);
+    }
+    return 0;
   }
 
   return (
@@ -207,6 +238,21 @@ export function DistributionCampaignFTPopup({
                      value={formData.tokensAmount}
                      onChange={(e) => setFormData({ ...formData, tokensAmount: e.target.value })}
               />
+            </div>
+            <div className="flex flex-row gap-4 mt-4">
+              <div className="flex-1">
+                <Input type="number"
+                       label={`${tokenSymbol} per user*`}
+                       className="flex-1"
+                       required={true}
+                       maxLength={50}
+                       value={formData.tokensPerUser}
+                       onChange={(e) => setFormData({ ...formData, tokensPerUser: e.target.value })}
+                />
+              </div>
+              <div className={`flex-1  ${totalUsersClaim() > 100000 ? "" : "pt-2"} text-sm`}>
+                <b>Total Users:</b> {totalUsersClaim()}
+              </div>
             </div>
             <div className="flex flex-row gap-4 mt-4">
               <div className="flex-1 mb-4">

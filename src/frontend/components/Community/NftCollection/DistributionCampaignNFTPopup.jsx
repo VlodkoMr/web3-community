@@ -86,7 +86,7 @@ export function DistributionCampaignNFTPopup({
     }
     const distributionType = parseInt(formData.distributionType);
     let whitelisted = [];
-    if (distributionType === 4) {
+    if (distributionType === 2) {
       formData.whitelisted.replace("\n", ",").split(",").map(address => {
         if (address.length > 3) {
           whitelisted.push(address.trim());

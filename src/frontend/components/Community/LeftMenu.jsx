@@ -13,11 +13,10 @@ export function DashboardLeftMenu() {
 
   const MenuItem = ({ children, title, link }) => (
     <NavLink to={link} className="left-nav flex items-center text-sm py-4 px-3 h-14 overflow-hidden text-ellipsis whitespace-nowrap
-      hover:text-gray-900 hover:bg-gray-100
-      transition duration-300 ease-in-out rounded-lg"
+      hover:text-gray-900 transition duration-300 ease-in-out rounded-lg"
     >
       <div className="mr-3 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center
-      stroke-0 text-center xl:p-2.5 shadow-gray-300/40 shadow-md">
+      stroke-0 text-center xl:p-2.5 shadow-gray-300/50 shadow-md">
         {children}
       </div>
       <span>{title}</span>

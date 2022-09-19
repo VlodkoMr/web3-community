@@ -37,3 +37,8 @@ export const formatPrice = (price) => {
     return convertFromEther(price, 1);
   }
 }
+
+export const timestampToDate = (timestamp) => {
+  const date = new Date(timestamp);
+  return new Intl.DateTimeFormat().format(date);
+}

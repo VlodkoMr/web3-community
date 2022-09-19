@@ -16,7 +16,6 @@ import { Button } from '@material-tailwind/react';
 export const NftCollection = () => {
   const currentCommunity = useSelector(state => state.community.current);
   const [reloadCommunityList] = useOutletContext();
-  const [userCollections, setUserCollections] = useState([]);
   const [createNFTPopupVisible, setCreateNFTPopupVisible] = useState(false);
 
   const [mintNFTCollection, setMintNFTCollection] = useState();
@@ -33,11 +32,11 @@ export const NftCollection = () => {
     ...myNFTContract,
     enabled: isContractAddress(currentCommunity?.nftContract),
     functionName: "getCollections",
+    select: data => data.map(collection => transformCollectionNFT(collection))
   });
-  const { data: totalCollections } = useContractRead({
+  const { data: totalCollections, refetch: refetchTotalCollections } = useContractRead({
     ...myNFTContract,
     functionName: "collectionsTotal",
-    watch: true
   });
   const { data: tokenName } = useContractRead({
     ...myNFTContract,
@@ -51,10 +50,9 @@ export const NftCollection = () => {
   }
 
   const reloadCollectionItems = () => {
-    refetchCollectionItems().then(result => {
-      const transformedCollection = result.data.map(collection => transformCollectionNFT(collection));
-      setUserCollections(transformedCollection);
-    });
+    console.log('refetchTotalCollections')
+    refetchCollectionItems();
+    refetchTotalCollections();
   }
 
   const handleMint = (nft) => {
@@ -65,13 +63,6 @@ export const NftCollection = () => {
     setCreateCampaign(nft);
     setCampaignPopupVisible(true);
   }
-
-  useEffect(() => {
-    if (collectionItems) {
-      const transformedCollection = collectionItems.map(collection => transformCollectionNFT(collection));
-      setUserCollections(transformedCollection);
-    }
-  }, [collectionItems])
 
   return (
     <div>
@@ -130,7 +121,7 @@ export const NftCollection = () => {
 
       {isContractAddress(currentCommunity.nftContract) && (
         <>
-          {userCollections && userCollections.length > 0 && userCollections.map((nft, index) => (
+          {collectionItems && collectionItems.length > 0 && collectionItems.map((nft, index) => (
             <OneNFTSeries
               key={index}
               nft={nft}

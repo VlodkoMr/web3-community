@@ -57,8 +57,9 @@ export const transformFTCampaign = (item) => {
     dateEnd: parseInt(item.dateEnd),
     eventCode: parseInt(item.eventCode),
     whitelist: item.whitelist,
-    tokensTotal: parseInt(item.tokensTotal),
-    tokensMinted: parseInt(item.tokensMinted),
+    tokensTotal: item.tokensTotal,
+    tokensMinted: item.tokensMinted,
+    tokensPerUser: item.tokensPerUser,
     isProtected: item.isProtected
   }
 };
