@@ -17,8 +17,7 @@ export function DistributionCampaignNFTPopup({
   collection
 }) {
   const dispatch = useDispatch();
-  const [isReady, setIsReady] = useState(false);
-  const [isSubmitLoading, setIsSubmitLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [submitFormData, setSubmitFormData] = useState({});
   const [formData, setFormData] = useState({
     distributionType: "",
@@ -33,15 +32,13 @@ export function DistributionCampaignNFTPopup({
     contractInterface: NFTCollectionABI.abi,
     enabled: submitFormData?.distributionType > 0,
     functionName: 'createDistributionCampaign',
-    args: [collection?.id, submitFormData.distributionType, submitFormData.dateFrom, submitFormData.dateTo, submitFormData.whitelisted, submitFormData.isLimit]
+    args: [collection?.id, submitFormData.distributionType, submitFormData.dateFrom, submitFormData.dateTo, submitFormData.whitelisted || [], submitFormData.isLimit]
   });
 
-  const { data: createData, write: createWrite } = useContractWrite({
+  const { data: createData, write: createWrite, status: createStatus } = useContractWrite({
     ...configCreate,
     onSuccess: ({ hash }) => {
       setPopupVisible(false);
-      setIsSubmitLoading(false);
-      resetForm();
 
       dispatch(addTransaction({
         hash: hash,
@@ -50,7 +47,8 @@ export function DistributionCampaignNFTPopup({
     },
     onError: ({ message }) => {
       console.log('onError message', message);
-      setIsSubmitLoading(false);
+      setSubmitFormData({});
+      setIsLoading(false);
     },
   });
 
@@ -74,7 +72,7 @@ export function DistributionCampaignNFTPopup({
       return;
     }
 
-    setIsSubmitLoading(true);
+    setIsLoading(true);
 
     let dateFrom = 0;
     let dateTo = 0;
@@ -94,8 +92,6 @@ export function DistributionCampaignNFTPopup({
       });
     }
 
-    console.log('whitelisted', whitelisted)
-
     setSubmitFormData({
       distributionType,
       dateFrom,
@@ -107,18 +103,10 @@ export function DistributionCampaignNFTPopup({
 
   // call contract write when all is ready
   useEffect(() => {
-    console.log('submitFormData', submitFormData)
-    // submit data if we receive json result URL
-    if (createWrite && submitFormData?.distributionType > 0) {
+    if (createWrite && createStatus !== 'loading') {
       createWrite();
     }
   }, [createWrite]);
-
-  useEffect(() => {
-    if (collection) {
-      setIsReady(true);
-    }
-  }, [collection]);
 
   const resetForm = () => {
     setSubmitFormData({});
@@ -128,8 +116,7 @@ export function DistributionCampaignNFTPopup({
       dateTo: "",
       whitelisted: "",
       isLimit: false
-    })
-    ;
+    });
   }
 
   useEffect(() => {
@@ -137,6 +124,13 @@ export function DistributionCampaignNFTPopup({
       console.log('errorCreate', errorCreate);
     }
   }, [errorCreate]);
+
+  useEffect(() => {
+    if (!popupVisible) {
+      resetForm();
+      setIsLoading(false);
+    }
+  }, [popupVisible]);
 
   const isFormErrors = () => {
     if (!parseInt(formData.distributionType)) {
@@ -147,11 +141,11 @@ export function DistributionCampaignNFTPopup({
 
   return (
     <>
-      <Popup title="Create Distribution Campaign"
-             isVisible={popupVisible}
-             size={"lg"}
-             setIsVisible={setPopupVisible}>
-        {isReady && (
+      {collection && (
+        <Popup title="Create Distribution Campaign"
+               isVisible={popupVisible}
+               size={"lg"}
+               setIsVisible={setPopupVisible}>
           <form className="flex flex-row gap-8 relative" onSubmit={handleCreateCampaign}>
             <div className="w-1/3">
               <img className="mt-2 h-48 w-48 bg-gray-50 rounded-lg object-cover mx-auto"
@@ -238,7 +232,7 @@ export function DistributionCampaignNFTPopup({
               </div>
             </div>
 
-            {isSubmitLoading && (
+            {isLoading && (
               <div className="bg-white/80 absolute top-[-20px] bottom-0 right-0 left-0 z-10">
                 <div className={"w-12 mx-auto mt-10"}>
                   <Loader />
@@ -246,8 +240,8 @@ export function DistributionCampaignNFTPopup({
               </div>
             )}
           </form>
-        )}
-      </Popup>
+        </Popup>
+      )}
     </>
   );
 }

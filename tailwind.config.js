@@ -33,8 +33,7 @@ module.exports = withMT({
         testimonial: "0px 60px 120px -20px #EBEFFD",
       },
       zIndex: {
-        '60': '60',
-        '70': '70',
+        '100': '100',
       },
       fontFamily: {
         sans: ["Inter", "sans-serif"],

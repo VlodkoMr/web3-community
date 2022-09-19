@@ -34,8 +34,6 @@ export const transformCollectionNFT = (item) => {
     }
   }
 
-  console.log('distribution', distribution)
-
   return {
     id: parseInt(item.id),
     title: item.title,

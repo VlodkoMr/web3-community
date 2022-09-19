@@ -3,15 +3,16 @@ import { useSelector } from "react-redux";
 import { InnerBlock, InnerTransparentBlock } from '../../assets/css/common.style';
 import { useContractRead } from 'wagmi';
 import { isContractAddress } from '../../utils/format';
-import { DeployNFTContract } from '../../components/Community/DeployNFTContract';
+import { DeployNFTContract } from '../../components/Community/NftCollection/DeployNFTContract';
 import { CreateNFTSeriesPopup } from '../../components/Community/NftCollection/CreateNFTSeriesPopup';
 import { useOutletContext } from "react-router-dom";
-import NFTCollectionABI from '../../contractsData/NFTCollection.json';
 import { transformCollectionNFT } from '../../utils/transform';
 import { OneNFTSeries } from '../../components/Community/NftCollection/OneNFTSeries';
 import { MintNFTPopup } from '../../components/Community/NftCollection/MintNFTPopup';
 import { DistributionCampaignNFTPopup } from '../../components/Community/NftCollection/DistributionCampaignNFTPopup';
 import { Button } from '@material-tailwind/react';
+import { PauseUnpausePopup } from '../../components/Community/NftCollection/PauseUnpausePopup';
+import NFTCollectionABI from '../../contractsData/NFTCollection.json';
 
 export const NftCollection = () => {
   const currentCommunity = useSelector(state => state.community.current);
@@ -43,14 +44,7 @@ export const NftCollection = () => {
     functionName: "name"
   });
 
-  const pauseContract = () => {
-    if (confirm("Paused contract don't allow minting or transfer NFT. Are you sure?")) {
-      // pause
-    }
-  }
-
   const reloadCollectionItems = () => {
-    console.log('refetchTotalCollections')
     refetchCollectionItems();
     refetchTotalCollections();
   }
@@ -70,13 +64,10 @@ export const NftCollection = () => {
         <InnerBlock.Header className="flex justify-between">
           <span>NFT Collection</span>
           {isContractAddress(currentCommunity?.nftContract) && (
-            <Button size="sm"
-                    color="red"
-                    variant="outlined"
-                    className={"px-3 py-0.5"}
-                    onClick={pauseContract}>
-              Pause Contract
-            </Button>
+            <PauseUnpausePopup contractAddress={currentCommunity.nftContract}
+                               contractABI={NFTCollectionABI}
+                               handleSuccess={reloadCommunityList}
+            />
           )}
         </InnerBlock.Header>
         <div>
@@ -124,9 +115,11 @@ export const NftCollection = () => {
           {collectionItems && collectionItems.length > 0 && collectionItems.map((nft, index) => (
             <OneNFTSeries
               key={index}
+              currentCommunity={currentCommunity}
               nft={nft}
               handleMint={() => handleMint(nft)}
               handleCreateCampaign={() => handleCreateCampaign(nft)}
+              handleReloadCampaigns={() => refetchCollectionItems()}
             />
           ))}
         </>

@@ -1,35 +1,33 @@
 import React, { useEffect, useState } from "react";
 import { useAccount, useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
-import { useDebounce } from 'use-debounce';
 import NFTCollectionABI from '../../../contractsData/NFTCollection.json';
 import { useDispatch } from 'react-redux';
 import { addTransaction } from '../../../store/transactionSlice';
 import { ImInfinite } from 'react-icons/im';
 import { Loader } from '../../Loader';
-import { Button, Input, Dialog, DialogBody, DialogHeader } from '@material-tailwind/react';
+import { Button, Input } from '@material-tailwind/react';
 import { Popup } from '../../Popup';
 import { MdKeyboardArrowRight } from 'react-icons/md';
 
 export function MintNFTPopup({ popupVisible, setPopupVisible, handleSuccess, currentCommunity, collection }) {
   const dispatch = useDispatch();
   const { address } = useAccount();
-  const [isReady, setIsReady] = useState(false);
   const [isSubmitLoading, setIsSubmitLoading] = useState(false);
+  const [submitFormData, setSubmitFormData] = useState({});
   const [formData, setFormData] = useState({
     account: "",
     amount: ""
   });
 
-  const [debouncedFormData] = useDebounce(formData, 300);
   const { config: configMint, error: errorMint } = usePrepareContractWrite({
     addressOrName: currentCommunity?.nftContract,
     contractInterface: NFTCollectionABI.abi,
-    enabled: debouncedFormData.account.length > 0 && parseInt(debouncedFormData.amount) > 0,
+    enabled: submitFormData.account?.length > 0 && parseInt(submitFormData.amount) > 0,
     functionName: 'mint',
-    args: [formData.account, collection?.id, formData.amount]
+    args: [submitFormData.account, collection?.id, submitFormData.amount]
   });
 
-  const { data: mintData, write: mintWrite } = useContractWrite({
+  const { data: mintData, write: mintWrite, status: mintStatus } = useContractWrite({
     ...configMint,
     onSuccess: ({ hash }) => {
       setPopupVisible(false);
@@ -44,13 +42,15 @@ export function MintNFTPopup({ popupVisible, setPopupVisible, handleSuccess, cur
     onError: ({ message }) => {
       console.log('onError message', message);
       setIsSubmitLoading(false);
+      setSubmitFormData({});
     },
   });
 
   useWaitForTransaction({
     hash: mintData?.hash,
     onError: error => {
-      console.log('is err', error)
+      console.log('is err', error);
+      setSubmitFormData({});
     },
     onSuccess: data => {
       if (data) {
@@ -68,10 +68,11 @@ export function MintNFTPopup({ popupVisible, setPopupVisible, handleSuccess, cur
     }
 
     setIsSubmitLoading(true);
-    mintWrite();
+    setSubmitFormData({ ...formData });
   }
 
   const resetForm = () => {
+    setSubmitFormData({});
     setFormData({
       account: "",
       amount: ""
@@ -79,20 +80,16 @@ export function MintNFTPopup({ popupVisible, setPopupVisible, handleSuccess, cur
   }
 
   useEffect(() => {
-    if (collection) {
-      setIsReady(true);
+    if (mintWrite && mintStatus !== 'loading') {
+      mintWrite();
     }
-  }, [collection]);
+  }, [mintWrite]);
 
   useEffect(() => {
     if (errorMint) {
       console.log('errorUpload', errorMint);
     }
   }, [errorMint]);
-
-  // useEffect(() => {
-  //   setIsFormDataValid(!isFormErrors());
-  // }, [formData]);
 
   const isFormErrors = () => {
     if (formData.account.length < 1) {
@@ -115,10 +112,10 @@ export function MintNFTPopup({ popupVisible, setPopupVisible, handleSuccess, cur
 
   return (
     <>
-      <Popup isVisible={popupVisible}
-             setIsVisible={setPopupVisible}
-             title="Mint NFT">
-        {isReady && (
+      {collection && (
+        <Popup isVisible={popupVisible}
+               setIsVisible={setPopupVisible}
+               title="Mint NFT">
           <form className="flex flex-row gap-8 relative" onSubmit={handleMintNFT}>
             <div className="w-36">
               <img className="mt-2 h-36 w-36 bg-gray-50 rounded-lg object-cover" src={collection.mediaUri} alt="" />
@@ -161,7 +158,7 @@ export function MintNFTPopup({ popupVisible, setPopupVisible, handleSuccess, cur
                 <div className="text-gray-500 text-sm pt-2" />
                 <Button type="Submit"
                         variant="gradient"
-                        disabled={!mintWrite}>
+                        disabled={isFormErrors()}>
                   Mint NFT
                   <MdKeyboardArrowRight className="text-lg align-bottom ml-1 inline-block" />
                 </Button>
@@ -176,8 +173,8 @@ export function MintNFTPopup({ popupVisible, setPopupVisible, handleSuccess, cur
               </div>
             )}
           </form>
-        )}
-      </Popup>
+        </Popup>
+      )}
     </>
   );
 }

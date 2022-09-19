@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { convertFromEther, convertToEther, formatNumber, timestampToDate } from '../../../utils/format';
+import { convertFromEther, formatNumber, timestampToDate } from '../../../utils/format';
 import { InnerBlock } from '../../../assets/css/common.style';
 import { distributionCampaignsNFT } from '../../../utils/settings';
-import { BigNumber } from '@ethersproject/bignumber';
+import { Button } from '@material-tailwind/react';
 
 export function OneFTDistribution({ campaign, tokenSymbol }) {
   const [campaignDetails, setCampaignDetails] = useState();
 
   useEffect(() => {
-    console.log('campaign', campaign)
     distributionCampaignsNFT.map(campSettings => {
-      if (parseInt(campSettings.id) === campaign.id) {
+      if (parseInt(campSettings.id) === campaign.distType) {
         setCampaignDetails(campSettings)
       }
     });
@@ -23,7 +22,7 @@ export function OneFTDistribution({ campaign, tokenSymbol }) {
 
   return (
     <InnerBlock className="mb-3">
-      <div className="flex-auto">
+      <div className="flex-auto text-sm">
         <h2 className="text-lg font-semibold text-gray-800">
           {formatNumber(convertFromEther(campaign.tokensTotal, 0))} {tokenSymbol} for {campaignDetails?.title}
         </h2>
@@ -40,28 +39,31 @@ export function OneFTDistribution({ campaign, tokenSymbol }) {
             </span>
           )}
         </div>
+
+        <div>
+          {tokenSymbol} per User: <b>{formatNumber(convertFromEther(campaign.tokensPerUser))}</b>
+        </div>
+
         {campaign.eventCode > 0 && (
           <div>
             Event Code: <b>{campaign.eventCode}</b>
           </div>
         )}
 
-        <div className={campaign.isProtected ? "text-gray-500" : "text-orange-500 font-medium"}>
-          {campaign.isProtected ? "Not protected" : "Protected"} by World ID
+        <div className={campaign.isProtected ? "font-medium" : "opacity-60"}>
+          {campaign.isProtected ? "Protected" : "Not protected"} by Proof of Personhood
         </div>
-        <div className={"absolute right-6 bottom-6 text-blue-500 text-sm"}>
-          Whitelisted Addresses
+
+        {campaign.whitelist.length > 0 && (
+          <span className="absolute right-6 bottom-6 text-blue-500 cursor-pointer underline">whitelisted addresses</span>
+        )}
+
+        <div className={'mt-4'}>
+          <Button color={'red'} variant={'outlined'} size={'sm'}>
+            Cancel Distribution
+          </Button>
         </div>
       </div>
-      {/*<div>distType: {campaign.distType}</div>*/}
-      {/*<div>{campaign.dateStart}</div>*/}
-      {/*<div>{campaign.dateEnd}</div>*/}
-      {/*<div>{campaign.eventCode}</div>*/}
-      {/*<div>whitelist: {campaign.whitelist}</div>*/}
-      {/*<div>{campaign.tokensTotal}</div>*/}
-      {/*<div>{campaign.tokensMinted}</div>*/}
-      {/*<div>{campaign.tokensPerUser}</div>*/}
-      {/*<div>{campaign.isProtected ? "+" : "-"}</div>*/}
     </InnerBlock>
   );
 }

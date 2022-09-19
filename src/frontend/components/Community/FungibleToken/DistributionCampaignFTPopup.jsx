@@ -20,9 +20,8 @@ export function DistributionCampaignFTPopup({
   myBalance,
 }) {
   const dispatch = useDispatch();
-  const [isSubmitLoading, setIsSubmitLoading] = useState(false);
-  const [isApproveLoading, setIsApproveLoading] = useState(false);
-  const [isTokensApproved, setIsTokensApproved] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [approveFormData, setApproveFormData] = useState({});
   const [submitFormData, setSubmitFormData] = useState({});
   const [formData, setFormData] = useState({
     distributionType: "",
@@ -39,12 +38,12 @@ export function DistributionCampaignFTPopup({
   const { config: configApprove, error: errorApprove } = usePrepareContractWrite({
     addressOrName: currentCommunity?.ftContract,
     contractInterface: FungibleTokenABI.abi,
-    enabled: submitFormData?.distributionType > 0 && submitFormData.tokensAmount > 0,
+    enabled: approveFormData?.distributionType > 0 && approveFormData.tokensAmount > 0,
     functionName: 'approve',
-    args: [currentCommunity?.ftContract, submitFormData.tokensAmount]
+    args: [currentCommunity?.ftContract, approveFormData.tokensAmount]
   });
 
-  const { data: approveData, write: approveWrite } = useContractWrite({
+  const { data: approveData, write: approveWrite, status: approveStatus } = useContractWrite({
     ...configApprove,
     onSuccess: ({ hash }) => {
       dispatch(addTransaction({
@@ -53,23 +52,85 @@ export function DistributionCampaignFTPopup({
       }));
     },
     onError: ({ message }) => {
+      setIsLoading(false);
+      setApproveFormData({});
       console.log('onError message', message);
-      setIsSubmitLoading(false);
     },
   });
 
   useWaitForTransaction({
     hash: approveData?.hash,
     onError: error => {
-      console.log('is err', error)
+      setIsLoading(false);
+      setApproveFormData({});
+      console.log('is err', error);
     },
     onSuccess: data => {
       if (data) {
-        console.log('setIsTokensApproved')
-        setIsTokensApproved(true);
+        setSubmitFormData({ ...approveFormData });
+        setApproveFormData({});
       }
     },
   });
+
+  // call contract write when all is ready
+  useEffect(() => {
+    if (approveWrite && approveStatus !== 'loading') {
+      approveWrite();
+    }
+  }, [approveWrite]);
+
+  // ------------ Create Distribution Campaign ------------
+
+  const { config: configCreate, error: errorCreate } = usePrepareContractWrite({
+    addressOrName: currentCommunity?.ftContract,
+    contractInterface: FungibleTokenABI.abi,
+    enabled: submitFormData?.distributionType > 0 && submitFormData?.tokensAmount > 0,
+    functionName: 'createDistributionCampaign',
+    args: [submitFormData.distributionType, submitFormData.dateFrom, submitFormData.dateTo, submitFormData.whitelisted || [], submitFormData.isLimit, submitFormData.tokensAmount, submitFormData.tokensPerUser]
+  });
+
+  const { data: createData, write: createWrite, status: createStatus } = useContractWrite({
+    ...configCreate,
+    onSuccess: ({ hash }) => {
+      setPopupVisible(false);
+      setSubmitFormData({});
+      resetForm();
+
+      dispatch(addTransaction({
+        hash: hash,
+        description: `Create Distribution Campaign`
+      }));
+    },
+    onError: ({ message }) => {
+      setIsLoading(false);
+      setSubmitFormData({});
+      console.log('onError message', message);
+    },
+  });
+
+  useWaitForTransaction({
+    hash: createData?.hash,
+    onError: error => {
+      console.log('is err', error);
+      setIsLoading(false);
+      setSubmitFormData({});
+    },
+    onSuccess: data => {
+      setIsLoading(false);
+      if (data) {
+        handleSuccess?.();
+      }
+    },
+  });
+
+  useEffect(() => {
+    if (createWrite && createStatus !== 'loading') {
+      createWrite();
+    }
+  }, [createWrite]);
+
+  // ------------ Actions ------------
 
   const handleCreateCampaign = (e) => {
     e.preventDefault();
@@ -79,7 +140,7 @@ export function DistributionCampaignFTPopup({
       return;
     }
 
-    setIsSubmitLoading(true);
+    setIsLoading(true);
 
     let dateFrom = 0;
     let dateTo = 0;
@@ -99,7 +160,7 @@ export function DistributionCampaignFTPopup({
       });
     }
 
-    setSubmitFormData({
+    setApproveFormData({
       distributionType,
       dateFrom,
       dateTo,
@@ -110,75 +171,9 @@ export function DistributionCampaignFTPopup({
     });
   }
 
-  // ------------ Create Distribution Campaign ------------
-
-  const { config: configCreate, error: errorCreate } = usePrepareContractWrite({
-    addressOrName: currentCommunity?.ftContract,
-    contractInterface: FungibleTokenABI.abi,
-    enabled: isTokensApproved,
-    functionName: 'createDistributionCampaign',
-    args: [submitFormData.distributionType, submitFormData.dateFrom, submitFormData.dateTo, submitFormData.whitelisted, submitFormData.isLimit, submitFormData.tokensAmount, submitFormData.tokensPerUser]
-  });
-
-  const { data: createData, write: createWrite } = useContractWrite({
-    ...configCreate,
-    onSuccess: ({ hash }) => {
-      setPopupVisible(false);
-      setIsSubmitLoading(false);
-      setIsTokensApproved(false);
-      setIsApproveLoading(false);
-      resetForm();
-
-      dispatch(addTransaction({
-        hash: hash,
-        description: `Create Distribution Campaign`
-      }));
-    },
-    onError: ({ message }) => {
-      console.log('onError message', message);
-      setIsSubmitLoading(false);
-      setIsApproveLoading(false);
-      setIsTokensApproved(false);
-    },
-  });
-
-  useWaitForTransaction({
-    hash: createData?.hash,
-    onError: error => {
-      console.log('is err', error);
-    },
-    onSuccess: data => {
-      if (data) {
-        handleSuccess?.();
-      }
-    },
-  });
-
-  // ------------ Actions ------------
-
-  // call contract write when all is ready
-  useEffect(() => {
-    // submit data if we receive json result URL
-    if (approveWrite && submitFormData?.distributionType > 0 && submitFormData.tokensPerUser > 0) {
-      if (!isApproveLoading) {
-        setIsApproveLoading(true);
-        approveWrite();
-      }
-    }
-  }, [approveWrite]);
-
-  useEffect(() => {
-    if (createWrite && isTokensApproved) {
-      createWrite();
-    }
-  }, [createWrite, isTokensApproved]);
-
-  useEffect(() => {
-    console.log('errorCreate', errorCreate)
-  }, [errorCreate]);
-
   const resetForm = () => {
     setSubmitFormData({});
+    setApproveFormData({});
     setFormData({
       distributionType: "",
       dateFrom: "",
@@ -332,7 +327,7 @@ export function DistributionCampaignFTPopup({
             </div>
           </div>
 
-          {isSubmitLoading && (
+          {isLoading && (
             <div className="bg-white/80 absolute top-[-20px] bottom-0 right-0 left-0 z-10">
               <div className={"w-12 mx-auto mt-10"}>
                 <Loader />

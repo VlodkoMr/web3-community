@@ -7,17 +7,16 @@ import { MdKeyboardArrowRight, MdOutlineAddCircleOutline, MdOutlineCancel } from
 import { convertToEther } from '../../../utils/format';
 import { getTokenName } from '../../../utils/settings';
 import { Loader } from '../../Loader';
-import { Button, Dialog, DialogBody, DialogHeader, Textarea, Input } from '@material-tailwind/react';
-import NFTCollectionABI from '../../../contractsData/NFTCollection.json';
+import { Button, Textarea, Input } from '@material-tailwind/react';
 import { Popup } from '../../Popup';
-import { BsArrowRightShort } from 'react-icons/bs';
 import { MdKeyboardArrowLeft } from 'react-icons/all';
+import NFTCollectionABI from '../../../contractsData/NFTCollection.json';
 
 export function CreateNFTSeriesPopup({ popupVisible, setPopupVisible, handleSuccess }) {
   const dispatch = useDispatch();
   const { chain } = useNetwork();
   const currentCommunity = useSelector(state => state.community.current);
-  const [isSubmitLoading, setIsSubmitLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     name: "",
@@ -44,11 +43,11 @@ export function CreateNFTSeriesPopup({ popupVisible, setPopupVisible, handleSucc
     ]]
   });
 
-  const { data: uploadData, write: uploadWrite } = useContractWrite({
+  const { data: uploadData, write: uploadWrite, status: uploadStatus } = useContractWrite({
     ...configUpload,
     onSuccess: ({ hash }) => {
       setPopupVisible(false);
-      setIsSubmitLoading(false);
+      setIsLoading(false);
       resetForm();
 
       dispatch(addTransaction({
@@ -58,7 +57,7 @@ export function CreateNFTSeriesPopup({ popupVisible, setPopupVisible, handleSucc
     },
     onError: ({ message }) => {
       console.log('onError message', message);
-      setIsSubmitLoading(false);
+      setIsLoading(false);
     },
   });
 
@@ -82,7 +81,7 @@ export function CreateNFTSeriesPopup({ popupVisible, setPopupVisible, handleSucc
       return;
     }
 
-    setIsSubmitLoading(true);
+    setIsLoading(true);
     uploadNFTtoIPFS(formData).then((metadata) => {
       const royaltyAddress = formData.royaltyAddress.length > 1 ? formData.royaltyAddress : "0x0000000000000000000000000000000000000000";
       const royaltyPct = parseInt(formData.royaltyPct) > 0 ? parseInt(formData.royaltyPct) : 0;
@@ -98,7 +97,7 @@ export function CreateNFTSeriesPopup({ popupVisible, setPopupVisible, handleSucc
       });
     }).catch(e => {
       alert(e);
-      setIsSubmitLoading(false);
+      setIsLoading(false);
     });
   }
 
@@ -128,7 +127,7 @@ export function CreateNFTSeriesPopup({ popupVisible, setPopupVisible, handleSucc
   // call contract write when all is ready
   useEffect(() => {
     // submit data if we receive json result URL
-    if (uploadWrite && submitFormData?.jsonFileURL.length > 0) {
+    if (uploadWrite && uploadStatus !== 'loading') {
       uploadWrite();
     }
   }, [uploadWrite]);
@@ -347,7 +346,7 @@ export function CreateNFTSeriesPopup({ popupVisible, setPopupVisible, handleSucc
             </div>
           )}
 
-          {isSubmitLoading && (
+          {isLoading && (
             <div className="bg-white/80 absolute top-[-20px] bottom-0 right-0 left-0 z-10">
               <div className={"w-12 mx-auto mt-10"}>
                 <Loader />

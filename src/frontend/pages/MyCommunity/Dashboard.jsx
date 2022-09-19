@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { InnerBlock, InnerTransparentBlock } from '../../assets/css/common.style';
 import { isContractAddress } from '../../utils/format';
 import { Button } from '@material-tailwind/react';
-import { DeployNFTContract } from '../../components/Community/DeployNFTContract';
+import { DeployNFTContract } from '../../components/Community/NftCollection/DeployNFTContract';
 
 export const Dashboard = () => {
   const dispatch = useDispatch();

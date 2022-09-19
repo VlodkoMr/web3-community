@@ -90,7 +90,7 @@ export const InnerBlock = styled.section.attrs({
   break-words 
   bg-white 
   rounded-xl 
-  shadow-gray-300/30 
+  shadow-gray-300/50 
   shadow-lg 
   px-8 
   py-6`,

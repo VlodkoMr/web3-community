@@ -1,13 +1,55 @@
 import React, { useEffect, useState } from "react";
 import { shortAddress } from '../../../utils/format';
 import { InnerBlock } from '../../../assets/css/common.style';
-import { distributionCampaigns, getTokenName } from '../../../utils/settings';
-import { useNetwork } from 'wagmi';
+import { distributionCampaignsNFT, getTokenName } from '../../../utils/settings';
+import { useContractWrite, useNetwork, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
 import { Loader } from '../../Loader';
 import { Button } from '@material-tailwind/react';
+import { addTransaction } from '../../../store/transactionSlice';
+import { useDispatch } from 'react-redux';
+import NFTCollectionABI from '../../../contractsData/NFTCollection.json';
 
-export function OneNFTSeries({ nft, handleMint, handleCreateCampaign }) {
+export function OneNFTSeries({ currentCommunity, nft, handleMint, handleCreateCampaign, handleReloadCampaigns }) {
   const { chain } = useNetwork();
+  const dispatch = useDispatch();
+
+  const { config: configCancelCampaign, error: errorCancelCampaign } = usePrepareContractWrite({
+    addressOrName: currentCommunity?.nftContract,
+    contractInterface: NFTCollectionABI.abi,
+    functionName: 'cancelDistributionCampaign',
+    args: [nft?.id]
+  });
+
+  const { data: cancelCampaignData, write: cancelCampaignWrite } = useContractWrite({
+    ...configCancelCampaign,
+    onSuccess: ({ hash }) => {
+      dispatch(addTransaction({
+        hash: hash,
+        description: `Cancel Campaign Distribution`
+      }));
+    },
+    onError: ({ message }) => {
+      console.log('onError message', message);
+    },
+  });
+
+  useWaitForTransaction({
+    hash: cancelCampaignData?.hash,
+    onError: error => {
+      console.log('is err', error)
+    },
+    onSuccess: data => {
+      if (data) {
+        handleReloadCampaigns?.();
+      }
+    },
+  });
+
+  const handleCancelCampaign = () => {
+    if (confirm('Please confirm Campaign cancellation')) {
+      cancelCampaignWrite();
+    }
+  }
 
   return (
     <InnerBlock className="mb-4 flex-row gap-8">
@@ -29,52 +71,70 @@ export function OneNFTSeries({ nft, handleMint, handleCreateCampaign }) {
         <div className="flex flex-row mt-4 text-sm">
           <div className="w-64">
             <div>
-              <span className="font-semibold mr-1">Price:</span>
+              <span className="font-medium mr-1">Price:</span>
               {nft.price > 0 ? `${nft.price} ${getTokenName(chain)}` : "Free"}
             </div>
             <div>
-              <span className="font-semibold mr-1">Royalty:</span>
+              <span className="font-medium mr-1">Royalty:</span>
               {nft.royalty ? (
                 <>
                   <b>{nft.royalty.percent}%</b> for {shortAddress(nft.royalty.address)}
                 </>
               ) : "No"}
             </div>
+            <div>
+              <span className="font-medium mr-1">URL:</span> ...
+            </div>
           </div>
-          <div className="flex-auto">
+          <div className="flex-auto ml-4">
             {nft.distribution && (
               <>
-                <div className="mb-1 block text-left">
-                  <span className="font-semibold mr-1">Distribution:</span>
-                  <span>{distributionCampaigns[nft.distribution.distType]}</span>
-                </div>
                 <div>
-                  <span className="font-semibold mr-1">URL:</span>: ...
+                  <span className="font-medium mr-1">Distribution:</span>
+                  <span>{distributionCampaignsNFT[nft.distribution.distType - 1]?.title}</span>
                 </div>
+                <div className={nft.distribution.isProtected ? "font-medium" : "opacity-60"}>
+                  {nft.distribution.isProtected ? "Protected by" : "No"} Proof of Personhood
+                </div>
+                {nft.distribution.eventCode > 0 && (
+                  <div>
+                    <span className="font-medium mr-1">Event Code:</span> <b>{nft.distribution.eventCode}</b>
+                  </div>
+                )}
+                {nft.distribution.whitelist.length > 0 && (
+                  <span className={`underline text-blue-500 cursor-pointer`}>whitelisted addresses</span>
+                )}
               </>
             )}
           </div>
         </div>
 
         <div className="flex flex-row mt-4">
-          <div className="opacity-80 hover:opacity-100 inline-block">
+          <div className="inline-block">
             <Button variant="outlined" size={'sm'} onClick={handleMint}>
               Mint NFT
             </Button>
           </div>
 
 
-          <div className="opacity-80 hover:opacity-100 inline-block ml-2">
-            {nft.distribution ? (
-              <Button variant="outlined" size={'sm'} onClick={handleCreateCampaign}>
+          {nft.distribution ? (
+            <>
+              <Button variant="outlined"
+                      color={'red'}
+                      size={'sm'}
+                      className={'ml-2'}
+                      onClick={() => handleCancelCampaign()}>
                 Cancel Distribution
               </Button>
-            ) : (
-              <Button variant="outlined" size={'sm'} onClick={handleCreateCampaign}>
-                New Distribution Campaign
-              </Button>
-            )}
-          </div>
+            </>
+          ) : (
+            <Button variant="outlined"
+                    size={'sm'}
+                    className={'ml-2'}
+                    onClick={handleCreateCampaign}>
+              New Distribution Campaign
+            </Button>
+          )}
 
         </div>
       </div>

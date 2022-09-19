@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from 'react-redux';
-import { useDebounce } from 'use-debounce';
 import { addTransaction } from '../../store/transactionSlice';
 import { communityTypes } from '../../utils/settings';
 import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from 'wagmi'
@@ -12,6 +11,8 @@ import { MdKeyboardArrowRight } from 'react-icons/md';
 export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
+  const [editFormData, setEditFormData] = useState({});
+  const [addFormData, setAddFormData] = useState({});
   const [formData, setFormData] = useState({
     name: editCommunity?.name || "",
     category: editCommunity?.category || "",
@@ -20,20 +21,17 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
     // logoData: "",
     description: editCommunity?.description || ""
   });
-  const [debouncedFormData] = useDebounce(formData, 300);
-  const [isFormDataValid, setIsFormDataValid] = useState(false);
-  const [debouncedFormDataValid] = useDebounce(isFormDataValid, 200);
 
   // ------------- Create Community Methods -------------
 
   const { config: configAdd, error: errorAdd } = usePrepareContractWrite({
     ...mainContract,
-    enabled: debouncedFormDataValid && !editCommunity,
+    enabled: !editCommunity && addFormData.name?.length > 0,
     functionName: 'createCommunity',
-    args: [debouncedFormData.name, debouncedFormData.category, debouncedFormData.privacy, debouncedFormData.description]
+    args: [addFormData.name, addFormData.category, addFormData.privacy, addFormData.description]
   });
 
-  const { data: addCommunityData, write: addCommunityWrite } = useContractWrite({
+  const { data: addCommunityData, write: addCommunityWrite, status: addCommunityStatus } = useContractWrite({
     ...configAdd,
     onSuccess: ({ hash }) => {
       handleTxStart?.();
@@ -45,35 +43,41 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
     onError: ({ message }) => {
       console.log('onError message', message);
       setIsLoading(false);
+      setAddFormData({});
     },
   });
 
   useWaitForTransaction({
     hash: addCommunityData?.hash,
     onError: error => {
-      console.log('is err', error)
+      console.log('is err', error);
+      setAddFormData({});
     },
     onSuccess: data => {
-      console.log('success data', data)
+      setIsLoading(false);
+      resetForm();
       if (data) {
-        console.log('handleSuccess', handleSuccess)
         handleSuccess?.();
-        setIsLoading(false);
-        resetForm();
       }
     },
   });
+
+  useEffect(() => {
+    if (addCommunityWrite && addCommunityStatus !== 'loading') {
+      addCommunityWrite();
+    }
+  }, [addCommunityWrite]);
 
   // ------------- Update Community Methods -------------
 
   const { config: configEdit, error: errorEdit } = usePrepareContractWrite({
     ...mainContract,
-    enabled: debouncedFormDataValid && !!editCommunity,
+    enabled: !!editCommunity && editFormData.name?.length > 0,
     functionName: 'updateCommunity',
-    args: [editCommunity?.id, debouncedFormData.name, debouncedFormData.category, debouncedFormData.privacy, debouncedFormData.description]
+    args: [editCommunity?.id, editFormData.name, editFormData.category, editFormData.privacy, editFormData.description]
   });
 
-  const { data: editCommunityData, writeAsync: editCommunityWrite } = useContractWrite({
+  const { data: editCommunityData, write: editCommunityWrite, status: editCommunityStatus } = useContractWrite({
     ...configEdit,
     onSuccess: ({ hash }) => {
       dispatch(addTransaction({
@@ -82,29 +86,34 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
       }));
     },
     onError: ({ message }) => {
-      console.log('onError message', message);
       setIsLoading(false);
+      setEditFormData({});
+      console.log('onError message', message);
     },
   });
 
   useWaitForTransaction({
     hash: editCommunityData?.hash,
     onError: error => {
-      console.log('is err', error)
+      console.log('is err', error);
+      setEditFormData({});
     },
     onSuccess: data => {
+      setIsLoading(false);
+      setEditFormData({});
       if (data) {
         handleSuccess?.();
-        setIsLoading(false);
       }
     },
   });
 
-  // ------------- Form -------------
-
   useEffect(() => {
-    setIsFormDataValid(!isFormErrors());
-  }, [formData]);
+    if (editCommunityWrite && editCommunityStatus !== 'loading') {
+      editCommunityWrite();
+    }
+  }, [editCommunityWrite]);
+
+  // ------------- Form -------------
 
   // Load community for edit
   useEffect(() => {
@@ -118,6 +127,8 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
 
   // Reset form
   const resetForm = () => {
+    setAddFormData({});
+    setEditFormData({});
     setFormData({
       name: "",
       category: "",
@@ -173,27 +184,10 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
 
     setIsLoading(true);
     if (editCommunity) {
-      editCommunityWrite?.();
+      setEditFormData({ ...formData });
     } else {
-      addCommunityWrite?.();
+      setAddFormData({ ...formData });
     }
-  }
-
-  const isSubmitActive = () => {
-    if (isLoading) {
-      return false;
-    }
-    if (editCommunity) {
-      if (!editCommunityWrite) {
-        return false;
-      }
-    } else {
-      if (!addCommunityWrite) {
-        return false;
-      }
-    }
-
-    return true;
   }
 
   return (
@@ -244,7 +238,7 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
         />
 
         <div className={"flex justify-end"}>
-          <Button type="Submit" variant="gradient" disabled={!isSubmitActive()}>
+          <Button type="Submit" variant="gradient" disabled={isFormErrors()}>
             {editCommunity ? "Save" : "Create Community"}
             <MdKeyboardArrowRight className="text-lg align-bottom ml-1 inline-block" />
           </Button>

@@ -13,7 +13,7 @@ import { transformCommunity } from '../../utils/transform';
 import { mainContract } from '../../utils/requests';
 import { Loader } from '../../components/Loader';
 
-export const Community = () => {
+export const MyCommunityLayout = () => {
   const dispatch = useDispatch();
   const { address } = useAccount();
   const [isReady, setIsReady] = useState(false);

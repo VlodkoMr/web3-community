@@ -1,72 +1,77 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { addTransaction } from '../../store/transactionSlice';
+import { addTransaction } from '../../../store/transactionSlice';
+import { factoryFTContract } from '../../../utils/requests';
 import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
-import { factoryNFTContract } from '../../utils/requests';
-import { useDebounce } from 'use-debounce';
-import { Loader } from '../Loader';
+import { Loader } from '../../Loader';
 import { Input, Button } from '@material-tailwind/react';
 
-export function DeployNFTContract({ reloadCommunityList }) {
+export function DeployFTContract({ reloadCommunityList }) {
   const dispatch = useDispatch();
   const [isLoadingCreate, setIsLoadingCreate] = useState(false);
   const currentCommunity = useSelector(state => state.community.current);
+  const [submitFormData, setSubmitFormData] = useState({});
   const [formData, setFormData] = useState({
     name: "",
     symbol: "",
+    supply: ""
   });
-  const [debouncedFormData] = useDebounce(formData, 300);
-  const [isFormDataValid, setIsFormDataValid] = useState(false);
-  const [debouncedFormDataValid] = useDebounce(isFormDataValid, 200);
 
   // ------------- Update Community Methods -------------
 
   const { config: configDeploy, error: errorDeploy } = usePrepareContractWrite({
-    ...factoryNFTContract,
-    enabled: debouncedFormDataValid,
-    functionName: 'deployNFTCollectionContract',
-    args: [currentCommunity.id, debouncedFormData.name, debouncedFormData.symbol.toUpperCase()]
+    ...factoryFTContract,
+    enabled: submitFormData.name?.length > 0,
+    functionName: 'deployFTContract',
+    args: [currentCommunity.id, submitFormData.name, submitFormData.symbol?.toUpperCase(), submitFormData.supply]
   });
 
-  const { data: deployData, write: deployWrite } = useContractWrite({
+  const { data: deployData, write: deployWrite, status: deployStatus } = useContractWrite({
     ...configDeploy,
     onSuccess: ({ hash }) => {
       dispatch(addTransaction({
         hash: hash,
-        description: `Create your NFT Collection`
+        description: `Create your Fungible Token`
       }));
     },
     onError: ({ message }) => {
-      console.log('onError message', message);
       setIsLoadingCreate(false);
+      setSubmitFormData({});
+      console.log('onError message', message);
     },
   });
 
   useWaitForTransaction({
     hash: deployData?.hash,
     onError: error => {
-      console.log('is err', error)
+      console.log('is err', error);
+      setSubmitFormData({});
     },
     onSuccess: data => {
+      setSubmitFormData({});
       if (data) {
         reloadCommunityList();
       }
     },
   });
 
+  useEffect(() => {
+    if (deployWrite && deployStatus !== 'loading') {
+      deployWrite();
+    }
+  }, [deployWrite]);
+
   // ------------- Form -------------
 
-  useEffect(() => {
-    setIsFormDataValid(!isFormErrors());
-  }, [formData]);
-
-  // Check form errors
   const isFormErrors = () => {
     if (formData.name.length < 3) {
       return "Collection name should be more than 3 chars";
     }
     if (formData.symbol.length < 3 || formData.symbol.length > 5) {
       return "Token symbol should be 3-5 chars";
+    }
+    if (formData.supply.length === 0 || parseInt(formData.supply) < 1) {
+      return "Wrong token supply";
     }
     if (!isNaN(formData.symbol.charAt(0))) {
       return "Token symbol should start from letter";
@@ -76,7 +81,7 @@ export function DeployNFTContract({ reloadCommunityList }) {
 
   // ------------- Actions -------------
 
-  const deployNFTContract = async (e) => {
+  const deployFTContract = async (e) => {
     e.preventDefault();
 
     const formError = isFormErrors();
@@ -86,47 +91,55 @@ export function DeployNFTContract({ reloadCommunityList }) {
     }
 
     setIsLoadingCreate(true);
-    deployWrite?.();
+    setSubmitFormData({ ...formData });
   }
 
   return (
     <>
       <p className="text-sm opacity-80 mb-4">
-        This section allow you create unique NFT Series for your community, create distribution campaign to sell or
-        minting NFT for free. <br />
-        To start using NFT Collections, let's enable this feature (deploy your own Smart Contract): <br />
+        This section allow you create Token for your community, transfer or send airdrops for your NFT holders. <br />
+        To start using Fungible Token, let's enable this feature (deploy your own Smart Contract): <br />
       </p>
 
-      <form className="flex gap-4 relative" onSubmit={deployNFTContract}>
+      <form className="flex gap-4 relative" onSubmit={deployFTContract}>
         <div className="w-48">
           <Input type="text"
-                 label="Collection Name"
+                 label="Token Name"
                  className="w-48"
                  required={true}
                  maxLength={50}
                  value={formData.name}
                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-
           />
         </div>
-        <div className="w-36">
+        <div className="w-20">
           <Input type="text"
                  label="Symbol"
-                 className="w-36"
+                 className="w-20"
                  required={true}
                  maxLength={5}
                  value={formData.symbol}
                  onChange={(e) => setFormData({ ...formData, symbol: e.target.value })}
           />
         </div>
+        <div className="w-32">
+          <Input type="number"
+                 label="Supply"
+                 className="w-32"
+                 required={true}
+                 min={0}
+                 value={formData.supply}
+                 onChange={(e) => setFormData({ ...formData, supply: e.target.value })}
+          />
+        </div>
 
-        <Button disabled={isLoadingCreate || !deployWrite} type="Submit" variant="gradient">
+        <Button disabled={isLoadingCreate || isFormErrors()} type="Submit" variant="gradient">
           {isLoadingCreate && (
             <span className="mr-2 align-bottom">
               <Loader size={"sm"} />
             </span>
           )}
-          Create NFT Collection
+          Create Fungible Token
         </Button>
       </form>
     </>

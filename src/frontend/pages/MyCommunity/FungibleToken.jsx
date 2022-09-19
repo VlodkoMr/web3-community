@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { InnerBlock, InnerTransparentBlock } from '../../assets/css/common.style';
-import { useAccount, useContractRead, useSigner } from 'wagmi';
+import { useAccount, useContractRead } from 'wagmi';
 import FungibleTokenABI from '../../contractsData/FungibleToken.json';
 import { convertFromEther, formatNumber, isContractAddress } from '../../utils/format';
-import { DeployFTContract } from '../../components/Community/DeployFTContract';
+import { DeployFTContract } from '../../components/Community/FungibleToken/DeployFTContract';
 import { useOutletContext } from 'react-router-dom';
-import { Button } from '@material-tailwind/react';
+import { Button, Textarea } from '@material-tailwind/react';
 import { DistributionCampaignFTPopup } from '../../components/Community/FungibleToken/DistributionCampaignFTPopup';
 import { transformFTCampaign } from '../../utils/transform';
 import { OneFTDistribution } from '../../components/Community/FungibleToken/OneFTDistribution';
@@ -32,12 +32,11 @@ export const FungibleToken = () => {
     enabled: isContractAddress(currentCommunity?.ftContract),
     functionName: "symbol",
   });
-  const { data: myBalance } = useContractRead({
+  const { data: myBalance, refetch: refetchBalance } = useContractRead({
     ...myFTContract,
     enabled: isContractAddress(currentCommunity?.ftContract),
     functionName: "balanceOf",
-    args: [address],
-    watch: true
+    args: [address]
   });
 
   const { data: distributionCampaigns, refetch: refetchDistributionCampaigns } = useContractRead({
@@ -48,9 +47,8 @@ export const FungibleToken = () => {
   });
 
   const refetchCampaignsList = () => {
-    refetchDistributionCampaigns().then(result => {
-      console.log('result', result);
-    })
+    refetchBalance();
+    refetchDistributionCampaigns();
   }
 
   const pauseContract = () => {
@@ -58,6 +56,10 @@ export const FungibleToken = () => {
       // pause
     }
   }
+
+  useEffect(() => {
+    console.log('distributionCampaigns', distributionCampaigns)
+  }, [distributionCampaigns])
 
   return (
     <div className="flex flex-row">
@@ -100,9 +102,13 @@ export const FungibleToken = () => {
                       </Button>
                     </div>
                   </div>
-                  {distributionCampaigns.length > 0 ? distributionCampaigns.map(campaign => (
-                    <OneFTDistribution key={campaign.id} campaign={campaign} tokenSymbol={tokenSymbol} />
-                  )) : (
+                  {distributionCampaigns?.length > 0 ? (
+                    <>
+                      {distributionCampaigns.map(campaign => (
+                        <OneFTDistribution key={campaign.id} campaign={campaign} tokenSymbol={tokenSymbol} />
+                      ))}
+                    </>
+                  ) : (
                     <InnerBlock className={"text-center text-gray-500"}>
                       *No Distribution Campaigns
                     </InnerBlock>
@@ -110,20 +116,25 @@ export const FungibleToken = () => {
                 </div>
                 <div className="w-1/3">
                   <h4 className="mb-3 mt-1 font-semibold">My Wallet Balance</h4>
-                  <div className="bg-white rounded-xl shadow-gray-300/30 shadow-lg px-8 py-6 text-center">
+                  <div className="bg-white rounded-xl shadow-gray-300/50 shadow-lg px-8 py-6 text-center">
                     <b>{formatNumber(convertFromEther(myBalance, 0))} {tokenSymbol}</b>
                   </div>
 
-                  {/*<h4 className="mt-6 mb-2 font-semibold">Tokenomic</h4>*/}
-                  {/*<InnerBlock className={"text-center"}>*/}
-                  {/*  <small className="text-gray-500">*/}
-                  {/*    Describe your <b>{tokenSymbol}</b> token usage and distribution details*/}
-                  {/*  </small>*/}
-                  {/*</InnerBlock>*/}
+                  {distributionCampaigns?.length > 0 && (
+                    <>
+                      <h4 className="mt-6 mb-2 font-semibold">Tokenomic</h4>
+                      <InnerBlock className={"text-center"}>
+                        <div>
+                          <small className="text-gray-500 block mb-3">
+                            Describe your <b>{tokenSymbol}</b> token usage and distribution details:
+                          </small>
+                          <Textarea label={`${tokenSymbol} tokenomic`} />
+                        </div>
+                      </InnerBlock>
+                    </>
+                  )}
                 </div>
-
               </div>
-
             </>
           ) : (
             <DeployFTContract reloadCommunityList={reloadCommunityList} />

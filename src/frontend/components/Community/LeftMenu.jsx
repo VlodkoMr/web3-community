@@ -2,7 +2,7 @@ import React from "react";
 import { MdPermMedia, MdSettings, MdSpaceDashboard } from 'react-icons/md';
 import { GiToken } from 'react-icons/gi';
 import { useLocation, NavLink } from "react-router-dom";
-import { ImUsers, IoIosVideocam } from 'react-icons/all';
+import { GoVerified, ImUsers, IoIosVideocam } from 'react-icons/all';
 
 export function DashboardLeftMenu() {
   const location = useLocation();
@@ -38,6 +38,11 @@ export function DashboardLeftMenu() {
       <li className="relative">
         <MenuItem title={"Fungible Token"} link={"/my/token"}>
           <GiToken color={getNavLinkClass("/my/token") ? "white" : ""} />
+        </MenuItem>
+      </li>
+      <li className="relative">
+        <MenuItem title={"DAO"} link={"/my/dao"}>
+          <GoVerified color={getNavLinkClass("/my/dao") ? "white" : ""} />
         </MenuItem>
       </li>
       <li className="relative">
