@@ -48,7 +48,7 @@ export const Category = () => {
           </div>
 
           <div className="md:flex md:flex-row md:gap-8 justify-center">
-            {communities.length > 0 ? communities.map(community => (
+            {communities?.length > 0 ? communities.map(community => (
               <Card className="w-96 border border-gray-100 mb-8 cursor-pointer hover:shadow-lg hover:border-gray-200 transition"
                     key={community.id}
                     onClick={() => navigate(`/category/${categoryId}/${community.id}`)}>

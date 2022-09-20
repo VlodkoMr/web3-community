@@ -11,7 +11,7 @@ import { transformCollectionNFT } from '../../utils/transform';
 import { OneNFTSeries } from '../../components/MyCommunity/NftCollection/OneNFTSeries';
 import { MintNFTPopup } from '../../components/MyCommunity/NftCollection/MintNFTPopup';
 import { DistributionCampaignNFTPopup } from '../../components/MyCommunity/NftCollection/DistributionCampaignNFTPopup';
-import { PauseUnpausePopup } from '../../components/MyCommunity/NftCollection/PauseUnpausePopup';
+import { PauseUnpausePopup } from '../../components/MyCommunity/PauseUnpausePopup';
 import NFTCollectionABI from '../../contractsData/NFTCollection.json';
 
 export const NftCollection = () => {

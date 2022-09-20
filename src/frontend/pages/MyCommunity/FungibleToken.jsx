@@ -9,7 +9,7 @@ import { Button, Textarea } from '@material-tailwind/react';
 import { DeployFTContract } from '../../components/MyCommunity/FungibleToken/DeployFTContract';
 import { DistributionCampaignFTPopup } from '../../components/MyCommunity/FungibleToken/DistributionCampaignFTPopup';
 import { OneFTDistribution } from '../../components/MyCommunity/FungibleToken/OneFTDistribution';
-import { PauseUnpausePopup } from '../../components/MyCommunity/NftCollection/PauseUnpausePopup';
+import { PauseUnpausePopup } from '../../components/MyCommunity/PauseUnpausePopup';
 import FungibleTokenABI from '../../contractsData/FungibleToken.json';
 
 export const FungibleToken = () => {

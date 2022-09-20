@@ -1,7 +1,7 @@
 import React from "react";
 import { useContractRead, useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
 import { useDispatch } from 'react-redux';
-import { addTransaction } from '../../../store/transactionSlice';
+import { addTransaction } from '../../store/transactionSlice';
 import { Button } from '@material-tailwind/react';
 
 export function PauseUnpausePopup({ contractAddress, contractABI, handleSuccess }) {
@@ -11,6 +11,7 @@ export function PauseUnpausePopup({ contractAddress, contractABI, handleSuccess 
 
   const { data: isPaused, refetch: refetchIsPaused } = useContractRead({
     addressOrName: contractAddress,
+    enabled: contractAddress.length > 0,
     contractInterface: contractABI.abi,
     functionName: "paused",
   });
@@ -19,6 +20,7 @@ export function PauseUnpausePopup({ contractAddress, contractABI, handleSuccess 
 
   const { config: configPause, error: errorPause } = usePrepareContractWrite({
     addressOrName: contractAddress,
+    enabled: contractAddress.length > 0,
     contractInterface: contractABI.abi,
     functionName: 'pause',
   });
@@ -60,6 +62,7 @@ export function PauseUnpausePopup({ contractAddress, contractABI, handleSuccess 
   const { config: configUnPause, error: errorUnPause } = usePrepareContractWrite({
     addressOrName: contractAddress,
     contractInterface: contractABI.abi,
+    enabled: contractAddress.length > 0 && isPaused,
     functionName: 'unpause',
   });
 
