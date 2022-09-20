@@ -29,7 +29,6 @@ export const MyCommunityLayout = () => {
 
   useEffect(() => {
     if (!isLoading) {
-      console.log('communityList', communityList)
       loadCommunityList(communityList);
     }
   }, [ isLoading ])

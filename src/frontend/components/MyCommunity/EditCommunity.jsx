@@ -36,14 +36,13 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
   const { data: addCommunityData, write: addCommunityWrite, status: addCommunityStatus } = useContractWrite({
     ...configAdd,
     onSuccess: ({ hash }) => {
-      handleTxStart?.();
       dispatch(addTransaction({
         hash: hash,
-        description: `Create Community "${formData.name}"`
+        description: `Create Community "${addFormData.name}"`
       }));
     },
     onError: ({ message }) => {
-      console.log('onError message', message);
+      console.log(`Error`, message);
       setIsLoading(false);
       setAddFormData({});
     },
@@ -56,8 +55,7 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
       setAddFormData({});
     },
     onSuccess: data => {
-      console.log(`community created`);
-
+      handleTxStart?.();
       setIsLoading(false);
       resetForm();
       if (data) {
@@ -71,14 +69,6 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
       addCommunityWrite();
     }
   }, [ addCommunityWrite ]);
-
-  useEffect(() => {
-    console.log(`errorAdd`, errorAdd);
-  }, [ errorAdd ]);
-
-  useEffect(() => {
-    console.log(`addCommunityStatus`, addCommunityStatus);
-  }, [ addCommunityStatus ]);
 
   // ------------- Update Community Methods -------------
 
@@ -94,7 +84,7 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
     onSuccess: ({ hash }) => {
       dispatch(addTransaction({
         hash: hash,
-        description: `Save Community "${formData.name}"`
+        description: `Save Community "${editFormData.name}"`
       }));
     },
     onError: ({ message }) => {
@@ -172,7 +162,7 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
       uploadMediaToIPFS(blobData).then(result => {
         setFormData({ ...formData, logo: result });
         setIsMediaLoading(false);
-      }).catch(e => setIsMediaLoading(false));
+      }).catch(() => setIsMediaLoading(false));
     });
   }
 

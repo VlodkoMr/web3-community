@@ -47,14 +47,12 @@ export const Header = ({ isInner, reloadCommunityList }) => {
     localStorage.setItem("communityId", communityId);
   }
 
-  const handleTxStart = async () => {
+  const handleTxStart = () => {
     setCommunityPopupVisible(false);
   }
 
-  const handleSuccessCreate = async () => {
-    console.log(`handleSuccessCreate`, handleSuccessCreate);
+  const handleSuccessCreate = () => {
     reloadCommunityList(true);
-    console.log('reloadCommunityList')
   }
 
   return (
