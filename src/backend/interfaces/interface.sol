@@ -2,9 +2,9 @@
 pragma solidity ^0.8.12;
 
 interface IMain {
-	function getCommunityDetailsById(address, uint) external view returns (uint, address, address);
+	function isContractExists(uint) external view returns (bool, bool);
 
-	function updateCommunityNFT(address, uint, address) external;
+	function updateCommunityNFT(uint, address) external;
 
-	function updateCommunityFT(address, uint, address) external;
+	function updateCommunityFT(uint, address) external;
 }

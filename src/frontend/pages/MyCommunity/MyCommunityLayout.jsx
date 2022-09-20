@@ -10,7 +10,7 @@ import { Outlet } from "react-router-dom";
 import { useContractRead } from 'wagmi';
 import { setCommunityList, setCurrentCommunity } from '../../store/communitySlice';
 import { transformCommunity } from '../../utils/transform';
-import { mainContract } from '../../utils/requests';
+import { mainContract } from '../../utils/contracts';
 import { Loader } from '../../components/Loader';
 
 export const MyCommunityLayout = () => {

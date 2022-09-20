@@ -1,22 +1,27 @@
 import { File, NFTStorage } from '../assets/js/nft-storage.esm.min';
 
-// export const uploadMediaToIPFS = (media) => {
-//   return new Promise(async (resolve, reject) => {
-//     const name = `${+new Date()}.jpg`;
-//     const image = dataURLtoFile(media, name);
-//     const nftStorage = new NFTStorage({ token: process.env.NFT_STORAGE_KEY });
-//     const token = await nftStorage.store({
-//       image,
-//       name,
-//       description: `Web3 Community ${name}`,
-//     });
-//
-//     if (token.url) {
-//       resolve(token.data.image.pathname.replace('//', ''));
-//     }
-//     reject("Error: IPFS Upload failed");
-//   })
-// }
+export const uploadMediaToIPFS = (media) => {
+  return new Promise(async (resolve, reject) => {
+    const name = `${+new Date()}.jpg`;
+    const image = new File([ media ], name, {
+      type: media.type,
+      lastModified: new Date().getTime()
+    });
+
+    const nftStorage = new NFTStorage({ token: process.env.NFT_STORAGE_KEY });
+    const token = await nftStorage.store({
+      image,
+      name,
+      description: `Web3 Community ${name}`,
+    });
+
+    console.log(`token`, token);
+    if (token.url) {
+      resolve(token.data.image.pathname.replace('//', ''));
+    }
+    reject("Error: IPFS Upload failed");
+  })
+}
 
 export const uploadNFTtoIPFS = (formData) => {
   return new Promise(async (resolve, reject) => {
@@ -45,23 +50,6 @@ export const uploadNFTtoIPFS = (formData) => {
     }
     reject("Error: IPFS Upload failed");
   })
-}
-
-export function dataURLtoFile(dataUrl, fileName) {
-  const arr = dataUrl.split(',');
-  const mime = arr[0].match(/:(.*?);/)[1];
-  const bstr = atob(arr[1]);
-  let n = bstr.length;
-  let u8arr = new Uint8Array(n);
-
-  while (n--) {
-    u8arr[n] = bstr.charCodeAt(n);
-  }
-
-  return new File([u8arr], fileName, {
-    type: mime,
-    lastModified: new Date().getTime()
-  });
 }
 
 export const resizeFileImage = (file, max_width, max_height) => {

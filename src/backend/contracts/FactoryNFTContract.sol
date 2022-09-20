@@ -31,13 +31,13 @@ contract FactoryNFTContract is Initializable, OwnableUpgradeable, UUPSUpgradeabl
     require(bytes(_symbol).length >= 3 && bytes(_symbol).length <= 5, "Symbol length should be 3-5 chars");
 
     // Check community owner & get contract details
-    (uint _index, address _nftContract,) = IMain(mainContractAddress).getCommunityDetailsById(msg.sender, _communityId);
-    require(_nftContract == address(0), "Community already have NFT Contract");
+    (bool _isNFTContract,) = IMain(mainContractAddress).isContractExists(_communityId);
+    require(!_isNFTContract, "Community already have NFT Contract");
 
     NFTCollection collection = new NFTCollection(_name, _symbol, msg.sender);
     contractsNFTList.push(collection);
 
     // Update contract address
-    IMain(mainContractAddress).updateCommunityNFT(msg.sender, _index, address(collection));
+    IMain(mainContractAddress).updateCommunityNFT(_communityId, address(collection));
   }
 }

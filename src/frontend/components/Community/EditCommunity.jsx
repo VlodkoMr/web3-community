@@ -3,22 +3,25 @@ import { useDispatch } from 'react-redux';
 import { addTransaction } from '../../store/transactionSlice';
 import { communityTypes } from '../../utils/settings';
 import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from 'wagmi'
-import { mainContract } from '../../utils/requests';
+import { mainContract } from '../../utils/contracts';
 import { Loader } from '../Loader';
 import { Input, Button, Option, Select, Textarea } from '@material-tailwind/react';
 import { MdKeyboardArrowRight } from 'react-icons/md';
+import { resizeFileImage, uploadMediaToIPFS } from "../../utils/media";
+import { mediaURL } from "../../utils/format";
 
 export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
   const dispatch = useDispatch();
   const [ isLoading, setIsLoading ] = useState(false);
+  const [ isMediaLoading, setIsMediaLoading ] = useState(false);
   const [ editFormData, setEditFormData ] = useState({});
   const [ addFormData, setAddFormData ] = useState({});
   const [ formData, setFormData ] = useState({
     name: editCommunity?.name || "",
     category: editCommunity?.category || "",
     privacy: editCommunity?.privacy || "0",
-    // logo: editCommunity?.logo || "",
-    // logoData: "",
+    logo: editCommunity?.logo || "",
+    logoData: "",
     description: editCommunity?.description || ""
   });
 
@@ -28,7 +31,7 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
     ...mainContract,
     enabled: !editCommunity && addFormData.name?.length > 0,
     functionName: 'createCommunity',
-    args: [ addFormData.name, addFormData.category, addFormData.privacy, addFormData.description ]
+    args: [ addFormData.name, addFormData.logo, addFormData.category, addFormData.privacy, addFormData.description ]
   });
 
   const { data: addCommunityData, write: addCommunityWrite, status: addCommunityStatus } = useContractWrite({
@@ -74,7 +77,7 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
     ...mainContract,
     enabled: !!editCommunity && editFormData.name?.length > 0,
     functionName: 'updateCommunity',
-    args: [ editCommunity?.id, editFormData.name, editFormData.privacy, editFormData.description ]
+    args: [ editCommunity?.id, editFormData.name, editFormData.logo, editFormData.privacy, editFormData.description ]
   });
 
   const { data: editCommunityData, write: editCommunityWrite, status: editCommunityStatus } = useContractWrite({
@@ -121,6 +124,7 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
       name: editCommunity?.name || "",
       category: editCommunity?.category || "",
       privacy: editCommunity?.privacy || "0",
+      logo: editCommunity?.logo || "",
       description: editCommunity?.description || ""
     });
   }, [ editCommunity ]);
@@ -131,6 +135,7 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
     setEditFormData({});
     setFormData({
       name: "",
+      logo: "",
       category: "",
       privacy: "",
       description: ""
@@ -150,28 +155,17 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
 
   // ------------- Actions -------------
 
-  // const resizeImage = (e) => {
-  //   const image = e.target.files[0];
-  //   resizeFileImage(image, 256, 256).then(result => {
-  //     setFormData({ ...formData, logoData: result })
-  //   });
-  // }
+  const resizeImage = (e) => {
+    const image = e.target.files[0];
+    resizeFileImage(image, 400, 400).then(blobData => {
+      setIsMediaLoading(true);
 
-  // const handleSave = (e) => {
-  //   e.preventDefault();
-  //   if (formData.logoData.length) {
-  //     setIsLoading(true);
-  //     uploadMediaToIPFS(formData.logoData, formData.name).then(logoURL => {
-  //       setFormData({ ...formData, logo: logoURL })
-  //       _saveCommunity();
-  //     }).catch(e => {
-  //       alert(e);
-  //       setIsLoading(false);
-  //     })
-  //   } else {
-  //     _saveCommunity();
-  //   }
-  // }
+      uploadMediaToIPFS(blobData).then(result => {
+        setFormData({ ...formData, logo: result });
+        setIsMediaLoading(false);
+      }).catch(e => setIsMediaLoading(false));
+    });
+  }
 
   // Save community
   const saveCommunity = (e) => {
@@ -201,6 +195,19 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           />
         </div>
+        <div className={`flex flex-row`}>
+          <div className={`flex-auto`}>
+            <Input type="file"
+                   accept="image/*"
+                   label={`${!!editCommunity ? "Update " : ""} Logo`}
+                   className="h-[47px]"
+                   onChange={(e) => resizeImage(e)}
+            />
+          </div>
+          {editCommunity && editCommunity.logo.length > 0 && (
+            <img className="w-12 h-12 bg-gray-100 rounded-md ml-6" src={mediaURL(editCommunity.logo)} alt="logo"/>
+          )}
+        </div>
         <div className="flex gap-6 text-left">
           <div className="flex-1">
             <Select label="Category*"
@@ -224,22 +231,19 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
             </Select>
           </div>
         </div>
-        {/*<div>*/}
-        {/*  <div className="mb-1 block text-left">*/}
-        {/*    <Label htmlFor="logo" value="Logo" />*/}
-        {/*  </div>*/}
-        {/*  <FileInput id="logo"*/}
-        {/*             accept="image/*"*/}
-        {/*             onChange={(e) => resizeImage(e)}*/}
-        {/*  />*/}
-        {/*</div>*/}
+
         <Textarea label="Description"
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   value={formData.description}
         />
 
         <div className={"flex justify-end"}>
-          <Button type="Submit" variant="gradient" disabled={isFormErrors()}>
+          <Button type="Submit" variant="gradient" disabled={isFormErrors() || isMediaLoading}>
+            {isMediaLoading && (
+              <span className="mr-2 align-bottom">
+                <Loader size={"sm"}/>
+              </span>
+            )}
             {editCommunity ? "Save" : "Create Community"}
             <MdKeyboardArrowRight className="text-lg align-bottom ml-1 inline-block"/>
           </Button>

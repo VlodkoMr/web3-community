@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { addTransaction } from '../../../store/transactionSlice';
 import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
-import { factoryNFTContract } from '../../../utils/requests';
+import { factoryNFTContract } from '../../../utils/contracts';
 import { Loader } from '../../Loader';
 import { Input, Button } from '@material-tailwind/react';
 

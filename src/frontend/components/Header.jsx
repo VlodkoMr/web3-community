@@ -109,7 +109,7 @@ export const Header = ({ isInner, reloadCommunityList }) => {
                   <ul className="lg:flex">
                     <li className="relative">
                       <NavLink to={"/"} dark={scroll ? "true" : undefined}>
-                        <MdKeyboardArrowLeft className="text-lg align-bottom mr-1 inline-block"/>
+                        <MdKeyboardArrowLeft className="align-bottom mr-1 inline pt-1 text-xl"/>
                         Home
                       </NavLink>
                       <span className="text-white opacity-40">/</span>

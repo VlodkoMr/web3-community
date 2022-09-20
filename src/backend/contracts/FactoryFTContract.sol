@@ -9,36 +9,36 @@ import "../interfaces/interface.sol";
 import "./_FungibleToken.sol";
 
 contract FactoryFTContract is Initializable, OwnableUpgradeable, UUPSUpgradeable {
-  address mainContractAddress;
-  FungibleToken[] private contractsFTList;
+	address mainContractAddress;
+	FungibleToken[] private contractsFTList;
 
-  /// @custom:oz-upgrades-unsafe-allow constructor
-  constructor() {
-    _disableInitializers();
-  }
+	/// @custom:oz-upgrades-unsafe-allow constructor
+	constructor() {
+		_disableInitializers();
+	}
 
-  function initialize(address _mainContractAddress) initializer public {
-    __Ownable_init();
-    __UUPSUpgradeable_init();
-    mainContractAddress = _mainContractAddress;
-  }
+	function initialize(address _mainContractAddress) initializer public {
+		__Ownable_init();
+		__UUPSUpgradeable_init();
+		mainContractAddress = _mainContractAddress;
+	}
 
-  function _authorizeUpgrade(address newImplementation) internal onlyOwner override {}
+	function _authorizeUpgrade(address newImplementation) internal onlyOwner override {}
 
-  // Deploy FT Contract
-  function deployFTContract(uint _communityId, string memory _name, string memory _symbol, uint _supply) public {
-    require(bytes(_name).length >= 3, "Collection name should be longer than 2 symbols");
-    require(bytes(_symbol).length >= 3 && bytes(_symbol).length <= 5, "Symbol length should be 3-5 chars");
-    require(_supply > 0, "Wrong supply amount");
+	// Deploy FT Contract
+	function deployFTContract(uint _communityId, string memory _name, string memory _symbol, uint _supply) public {
+		require(bytes(_name).length >= 3, "Collection name should be longer than 2 symbols");
+		require(bytes(_symbol).length >= 3 && bytes(_symbol).length <= 5, "Symbol length should be 3-5 chars");
+		require(_supply > 0, "Wrong supply amount");
 
-    // Check community owner & get contract details
-    (uint _index,,address _ftContract) = IMain(mainContractAddress).getCommunityDetailsById(msg.sender, _communityId);
-    require(_ftContract == address(0), "Community already have FT Contract");
+		// Check community owner & get contract details
+		(,bool _isFTContract) = IMain(mainContractAddress).isContractExists(_communityId);
+		require(!_isFTContract, "Community already have FT Contract");
 
-    FungibleToken token = new FungibleToken(_name, _symbol, msg.sender, _supply);
-    contractsFTList.push(token);
+		FungibleToken token = new FungibleToken(_name, _symbol, msg.sender, _supply);
+		contractsFTList.push(token);
 
-    // Update contract address
-    IMain(mainContractAddress).updateCommunityFT(msg.sender, _index, address(token));
-  }
+		// Update contract address
+		IMain(mainContractAddress).updateCommunityFT(_communityId, address(token));
+	}
 }

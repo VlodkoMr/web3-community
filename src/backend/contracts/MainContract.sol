@@ -9,8 +9,9 @@ contract MainContract is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 	address factoryNFTContract;
 	address factoryFTContract;
 	uint public communityCount;
-	mapping(address => Community[]) public communityList;
-	mapping(CommunityCategory => uint[]) public communityCategories;
+	mapping(uint => Community) public communities;
+	mapping(address => uint[]) public userCommunities;
+	mapping(CommunityCategory => uint[]) public categoryCommunities;
 
 	enum CommunityCategory {
 		None,
@@ -72,61 +73,71 @@ contract MainContract is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 
 	// Add new community
 	function createCommunity(
-		string memory _name, CommunityCategory _category, CommunityPrivacy _privacy, string memory _description
+		string memory _name, string memory _logo, CommunityCategory _category, CommunityPrivacy _privacy, string memory _description
 	) public {
 		require(bytes(_name).length > 3, "Community name too short");
 
 		communityCount += 1;
-		communityList[msg.sender].push(
-			Community(
-				communityCount, _category, _privacy, _name, _description, "", msg.sender, address(0), address(0)
-			)
+		communities[communityCount] = Community(
+			communityCount, _category, _privacy, _name, _description, _logo, msg.sender, address(0), address(0)
 		);
-
-		communityCategories[_category].push(communityCount);
+		userCommunities[msg.sender].push(communityCount);
+		categoryCommunities[_category].push(communityCount);
 	}
 
 	// Update community
 	function updateCommunity(
-		uint _id, string memory _name, CommunityPrivacy _privacy, string memory _description
+		uint _id, string memory _name, string memory _logo, CommunityPrivacy _privacy, string memory _description
 	) public {
 		require(bytes(_name).length >= 3, "Community name too short");
 
-		(uint _index,,) = getCommunityDetailsById(msg.sender, _id);
-		Community storage userCommunity = communityList[msg.sender][_index];
-		require(userCommunity.owner == msg.sender, "No access to community");
+		Community storage community = communities[_id];
+		require(community.owner == msg.sender, "No access to community");
 
-		userCommunity.name = _name;
-		userCommunity.privacy = _privacy;
-		userCommunity.description = _description;
+		community.name = _name;
+		community.logo = _logo;
+		community.privacy = _privacy;
+		community.description = _description;
 	}
 
+	// Get communities for user
 	function getUserCommunities(address _owner) public view returns (Community[] memory) {
-		return communityList[_owner];
-	}
-
-	function getCommunityDetailsById(address _owner, uint _id) public view returns (uint, address, address) {
-		uint _communityIndex;
-		Community memory _community;
-		for (uint _i = 0; _i < communityList[_owner].length; ++_i) {
-			if (communityList[_owner][_i].id == _id) {
-				_community = communityList[_owner][_i];
-				_communityIndex = _i;
-			}
+		uint _countCommunities = userCommunities[_owner].length;
+		Community[] memory result = new Community[](_countCommunities);
+		for (uint _i = 0; _i < _countCommunities; ++_i) {
+			result[_i] = communities[userCommunities[_owner][_i]];
 		}
-
-		require(_community.id > 0, "Community not found");
-		return (_communityIndex, _community.nftContract, _community.ftContract);
+		return result;
 	}
 
-	function updateCommunityNFT(address _owner, uint _index, address _nftContract) external {
+	// Get communities for category
+	function getCategoryCommunities(CommunityCategory _categoryId) public view returns (Community[] memory) {
+		// TODO: Add pagination
+		uint _countCommunities = categoryCommunities[_categoryId].length;
+		Community[] memory result = new Community[](_countCommunities);
+		for (uint _i = 0; _i < _countCommunities; ++_i) {
+			result[_i] = communities[categoryCommunities[_categoryId][_i]];
+		}
+		return result;
+	}
+
+	// Check if contracts exist
+	function isContractExists(uint _id) external view returns (bool, bool) {
+		bool _isNFT = communities[_id].nftContract != address(0);
+		bool _isFT = communities[_id].ftContract != address(0);
+		return (_isNFT, _isFT);
+	}
+
+	// Update NFT contract address
+	function updateCommunityNFT(uint _id, address _nftContract) external {
 		require(msg.sender == factoryNFTContract, "No Access for this action");
-		communityList[_owner][_index].nftContract = _nftContract;
+		communities[_id].nftContract = _nftContract;
 	}
 
-	function updateCommunityFT(address _owner, uint _index, address _ftContract) external {
+	// Update FT contract address
+	function updateCommunityFT(uint _id, address _ftContract) external {
 		require(msg.sender == factoryFTContract, "No Access for this action");
-		communityList[_owner][_index].ftContract = _ftContract;
+		communities[_id].ftContract = _ftContract;
 	}
 
 }

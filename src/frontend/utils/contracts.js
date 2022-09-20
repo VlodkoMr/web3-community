@@ -16,6 +16,6 @@ export const factoryNFTContract = {
 }
 
 export const factoryFTContract = {
-  addressOrName: factoryFTContractAddress.address,
+  addressOrName: factoryFTContractAddress.addresss,
   contractInterface: factoryFTContractABI.abi,
 }
