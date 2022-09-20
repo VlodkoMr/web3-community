@@ -54,7 +54,7 @@ export const Footer = () => (
 
       <div>
           <span className="absolute top-0 right-0 z-[-1]">
-            <img src={require("../assets/images/footer-dots.svg")} alt="..." className={"w-[102px] h-[102px]"} />
+            <img src={require("../assets/images/footer-dots.svg")} alt="..." className={"w-[102px] h-[102px]"}/>
         </span>
       </div>
     </footer>

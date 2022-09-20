@@ -22,7 +22,7 @@ export function Feature({ title, text, icon }) {
             className="w-[70px] h-[70px] flex items-center justify-center bg-primary bg-opacity-20 rounded-2xl
               mb-8 absolute z-[-1] top-0 left-0 rotate-[25deg] group-hover:rotate-45 duration-300"
           />
-          <img src={iconsMap[icon]} alt="" className="w-[35px] h-[35px]" />
+          <img src={iconsMap[icon]} alt="" className="w-[35px] h-[35px]"/>
         </div>
         <h4 className="font-bold text-xl text-dark mb-3">
           {title}

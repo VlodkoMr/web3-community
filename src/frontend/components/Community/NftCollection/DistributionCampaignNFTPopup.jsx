@@ -10,16 +10,16 @@ import { Popup } from '../../Popup';
 import { MdKeyboardArrowRight } from 'react-icons/md';
 
 export function DistributionCampaignNFTPopup({
-  popupVisible,
-  setPopupVisible,
-  handleSuccess,
-  currentCommunity,
-  collection
-}) {
+                                               popupVisible,
+                                               setPopupVisible,
+                                               handleSuccess,
+                                               currentCommunity,
+                                               collection
+                                             }) {
   const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(false);
-  const [submitFormData, setSubmitFormData] = useState({});
-  const [formData, setFormData] = useState({
+  const [ isLoading, setIsLoading ] = useState(false);
+  const [ submitFormData, setSubmitFormData ] = useState({});
+  const [ formData, setFormData ] = useState({
     distributionType: "",
     dateFrom: "",
     dateTo: "",
@@ -32,7 +32,7 @@ export function DistributionCampaignNFTPopup({
     contractInterface: NFTCollectionABI.abi,
     enabled: submitFormData?.distributionType > 0,
     functionName: 'createDistributionCampaign',
-    args: [collection?.id, submitFormData.distributionType, submitFormData.dateFrom, submitFormData.dateTo, submitFormData.whitelisted || [], submitFormData.isLimit]
+    args: [ collection?.id, submitFormData.distributionType, submitFormData.dateFrom, submitFormData.dateTo, submitFormData.whitelisted || [], submitFormData.isLimit ]
   });
 
   const { data: createData, write: createWrite, status: createStatus } = useContractWrite({
@@ -106,7 +106,7 @@ export function DistributionCampaignNFTPopup({
     if (createWrite && createStatus !== 'loading') {
       createWrite();
     }
-  }, [createWrite]);
+  }, [ createWrite ]);
 
   const resetForm = () => {
     setSubmitFormData({});
@@ -123,14 +123,14 @@ export function DistributionCampaignNFTPopup({
     if (errorCreate) {
       console.log('errorCreate', errorCreate);
     }
-  }, [errorCreate]);
+  }, [ errorCreate ]);
 
   useEffect(() => {
     if (!popupVisible) {
       resetForm();
       setIsLoading(false);
     }
-  }, [popupVisible]);
+  }, [ popupVisible ]);
 
   const isFormErrors = () => {
     if (!parseInt(formData.distributionType)) {
@@ -150,9 +150,9 @@ export function DistributionCampaignNFTPopup({
             <div className="w-1/3">
               <img className="mt-2 h-48 w-48 bg-gray-50 rounded-lg object-cover mx-auto"
                    src={collection.mediaUri}
-                   alt="" />
+                   alt=""/>
 
-              <hr className="mt-6 mb-6" />
+              <hr className="mt-6 mb-6"/>
 
               <div className="flex flex-row gap-4 mt-4">
                 <div className="flex-1 mb-4">
@@ -179,7 +179,7 @@ export function DistributionCampaignNFTPopup({
                 <Checkbox label="Limit: 1 NFT/person"
                           color="amber"
                           onChange={() => setFormData({ ...formData, isLimit: !formData.isLimit })}
-                          className="font-semibold" />
+                          className="font-semibold"/>
                 <a href="https://worldcoin.org/"
                    className="underline pt-3 text-blue-500"
                    target="_blank">
@@ -224,10 +224,10 @@ export function DistributionCampaignNFTPopup({
               </div>
 
               <div className="flex justify-between mt-8 ">
-                <div className="text-gray-500 text-sm pt-2" />
+                <div className="text-gray-500 text-sm pt-2"/>
                 <Button type="Submit" variant="gradient">
                   Create Campaign
-                  <MdKeyboardArrowRight className="text-lg align-bottom ml-1 inline-block" />
+                  <MdKeyboardArrowRight className="text-lg align-bottom ml-1 inline-block"/>
                 </Button>
               </div>
             </div>
@@ -235,7 +235,7 @@ export function DistributionCampaignNFTPopup({
             {isLoading && (
               <div className="bg-white/80 absolute top-[-20px] bottom-0 right-0 left-0 z-10">
                 <div className={"w-12 mx-auto mt-10"}>
-                  <Loader />
+                  <Loader/>
                 </div>
               </div>
             )}

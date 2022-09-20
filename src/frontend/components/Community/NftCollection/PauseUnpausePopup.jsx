@@ -1,19 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { resizeFileImage, uploadNFTtoIPFS } from '../../../utils/media';
-import { useContractRead, useContractWrite, useNetwork, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
-import { useDispatch, useSelector } from 'react-redux';
+import React from "react";
+import { useContractRead, useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
+import { useDispatch } from 'react-redux';
 import { addTransaction } from '../../../store/transactionSlice';
-import { MdKeyboardArrowRight, MdOutlineAddCircleOutline, MdOutlineCancel } from 'react-icons/md';
-import { convertToEther, isContractAddress } from '../../../utils/format';
-import { getTokenName } from '../../../utils/settings';
-import { Loader } from '../../Loader';
-import { Button, Textarea, Input } from '@material-tailwind/react';
-import { Popup } from '../../Popup';
-import { MdKeyboardArrowLeft } from 'react-icons/all';
-import NFTCollectionABI from '../../../contractsData/NFTCollection.json';
-import { transformCollectionNFT } from '../../../utils/transform';
-import mainContractAddress from '../../../contractsData/MainContract-address.json';
-import mainContractABI from '../../../contractsData/MainContract.json';
+import { Button } from '@material-tailwind/react';
 
 export function PauseUnpausePopup({ contractAddress, contractABI, handleSuccess }) {
   const dispatch = useDispatch();
@@ -109,7 +98,6 @@ export function PauseUnpausePopup({ contractAddress, contractABI, handleSuccess 
   return isPaused ? (
     <Button size="sm"
             color="orange"
-            variant="outlined"
             className={"px-3 py-0.5"}
             onClick={handleUnPause}>
       UnPause Contract

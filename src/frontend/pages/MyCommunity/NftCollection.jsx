@@ -16,13 +16,13 @@ import NFTCollectionABI from '../../contractsData/NFTCollection.json';
 
 export const NftCollection = () => {
   const currentCommunity = useSelector(state => state.community.current);
-  const [reloadCommunityList] = useOutletContext();
-  const [createNFTPopupVisible, setCreateNFTPopupVisible] = useState(false);
+  const [ reloadCommunityList ] = useOutletContext();
+  const [ createNFTPopupVisible, setCreateNFTPopupVisible ] = useState(false);
 
-  const [mintNFTCollection, setMintNFTCollection] = useState();
-  const [mintNFTPopupVisible, setMintNFTPopupVisible] = useState(false);
-  const [createCampaign, setCreateCampaign] = useState();
-  const [campaignPopupVisible, setCampaignPopupVisible] = useState(false);
+  const [ mintNFTCollection, setMintNFTCollection ] = useState();
+  const [ mintNFTPopupVisible, setMintNFTPopupVisible ] = useState(false);
+  const [ createCampaign, setCreateCampaign ] = useState();
+  const [ campaignPopupVisible, setCampaignPopupVisible ] = useState(false);
 
   const myNFTContract = {
     addressOrName: currentCommunity?.nftContract,
@@ -84,7 +84,7 @@ export const NftCollection = () => {
                 </span>
               </div>
 
-              <hr className="mb-6" />
+              <hr className="mb-6"/>
               <div className="flex justify-between text-sm mb-4">
                 <div>
                   {(parseInt(totalCollections) === 0) ? (
@@ -105,7 +105,7 @@ export const NftCollection = () => {
               </div>
             </>
           ) : (
-            <DeployNFTContract reloadCommunityList={reloadCommunityList} />
+            <DeployNFTContract reloadCommunityList={reloadCommunityList}/>
           )}
         </div>
       </InnerTransparentBlock>

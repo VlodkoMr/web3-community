@@ -16,7 +16,7 @@ import { Loader } from '../../components/Loader';
 export const MyCommunityLayout = () => {
   const dispatch = useDispatch();
   const { address } = useAccount();
-  const [isReady, setIsReady] = useState(false);
+  const [ isReady, setIsReady ] = useState(false);
   const {
     data: communityList,
     isLoading,
@@ -24,7 +24,7 @@ export const MyCommunityLayout = () => {
   } = useContractRead({
     ...mainContract,
     functionName: 'getUserCommunities',
-    args: [address]
+    args: [ address ]
   })
 
   useEffect(() => {
@@ -32,7 +32,7 @@ export const MyCommunityLayout = () => {
       console.log('communityList', communityList)
       loadCommunityList(communityList);
     }
-  }, [isLoading])
+  }, [ isLoading ])
 
   const loadCommunityList = (communityList, setLastByDefault = false) => {
     setIsReady(false);
@@ -69,18 +69,18 @@ export const MyCommunityLayout = () => {
 
   return (
     <InnerPageWrapper>
-      <Header isInner={true} reloadCommunityList={reloadCommunityList} />
-      <div id="home" className="relative h-[80px] bg-primary mb-6" />
+      <Header isInner={true} reloadCommunityList={reloadCommunityList}/>
+      <div id="home" className="relative h-[80px] bg-primary mb-6"/>
 
       {isReady ? (
         <Wrapper>
           {communityList.length > 0 ? (
             <Container className="flex flex-row">
               <div className="w-56">
-                <DashboardLeftMenu />
+                <DashboardLeftMenu/>
               </div>
               <div className="flex-auto ml-12">
-                <Outlet context={[reloadCommunityList]} />
+                <Outlet context={[ reloadCommunityList ]}/>
               </div>
             </Container>
           ) : (
@@ -90,10 +90,10 @@ export const MyCommunityLayout = () => {
                 <p className="text-sm mb-10">Look like you don't have Community, let's create first one:</p>
 
                 <div className="my-6">
-                  <EditCommunity handleSuccess={() => reloadCommunityList()} />
+                  <EditCommunity handleSuccess={() => reloadCommunityList()}/>
                 </div>
 
-                <hr className="my-4" />
+                <hr className="my-4"/>
                 <p className="text-sm opacity-50">Already have community on this address? Try to switch
                   <a href="https://dappradar.com/blog/guide-on-how-to-switch-network-in-metamask"
                      target="_blank"
@@ -107,11 +107,11 @@ export const MyCommunityLayout = () => {
         </Wrapper>
       ) : (
         <div className="w-10 mx-auto">
-          <Loader />
+          <Loader/>
         </div>
       )}
 
-      <Footer />
+      <Footer/>
     </InnerPageWrapper>
   );
 }

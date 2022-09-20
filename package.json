@@ -42,7 +42,8 @@
     "react-scroll": "^1.8.7",
     "styled-components": "^5.3.5",
     "use-debounce": "^8.0.4",
-    "wagmi": "^0.6.4"
+    "wagmi": "^0.6.4",
+    "@react-buddy/ide-toolbox": "^2.2.1"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^1.0.2",

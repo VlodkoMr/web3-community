@@ -8,10 +8,10 @@ import { Input, Button } from '@material-tailwind/react';
 
 export function DeployFTContract({ reloadCommunityList }) {
   const dispatch = useDispatch();
-  const [isLoadingCreate, setIsLoadingCreate] = useState(false);
+  const [ isLoadingCreate, setIsLoadingCreate ] = useState(false);
   const currentCommunity = useSelector(state => state.community.current);
-  const [submitFormData, setSubmitFormData] = useState({});
-  const [formData, setFormData] = useState({
+  const [ submitFormData, setSubmitFormData ] = useState({});
+  const [ formData, setFormData ] = useState({
     name: "",
     symbol: "",
     supply: ""
@@ -23,7 +23,7 @@ export function DeployFTContract({ reloadCommunityList }) {
     ...factoryFTContract,
     enabled: submitFormData.name?.length > 0,
     functionName: 'deployFTContract',
-    args: [currentCommunity.id, submitFormData.name, submitFormData.symbol?.toUpperCase(), submitFormData.supply]
+    args: [ currentCommunity.id, submitFormData.name, submitFormData.symbol?.toUpperCase(), submitFormData.supply ]
   });
 
   const { data: deployData, write: deployWrite, status: deployStatus } = useContractWrite({
@@ -59,7 +59,7 @@ export function DeployFTContract({ reloadCommunityList }) {
     if (deployWrite && deployStatus !== 'loading') {
       deployWrite();
     }
-  }, [deployWrite]);
+  }, [ deployWrite ]);
 
   // ------------- Form -------------
 
@@ -97,8 +97,8 @@ export function DeployFTContract({ reloadCommunityList }) {
   return (
     <>
       <p className="text-sm opacity-80 mb-4">
-        This section allow you create Token for your community, transfer or send airdrops for your NFT holders. <br />
-        To start using Fungible Token, let's enable this feature (deploy your own Smart Contract): <br />
+        This section allow you create Token for your community, transfer or send airdrops for your NFT holders. <br/>
+        To start using Fungible Token, let's enable this feature (deploy your own Smart Contract): <br/>
       </p>
 
       <form className="flex gap-4 relative" onSubmit={deployFTContract}>
@@ -136,7 +136,7 @@ export function DeployFTContract({ reloadCommunityList }) {
         <Button disabled={isLoadingCreate || isFormErrors()} type="Submit" variant="gradient">
           {isLoadingCreate && (
             <span className="mr-2 align-bottom">
-              <Loader size={"sm"} />
+              <Loader size={"sm"}/>
             </span>
           )}
           Create Fungible Token

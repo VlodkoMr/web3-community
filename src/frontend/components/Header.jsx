@@ -9,16 +9,13 @@ import { setCurrentCommunity } from '../store/communitySlice';
 import { EditCommunity } from './Community/EditCommunity';
 import { useAccount } from 'wagmi';
 import { Popup } from './Popup';
-import { communityTypes } from '../utils/settings';
-import { Option, Select } from '@material-tailwind/react';
-import { IoChevronDownSharp, MdKeyboardArrowLeft } from 'react-icons/all';
-import { MdKeyboardArrowRight } from 'react-icons/md';
+import { MdKeyboardArrowLeft } from 'react-icons/all';
 
 export const Header = ({ isInner, reloadCommunityList }) => {
   const dispatch = useDispatch();
   const { isConnected } = useAccount();
-  const [scroll, setScroll] = useState(false);
-  const [communityPopupVisible, setCommunityPopupVisible] = useState(false);
+  const [ scroll, setScroll ] = useState(false);
+  const [ communityPopupVisible, setCommunityPopupVisible ] = useState(false);
   const communityList = useSelector(state => state.community.list);
   const currentCommunity = useSelector(state => state.community.current);
 
@@ -28,10 +25,6 @@ export const Header = ({ isInner, reloadCommunityList }) => {
       setScroll(window.scrollY > 80);
     });
   }, []);
-
-  // useEffect(() => {
-  //   console.log('header currentCommunity', currentCommunity)
-  // }, [currentCommunity]);
 
   const closePopupCallback = () => {
     selectCommunity(localStorage.getItem("communityId"));
@@ -85,9 +78,9 @@ export const Header = ({ isInner, reloadCommunityList }) => {
                 id="navbarToggler"
                 className="block absolute right-4 top-1/2 -translate-y-1/2 lg:hidden focus:ring-2 ring-primary px-3 py-[6px] rounded-lg"
               >
-                <span className="relative w-[30px] h-[2px] my-[6px] block bg-white" />
-                <span className="relative w-[30px] h-[2px] my-[6px] block bg-white" />
-                <span className="relative w-[30px] h-[2px] my-[6px] block bg-white" />
+                <span className="relative w-[30px] h-[2px] my-[6px] block bg-white"/>
+                <span className="relative w-[30px] h-[2px] my-[6px] block bg-white"/>
+                <span className="relative w-[30px] h-[2px] my-[6px] block bg-white"/>
               </button>
               <nav
                 id="navbarCollapse"
@@ -106,7 +99,7 @@ export const Header = ({ isInner, reloadCommunityList }) => {
                       <ScrollLink to={"pricing"} dark={scroll ? "true" : undefined} smooth={true}>Pricing</ScrollLink>
                     </li>
                     <li className="relative group">
-                      <ScrollLink to={"team"} dark={scroll ? "true" : undefined} smooth={true}>Team</ScrollLink>
+                      <ScrollLink to={"communities"} dark={scroll ? "true" : undefined} smooth={true}>Communities</ScrollLink>
                     </li>
                     <li className="relative group">
                       <ScrollLink to={"contact"} dark={scroll ? "true" : undefined} smooth={true}>Contact</ScrollLink>
@@ -116,7 +109,7 @@ export const Header = ({ isInner, reloadCommunityList }) => {
                   <ul className="lg:flex">
                     <li className="relative">
                       <NavLink to={"/"} dark={scroll ? "true" : undefined}>
-                        <MdKeyboardArrowLeft className="text-lg align-bottom mr-1 inline-block" />
+                        <MdKeyboardArrowLeft className="text-lg align-bottom mr-1 inline-block"/>
                         Home
                       </NavLink>
                       <span className="text-white opacity-40">/</span>
@@ -161,7 +154,7 @@ export const Header = ({ isInner, reloadCommunityList }) => {
               )}
 
               <div className={`${isConnected && !isInner && "pt-4"} ml-2`}>
-                <ConnectKitButton />
+                <ConnectKitButton/>
               </div>
             </div>
           </div>

@@ -17,7 +17,7 @@ export function OneNFTSeries({ currentCommunity, nft, handleMint, handleCreateCa
     addressOrName: currentCommunity?.nftContract,
     contractInterface: NFTCollectionABI.abi,
     functionName: 'cancelDistributionCampaign',
-    args: [nft?.id]
+    args: [ nft?.id ]
   });
 
   const { data: cancelCampaignData, write: cancelCampaignWrite } = useContractWrite({
@@ -25,7 +25,7 @@ export function OneNFTSeries({ currentCommunity, nft, handleMint, handleCreateCa
     onSuccess: ({ hash }) => {
       dispatch(addTransaction({
         hash: hash,
-        description: `Cancel Campaign Distribution`
+        description: `Cancel Distribution Campaign`
       }));
     },
     onError: ({ message }) => {
@@ -55,9 +55,9 @@ export function OneNFTSeries({ currentCommunity, nft, handleMint, handleCreateCa
     <InnerBlock className="mb-4 flex-row gap-8">
       <div className="w-48 relative bg-gray-50 rounded-lg overflow-hidden">
         <div className="absolute top-0 bottom-0 left-0 right-0 flex justify-center items-center z-0 opacity-50">
-          <Loader />
+          <Loader/>
         </div>
-        <img alt="" className="h-48 w-48 object-cover z-10 relative" src={nft.mediaUri} />
+        <img alt="" className="h-48 w-48 object-cover z-10 relative" src={nft.mediaUri}/>
       </div>
 
       <div className="flex-auto">

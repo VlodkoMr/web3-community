@@ -12,9 +12,9 @@ import { MdKeyboardArrowRight } from 'react-icons/md';
 export function MintNFTPopup({ popupVisible, setPopupVisible, handleSuccess, currentCommunity, collection }) {
   const dispatch = useDispatch();
   const { address } = useAccount();
-  const [isSubmitLoading, setIsSubmitLoading] = useState(false);
-  const [submitFormData, setSubmitFormData] = useState({});
-  const [formData, setFormData] = useState({
+  const [ isSubmitLoading, setIsSubmitLoading ] = useState(false);
+  const [ submitFormData, setSubmitFormData ] = useState({});
+  const [ formData, setFormData ] = useState({
     account: "",
     amount: ""
   });
@@ -24,7 +24,7 @@ export function MintNFTPopup({ popupVisible, setPopupVisible, handleSuccess, cur
     contractInterface: NFTCollectionABI.abi,
     enabled: submitFormData.account?.length > 0 && parseInt(submitFormData.amount) > 0,
     functionName: 'mint',
-    args: [submitFormData.account, collection?.id, submitFormData.amount]
+    args: [ submitFormData.account, collection?.id, submitFormData.amount ]
   });
 
   const { data: mintData, write: mintWrite, status: mintStatus } = useContractWrite({
@@ -83,13 +83,13 @@ export function MintNFTPopup({ popupVisible, setPopupVisible, handleSuccess, cur
     if (mintWrite && mintStatus !== 'loading') {
       mintWrite();
     }
-  }, [mintWrite]);
+  }, [ mintWrite ]);
 
   useEffect(() => {
     if (errorMint) {
       console.log('errorUpload', errorMint);
     }
-  }, [errorMint]);
+  }, [ errorMint ]);
 
   const isFormErrors = () => {
     if (formData.account.length < 1) {
@@ -118,12 +118,12 @@ export function MintNFTPopup({ popupVisible, setPopupVisible, handleSuccess, cur
                title="Mint NFT">
           <form className="flex flex-row gap-8 relative" onSubmit={handleMintNFT}>
             <div className="w-36">
-              <img className="mt-2 h-36 w-36 bg-gray-50 rounded-lg object-cover" src={collection.mediaUri} alt="" />
+              <img className="mt-2 h-36 w-36 bg-gray-50 rounded-lg object-cover" src={collection.mediaUri} alt=""/>
             </div>
             <div className="flex-1">
               <div className="mb-3">
                 <div className="mb-1 block text-left flex justify-between">
-                  <div />
+                  <div/>
                   <div className="text-sm text-gray-500 underline cursor-pointer" onClick={() => setMyAddress()}>
                     set my wallet
                   </div>
@@ -150,17 +150,17 @@ export function MintNFTPopup({ popupVisible, setPopupVisible, handleSuccess, cur
                 </div>
                 <div className="text-sm text-gray-500 ml-6 pt-2.5">
                   Total Supply: {collection.supply === 0 ?
-                  <ImInfinite size="16" className="inline" /> : `${collection.supply} NFT`}
+                  <ImInfinite size="16" className="inline"/> : `${collection.supply} NFT`}
                 </div>
               </div>
 
               <div className="flex justify-between mt-8">
-                <div className="text-gray-500 text-sm pt-2" />
+                <div className="text-gray-500 text-sm pt-2"/>
                 <Button type="Submit"
                         variant="gradient"
                         disabled={isFormErrors()}>
                   Mint NFT
-                  <MdKeyboardArrowRight className="text-lg align-bottom ml-1 inline-block" />
+                  <MdKeyboardArrowRight className="text-lg align-bottom ml-1 inline-block"/>
                 </Button>
               </div>
             </div>
@@ -168,7 +168,7 @@ export function MintNFTPopup({ popupVisible, setPopupVisible, handleSuccess, cur
             {isSubmitLoading && (
               <div className="bg-white/80 absolute top-[-20px] bottom-0 right-0 left-0 z-10">
                 <div className={"w-12 mx-auto mt-10"}>
-                  <Loader />
+                  <Loader/>
                 </div>
               </div>
             )}

@@ -10,10 +10,10 @@ import { MdKeyboardArrowRight } from 'react-icons/md';
 
 export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
   const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(false);
-  const [editFormData, setEditFormData] = useState({});
-  const [addFormData, setAddFormData] = useState({});
-  const [formData, setFormData] = useState({
+  const [ isLoading, setIsLoading ] = useState(false);
+  const [ editFormData, setEditFormData ] = useState({});
+  const [ addFormData, setAddFormData ] = useState({});
+  const [ formData, setFormData ] = useState({
     name: editCommunity?.name || "",
     category: editCommunity?.category || "",
     privacy: editCommunity?.privacy || "0",
@@ -28,7 +28,7 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
     ...mainContract,
     enabled: !editCommunity && addFormData.name?.length > 0,
     functionName: 'createCommunity',
-    args: [addFormData.name, addFormData.category, addFormData.privacy, addFormData.description]
+    args: [ addFormData.name, addFormData.category, addFormData.privacy, addFormData.description ]
   });
 
   const { data: addCommunityData, write: addCommunityWrite, status: addCommunityStatus } = useContractWrite({
@@ -66,7 +66,7 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
     if (addCommunityWrite && addCommunityStatus !== 'loading') {
       addCommunityWrite();
     }
-  }, [addCommunityWrite]);
+  }, [ addCommunityWrite ]);
 
   // ------------- Update Community Methods -------------
 
@@ -74,7 +74,7 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
     ...mainContract,
     enabled: !!editCommunity && editFormData.name?.length > 0,
     functionName: 'updateCommunity',
-    args: [editCommunity?.id, editFormData.name, editFormData.category, editFormData.privacy, editFormData.description]
+    args: [ editCommunity?.id, editFormData.name, editFormData.privacy, editFormData.description ]
   });
 
   const { data: editCommunityData, write: editCommunityWrite, status: editCommunityStatus } = useContractWrite({
@@ -111,7 +111,7 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
     if (editCommunityWrite && editCommunityStatus !== 'loading') {
       editCommunityWrite();
     }
-  }, [editCommunityWrite]);
+  }, [ editCommunityWrite ]);
 
   // ------------- Form -------------
 
@@ -123,7 +123,7 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
       privacy: editCommunity?.privacy || "0",
       description: editCommunity?.description || ""
     });
-  }, [editCommunity]);
+  }, [ editCommunity ]);
 
   // Reset form
   const resetForm = () => {
@@ -206,6 +206,7 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
             <Select label="Category*"
                     value={formData.category}
                     placeholder="Select Category"
+                    disabled={!!editCommunity}
                     onChange={val => setFormData({ ...formData, category: val })}>
               {communityTypes.map((oneType, index) => (
                 <Option value={(index + 1).toString()} key={index}>
@@ -240,14 +241,14 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
         <div className={"flex justify-end"}>
           <Button type="Submit" variant="gradient" disabled={isFormErrors()}>
             {editCommunity ? "Save" : "Create Community"}
-            <MdKeyboardArrowRight className="text-lg align-bottom ml-1 inline-block" />
+            <MdKeyboardArrowRight className="text-lg align-bottom ml-1 inline-block"/>
           </Button>
         </div>
 
         {isLoading && (
           <div className="bg-white/80 absolute top-[-10px] bottom-0 right-0 left-0 z-10">
             <div className={"w-12 mx-auto mt-10"}>
-              <Loader />
+              <Loader/>
             </div>
           </div>
         )}

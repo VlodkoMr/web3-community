@@ -10,6 +10,7 @@ import { Button, Textarea } from '@material-tailwind/react';
 import { DistributionCampaignFTPopup } from '../../components/Community/FungibleToken/DistributionCampaignFTPopup';
 import { transformFTCampaign } from '../../utils/transform';
 import { OneFTDistribution } from '../../components/Community/FungibleToken/OneFTDistribution';
+import { PauseUnpausePopup } from '../../components/Community/NftCollection/PauseUnpausePopup';
 
 export const FungibleToken = () => {
   const { address } = useAccount();
@@ -51,12 +52,6 @@ export const FungibleToken = () => {
     refetchDistributionCampaigns();
   }
 
-  const pauseContract = () => {
-    if (confirm("Paused contract don't allow minting or transfer NFT. Are you sure?")) {
-      // pause
-    }
-  }
-
   useEffect(() => {
     console.log('distributionCampaigns', distributionCampaigns)
   }, [distributionCampaigns])
@@ -67,13 +62,10 @@ export const FungibleToken = () => {
         <InnerBlock.Header className="flex justify-between">
           <span>Fungible Token</span>
           {isContractAddress(currentCommunity?.ftContract) && (
-            <Button size="sm"
-                    color="red"
-                    variant="outlined"
-                    className={"px-3 py-0.5"}
-                    onClick={pauseContract}>
-              Pause Contract
-            </Button>
+            <PauseUnpausePopup contractAddress={currentCommunity.ftContract}
+                               contractABI={FungibleTokenABI}
+                               handleSuccess={reloadCommunityList}
+            />
           )}
         </InnerBlock.Header>
         <div>
@@ -105,7 +97,11 @@ export const FungibleToken = () => {
                   {distributionCampaigns?.length > 0 ? (
                     <>
                       {distributionCampaigns.map(campaign => (
-                        <OneFTDistribution key={campaign.id} campaign={campaign} tokenSymbol={tokenSymbol} />
+                        <OneFTDistribution key={campaign.id}
+                                           campaign={campaign}
+                                           tokenSymbol={tokenSymbol}
+                                           currentCommunity={currentCommunity}
+                        />
                       ))}
                     </>
                   ) : (

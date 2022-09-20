@@ -5,12 +5,12 @@ import { EditCommunity } from '../../components/Community/EditCommunity';
 import { useOutletContext } from 'react-router-dom';
 
 export const Settings = () => {
-  const [reloadCommunityList] = useOutletContext();
+  const [ reloadCommunityList ] = useOutletContext();
   const currentCommunity = useSelector(state => state.community.current);
 
   useEffect(() => {
     console.log('currentCommunity', currentCommunity);
-  }, [currentCommunity]);
+  }, [ currentCommunity ]);
 
   return (
     <div className="flex gap-6">
@@ -20,7 +20,7 @@ export const Settings = () => {
             <span>General Settings</span>
           </InnerBlock.Header>
           <div className="mt-8">
-            <EditCommunity editCommunity={currentCommunity} handleSuccess={() => reloadCommunityList()} />
+            <EditCommunity editCommunity={currentCommunity} handleSuccess={() => reloadCommunityList()}/>
           </div>
         </div>
       </InnerBlock>

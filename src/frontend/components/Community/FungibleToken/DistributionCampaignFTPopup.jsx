@@ -12,18 +12,18 @@ import { convertToEther } from '../../../utils/format';
 import { BigNumber } from '@ethersproject/bignumber';
 
 export function DistributionCampaignFTPopup({
-  popupVisible,
-  setPopupVisible,
-  handleSuccess,
-  currentCommunity,
-  tokenSymbol,
-  myBalance,
-}) {
+                                              popupVisible,
+                                              setPopupVisible,
+                                              handleSuccess,
+                                              currentCommunity,
+                                              tokenSymbol,
+                                              myBalance,
+                                            }) {
   const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(false);
-  const [approveFormData, setApproveFormData] = useState({});
-  const [submitFormData, setSubmitFormData] = useState({});
-  const [formData, setFormData] = useState({
+  const [ isLoading, setIsLoading ] = useState(false);
+  const [ approveFormData, setApproveFormData ] = useState({});
+  const [ submitFormData, setSubmitFormData ] = useState({});
+  const [ formData, setFormData ] = useState({
     distributionType: "",
     dateFrom: "",
     dateTo: "",
@@ -40,7 +40,7 @@ export function DistributionCampaignFTPopup({
     contractInterface: FungibleTokenABI.abi,
     enabled: approveFormData?.distributionType > 0 && approveFormData.tokensAmount > 0,
     functionName: 'approve',
-    args: [currentCommunity?.ftContract, approveFormData.tokensAmount]
+    args: [ currentCommunity?.ftContract, approveFormData.tokensAmount ]
   });
 
   const { data: approveData, write: approveWrite, status: approveStatus } = useContractWrite({
@@ -78,7 +78,7 @@ export function DistributionCampaignFTPopup({
     if (approveWrite && approveStatus !== 'loading') {
       approveWrite();
     }
-  }, [approveWrite]);
+  }, [ approveWrite ]);
 
   // ------------ Create Distribution Campaign ------------
 
@@ -87,7 +87,7 @@ export function DistributionCampaignFTPopup({
     contractInterface: FungibleTokenABI.abi,
     enabled: submitFormData?.distributionType > 0 && submitFormData?.tokensAmount > 0,
     functionName: 'createDistributionCampaign',
-    args: [submitFormData.distributionType, submitFormData.dateFrom, submitFormData.dateTo, submitFormData.whitelisted || [], submitFormData.isLimit, submitFormData.tokensAmount, submitFormData.tokensPerUser]
+    args: [ submitFormData.distributionType, submitFormData.dateFrom, submitFormData.dateTo, submitFormData.whitelisted || [], submitFormData.isLimit, submitFormData.tokensAmount, submitFormData.tokensPerUser ]
   });
 
   const { data: createData, write: createWrite, status: createStatus } = useContractWrite({
@@ -128,7 +128,7 @@ export function DistributionCampaignFTPopup({
     if (createWrite && createStatus !== 'loading') {
       createWrite();
     }
-  }, [createWrite]);
+  }, [ createWrite ]);
 
   // ------------ Actions ------------
 
@@ -274,7 +274,7 @@ export function DistributionCampaignFTPopup({
               <Checkbox label="Limit: 1 mint/person"
                         color="amber"
                         onChange={() => setFormData({ ...formData, isLimit: !formData.isLimit })}
-                        className="font-semibold" />
+                        className="font-semibold"/>
               <a href="https://worldcoin.org/"
                  className="underline pt-3 text-blue-500"
                  target="_blank">
@@ -319,10 +319,10 @@ export function DistributionCampaignFTPopup({
             </div>
 
             <div className="flex justify-between mt-8 ">
-              <div className="text-gray-500 text-sm pt-2" />
+              <div className="text-gray-500 text-sm pt-2"/>
               <Button type="Submit" variant="gradient">
                 Create Campaign
-                <MdKeyboardArrowRight className="text-lg align-bottom ml-1 inline-block" />
+                <MdKeyboardArrowRight className="text-lg align-bottom ml-1 inline-block"/>
               </Button>
             </div>
           </div>
@@ -330,7 +330,7 @@ export function DistributionCampaignFTPopup({
           {isLoading && (
             <div className="bg-white/80 absolute top-[-20px] bottom-0 right-0 left-0 z-10">
               <div className={"w-12 mx-auto mt-10"}>
-                <Loader />
+                <Loader/>
               </div>
             </div>
           )}

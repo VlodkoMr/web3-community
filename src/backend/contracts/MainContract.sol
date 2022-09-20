@@ -10,7 +10,7 @@ contract MainContract is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 	address factoryFTContract;
 	uint public communityCount;
 	mapping(address => Community[]) public communityList;
-	mapping(CommunityCategory => uint[]) public communityCategory;
+	mapping(CommunityCategory => uint[]) public communityCategories;
 
 	enum CommunityCategory {
 		None,
@@ -82,11 +82,13 @@ contract MainContract is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 				communityCount, _category, _privacy, _name, _description, "", msg.sender, address(0), address(0)
 			)
 		);
+
+		communityCategories[_category].push(communityCount);
 	}
 
 	// Update community
 	function updateCommunity(
-		uint _id, string memory _name, CommunityCategory _category, CommunityPrivacy _privacy, string memory _description
+		uint _id, string memory _name, CommunityPrivacy _privacy, string memory _description
 	) public {
 		require(bytes(_name).length >= 3, "Community name too short");
 
@@ -95,7 +97,6 @@ contract MainContract is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 		require(userCommunity.owner == msg.sender, "No access to community");
 
 		userCommunity.name = _name;
-		userCommunity.category = _category;
 		userCommunity.privacy = _privacy;
 		userCommunity.description = _description;
 	}

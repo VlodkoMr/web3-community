@@ -16,9 +16,9 @@ export function CreateNFTSeriesPopup({ popupVisible, setPopupVisible, handleSucc
   const dispatch = useDispatch();
   const { chain } = useNetwork();
   const currentCommunity = useSelector(state => state.community.current);
-  const [isLoading, setIsLoading] = useState(false);
-  const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState({
+  const [ isLoading, setIsLoading ] = useState(false);
+  const [ currentStep, setCurrentStep ] = useState(1);
+  const [ formData, setFormData ] = useState({
     name: "",
     description: "",
     price: "",
@@ -31,16 +31,16 @@ export function CreateNFTSeriesPopup({ popupVisible, setPopupVisible, handleSucc
     attributes: []
   });
 
-  const [submitFormData, setSubmitFormData] = useState({});
+  const [ submitFormData, setSubmitFormData ] = useState({});
   const { config: configUpload, error: errorUpload } = usePrepareContractWrite({
     addressOrName: currentCommunity?.nftContract,
     contractInterface: NFTCollectionABI.abi,
     enabled: submitFormData?.jsonFileURL?.length > 0,
     functionName: 'newCollectionItem',
-    args: [submitFormData.jsonFileURL, submitFormData.mediaURL, submitFormData.name, submitFormData.price, submitFormData.supply, [
+    args: [ submitFormData.jsonFileURL, submitFormData.mediaURL, submitFormData.name, submitFormData.price, submitFormData.supply, [
       submitFormData.royaltyAddress,
       submitFormData.royaltyPct,
-    ]]
+    ] ]
   });
 
   const { data: uploadData, write: uploadWrite, status: uploadStatus } = useContractWrite({
@@ -122,7 +122,7 @@ export function CreateNFTSeriesPopup({ popupVisible, setPopupVisible, handleSucc
     if (errorUpload) {
       console.log('errorUpload', errorUpload);
     }
-  }, [errorUpload]);
+  }, [ errorUpload ]);
 
   // call contract write when all is ready
   useEffect(() => {
@@ -130,7 +130,7 @@ export function CreateNFTSeriesPopup({ popupVisible, setPopupVisible, handleSucc
     if (uploadWrite && uploadStatus !== 'loading') {
       uploadWrite();
     }
-  }, [uploadWrite]);
+  }, [ uploadWrite ]);
 
   const isFormErrors = () => {
     if (formData.name.length < 3) {
@@ -175,20 +175,20 @@ export function CreateNFTSeriesPopup({ popupVisible, setPopupVisible, handleSucc
   }
 
   const removeAttribute = (index) => {
-    const values = [...formData.attributes];
+    const values = [ ...formData.attributes ];
     values.splice(index, 1);
     setFormData({ ...formData, attributes: values })
   }
 
   const updateAttribute = (index, event) => {
-    const values = [...formData.attributes];
+    const values = [ ...formData.attributes ];
     const updatedValue = event.target.name;
     values[index][updatedValue] = event.target.value;
     setFormData({ ...formData, attributes: values })
   }
 
   const addNFTAttribute = () => {
-    const values = [...formData.attributes];
+    const values = [ ...formData.attributes ];
     values.push({ type: "", value: "" });
     setFormData({ ...formData, attributes: values })
   }
@@ -252,7 +252,7 @@ export function CreateNFTSeriesPopup({ popupVisible, setPopupVisible, handleSucc
                         variant="gradient"
                         onClick={handleNextStep}>
                   Next Step
-                  <MdKeyboardArrowRight className="text-lg align-bottom ml-1 inline-block" />
+                  <MdKeyboardArrowRight className="text-lg align-bottom ml-1 inline-block"/>
                 </Button>
               </div>
             </div>
@@ -321,7 +321,7 @@ export function CreateNFTSeriesPopup({ popupVisible, setPopupVisible, handleSucc
                         <div className="w-5">
                           <MdOutlineCancel
                             onClick={() => removeAttribute(index)}
-                            className="w-5 h-5 mt-3 text-red-500 hover:text-red-600 cursor-pointer" />
+                            className="w-5 h-5 mt-3 text-red-500 hover:text-red-600 cursor-pointer"/>
                         </div>
                       </div>
                     ))}
@@ -335,12 +335,12 @@ export function CreateNFTSeriesPopup({ popupVisible, setPopupVisible, handleSucc
 
               <div className="flex justify-between mt-8">
                 <Button type="Button" size="sm" color="gray" variant="outlined" onClick={() => setCurrentStep(1)}>
-                  <MdKeyboardArrowLeft className="text-lg align-bottom mr-1 inline-block" />
+                  <MdKeyboardArrowLeft className="text-lg align-bottom mr-1 inline-block"/>
                   Back
                 </Button>
                 <Button type="Submit">
                   Create Series
-                  <MdKeyboardArrowRight className="text-lg align-bottom ml-1 inline-block" />
+                  <MdKeyboardArrowRight className="text-lg align-bottom ml-1 inline-block"/>
                 </Button>
               </div>
             </div>
@@ -349,7 +349,7 @@ export function CreateNFTSeriesPopup({ popupVisible, setPopupVisible, handleSucc
           {isLoading && (
             <div className="bg-white/80 absolute top-[-20px] bottom-0 right-0 left-0 z-10">
               <div className={"w-12 mx-auto mt-10"}>
-                <Loader />
+                <Loader/>
               </div>
             </div>
           )}

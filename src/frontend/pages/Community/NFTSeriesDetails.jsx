@@ -4,7 +4,7 @@ import { Footer } from "../../components/Footer";
 
 export const NFTSeriesDetails = () => (
   <div className="flex flex-col h-screen relative">
-    <Header />
+    <Header/>
 
     <div
       id="home"
@@ -16,6 +16,6 @@ export const NFTSeriesDetails = () => (
       </div>
     </div>
 
-    <Footer />
+    <Footer/>
   </div>
 );

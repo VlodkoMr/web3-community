@@ -3,9 +3,14 @@ import { convertFromEther, formatNumber, timestampToDate } from '../../../utils/
 import { InnerBlock } from '../../../assets/css/common.style';
 import { distributionCampaignsNFT } from '../../../utils/settings';
 import { Button } from '@material-tailwind/react';
+import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
+import { addTransaction } from '../../../store/transactionSlice';
+import { useDispatch } from 'react-redux';
+import NFTCollectionABI from '../../../contractsData/NFTCollection.json';
 
-export function OneFTDistribution({ campaign, tokenSymbol }) {
-  const [campaignDetails, setCampaignDetails] = useState();
+export function OneFTDistribution({ campaign, currentCommunity, tokenSymbol }) {
+  const dispatch = useDispatch();
+  const [ campaignDetails, setCampaignDetails ] = useState();
 
   useEffect(() => {
     distributionCampaignsNFT.map(campSettings => {
@@ -13,11 +18,49 @@ export function OneFTDistribution({ campaign, tokenSymbol }) {
         setCampaignDetails(campSettings)
       }
     });
-  }, [])
+  }, []);
+
+  const { config: configCancelCampaign, error: errorCancelCampaign } = usePrepareContractWrite({
+    addressOrName: currentCommunity?.nftContract,
+    contractInterface: NFTCollectionABI.abi,
+    functionName: 'cancelDistributionCampaign',
+    args: [ campaign?.id ]
+  });
+
+  const { data: cancelCampaignData, write: cancelCampaignWrite } = useContractWrite({
+    ...configCancelCampaign,
+    onSuccess: ({ hash }) => {
+      dispatch(addTransaction({
+        hash: hash,
+        description: `Cancel Distribution Campaign`
+      }));
+    },
+    onError: ({ message }) => {
+      console.log('onError message', message);
+    },
+  });
+
+  useWaitForTransaction({
+    hash: cancelCampaignData?.hash,
+    onError: error => {
+      console.log('is err', error)
+    },
+    onSuccess: data => {
+      if (data) {
+        console.log('...')
+      }
+    },
+  });
 
   const claimedPct = () => {
     const mintedPct = campaign.tokensMinted.mul(100).div(campaign.tokensTotal);
     return mintedPct.toNumber();
+  }
+
+  const handleCancel = () => {
+    if (confirm('Please confirm Campaign cancellation')) {
+      cancelCampaignWrite();
+    }
   }
 
   return (
@@ -59,7 +102,7 @@ export function OneFTDistribution({ campaign, tokenSymbol }) {
         )}
 
         <div className={'mt-4'}>
-          <Button color={'red'} variant={'outlined'} size={'sm'}>
+          <Button color={'red'} variant={'outlined'} size={'sm'} onClick={() => handleCancel()}>
             Cancel Distribution
           </Button>
         </div>

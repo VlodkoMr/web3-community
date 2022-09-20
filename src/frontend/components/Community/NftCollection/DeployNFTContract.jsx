@@ -8,10 +8,10 @@ import { Input, Button } from '@material-tailwind/react';
 
 export function DeployNFTContract({ reloadCommunityList }) {
   const dispatch = useDispatch();
-  const [isLoadingCreate, setIsLoadingCreate] = useState(false);
+  const [ isLoadingCreate, setIsLoadingCreate ] = useState(false);
   const currentCommunity = useSelector(state => state.community.current);
-  const [submitFormData, setSubmitFormData] = useState({});
-  const [formData, setFormData] = useState({
+  const [ submitFormData, setSubmitFormData ] = useState({});
+  const [ formData, setFormData ] = useState({
     name: "",
     symbol: "",
   });
@@ -22,7 +22,7 @@ export function DeployNFTContract({ reloadCommunityList }) {
     ...factoryNFTContract,
     enabled: submitFormData.name?.length > 0,
     functionName: 'deployNFTCollectionContract',
-    args: [currentCommunity.id, submitFormData.name, submitFormData.symbol?.toUpperCase()]
+    args: [ currentCommunity.id, submitFormData.name, submitFormData.symbol?.toUpperCase() ]
   });
 
   const { data: deployData, write: deployWrite, status: deployStatus } = useContractWrite({
@@ -58,7 +58,7 @@ export function DeployNFTContract({ reloadCommunityList }) {
     if (deployWrite && deployStatus !== 'loading') {
       deployWrite();
     }
-  }, [deployWrite]);
+  }, [ deployWrite ]);
 
   // ------------- Form -------------
 
@@ -95,8 +95,8 @@ export function DeployNFTContract({ reloadCommunityList }) {
     <>
       <p className="text-sm opacity-80 mb-4">
         This section allow you create unique NFT Series for your community, create distribution campaign to sell or
-        minting NFT for free. <br />
-        To start using NFT Collections, let's enable this feature (deploy your own Smart Contract): <br />
+        minting NFT for free. <br/>
+        To start using NFT Collections, let's enable this feature (deploy your own Smart Contract): <br/>
       </p>
 
       <form className="flex gap-4 relative" onSubmit={deployNFTContract}>
@@ -125,7 +125,7 @@ export function DeployNFTContract({ reloadCommunityList }) {
         <Button disabled={isLoadingCreate || isFormErrors()} type="Submit" variant="gradient">
           {isLoadingCreate && (
             <span className="mr-2 align-bottom">
-              <Loader size={"sm"} />
+              <Loader size={"sm"}/>
             </span>
           )}
           Create NFT Collection

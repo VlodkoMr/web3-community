@@ -13,7 +13,7 @@ export function Popup({ children, title, isVisible, setIsVisible, closeCallback,
     <Dialog open={isVisible} handler={handleOpenPopup} size={size}>
       <DialogHeader className={"flex justify-between cursor-pointer px-8 text-xl"}>
         {title}
-        <MdOutlineClose onClick={handleOpenPopup} />
+        <MdOutlineClose onClick={handleOpenPopup}/>
       </DialogHeader>
       <DialogBody divider className={`px-8 py-6 block`}>
         {children}

@@ -47,14 +47,14 @@ export const Transaction = ({ tx }) => {
         <div className="w-8 pt-1 mr-4 opacity-90">
           {isLoading && (
             <div className="w-10">
-              <Loader size={"lg"} />
+              <Loader size={"lg"}/>
             </div>
           )}
           {isError && (
-            <MdOutlineErrorOutline color="white" className="w-8 h-8" />
+            <MdOutlineErrorOutline color="white" className="w-8 h-8"/>
           )}
           {isSuccess && (
-            <MdOutlineCheckCircleOutline color="white" className="w-8 h-8" />
+            <MdOutlineCheckCircleOutline color="white" className="w-8 h-8"/>
           )}
         </div>
 

@@ -11,13 +11,13 @@ export const Dashboard = () => {
 
   useEffect(() => {
     console.log('currentCommunity', currentCommunity);
-  }, [currentCommunity]);
+  }, [ currentCommunity ]);
 
   useEffect(() => {
     if (window.contracts) {
       console.log('Dashboard load')
     }
-  }, [window.contracts]);
+  }, [ window.contracts ]);
 
   return (
     <>

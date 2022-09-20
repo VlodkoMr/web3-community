@@ -3,31 +3,37 @@ import ReactDOM from 'react-dom/client'
 import App from './frontend/App'
 import store from "./frontend/store"
 
-import { createClient, WagmiConfig } from 'wagmi'
-import { ConnectKitProvider, getDefaultClient } from 'connectkit'
-import { chain } from "wagmi"
-import { Provider } from "react-redux"
-import { ThemeProvider } from "@material-tailwind/react";
+import {createClient, WagmiConfig} from 'wagmi'
+import {ConnectKitProvider, getDefaultClient} from 'connectkit'
+import {chain} from "wagmi"
+import {Provider} from "react-redux"
+import {ThemeProvider} from "@material-tailwind/react";
+import {DevSupport} from "@react-buddy/ide-toolbox";
+import {ComponentPreviews, useInitial} from "./dev";
 
 // const chains = [chain.mainnet, chain.polygon, chain.optimism, chain.arbitrum]
 const chains = [chain.hardhat, chain.polygonMumbai, chain.optimismGoerli]
 
 const client = createClient(
-  getDefaultClient({
-    appName: "Web3 Community",
-    alchemyId: process.env.ALCHEMY_ID,
-    chains
-  }),
+    getDefaultClient({
+        appName: "Web3 Community",
+        alchemyId: process.env.ALCHEMY_ID,
+        chains
+    }),
 )
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <WagmiConfig client={client}>
-    <ConnectKitProvider>
-      <Provider store={store}>
-        <ThemeProvider>
-          <App />
-        </ThemeProvider>
-      </Provider>
-    </ConnectKitProvider>
-  </WagmiConfig>
+    <WagmiConfig client={client}>
+        <ConnectKitProvider>
+            <Provider store={store}>
+                <ThemeProvider>
+                    <DevSupport ComponentPreviews={ComponentPreviews}
+                                useInitialHook={useInitial}
+                    >
+                        <App/>
+                    </DevSupport>
+                </ThemeProvider>
+            </Provider>
+        </ConnectKitProvider>
+    </WagmiConfig>
 )

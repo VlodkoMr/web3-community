@@ -27,37 +27,37 @@ export function DashboardLeftMenu() {
     <ul>
       <li className="relative">
         <MenuItem title={"Dashboard"} link={"/my/dashboard"}>
-          <MdSpaceDashboard color={getNavLinkClass("/my/dashboard") ? "white" : ""} />
+          <MdSpaceDashboard color={getNavLinkClass("/my/dashboard") ? "white" : ""}/>
         </MenuItem>
       </li>
       <li className="relative">
         <MenuItem title={"NFT Collection"} link={"/my/nft"}>
-          <MdPermMedia color={getNavLinkClass("/my/nft") ? "white" : ""} />
+          <MdPermMedia color={getNavLinkClass("/my/nft") ? "white" : ""}/>
         </MenuItem>
       </li>
       <li className="relative">
         <MenuItem title={"Fungible Token"} link={"/my/token"}>
-          <GiToken color={getNavLinkClass("/my/token") ? "white" : ""} />
+          <GiToken color={getNavLinkClass("/my/token") ? "white" : ""}/>
         </MenuItem>
       </li>
       <li className="relative">
         <MenuItem title={"DAO"} link={"/my/dao"}>
-          <GoVerified color={getNavLinkClass("/my/dao") ? "white" : ""} />
+          <GoVerified color={getNavLinkClass("/my/dao") ? "white" : ""}/>
         </MenuItem>
       </li>
       <li className="relative">
         <MenuItem title={"Video Streaming"} link={"/my/video"}>
-          <IoIosVideocam color={getNavLinkClass("/my/video") ? "white" : ""} />
+          <IoIosVideocam color={getNavLinkClass("/my/video") ? "white" : ""}/>
         </MenuItem>
       </li>
       <li className="relative">
         <MenuItem title={"Members"} link={"/my/members"}>
-          <ImUsers color={getNavLinkClass("/my/members") ? "white" : ""} />
+          <ImUsers color={getNavLinkClass("/my/members") ? "white" : ""}/>
         </MenuItem>
       </li>
       <li className="relative">
         <MenuItem title={"Settings"} link={"/my/settings"}>
-          <MdSettings color={getNavLinkClass("/my/settings") ? "white" : ""} />
+          <MdSettings color={getNavLinkClass("/my/settings") ? "white" : ""}/>
         </MenuItem>
       </li>
     </ul>
