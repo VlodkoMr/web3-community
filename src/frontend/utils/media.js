@@ -15,7 +15,6 @@ export const uploadMediaToIPFS = (media) => {
       description: `Web3 Community ${name}`,
     });
 
-    console.log(`token`, token);
     if (token.url) {
       resolve(token.data.image.pathname.replace('//', ''));
     }

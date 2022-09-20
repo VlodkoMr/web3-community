@@ -4,11 +4,11 @@ import logoWhite from '../assets/images/logo/logo-white.png';
 import logoColor from '../assets/images/logo/logo.png';
 import { Container, Link, NavLink, ScrollLink } from '../assets/css/common.style';
 import { animateScroll } from "react-scroll";
-import { useDispatch, useSelector } from 'react-redux';
-import { setCurrentCommunity } from '../store/communitySlice';
-import { EditCommunity } from './Community/EditCommunity';
 import { useAccount } from 'wagmi';
 import { Popup } from './Popup';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCurrentCommunity } from '../store/communitySlice';
+import { EditCommunity } from './MyCommunity/EditCommunity';
 import { MdKeyboardArrowLeft } from 'react-icons/all';
 
 export const Header = ({ isInner, reloadCommunityList }) => {
@@ -52,6 +52,7 @@ export const Header = ({ isInner, reloadCommunityList }) => {
   }
 
   const handleSuccessCreate = async () => {
+    console.log(`handleSuccessCreate`, handleSuccessCreate);
     reloadCommunityList(true);
     console.log('reloadCommunityList')
   }
@@ -128,7 +129,7 @@ export const Header = ({ isInner, reloadCommunityList }) => {
                         //   ))}
                         // </Select>
                         <select
-                          className={`py-2 px-2 bg-transparent text-white focus:outline-none`}
+                          className={`py-2 px-2 bg-transparent text-white focus:outline-none max-w-[240px]`}
                           value={currentCommunity.id}
                           onChange={e => {
                             e.target.value.length ? selectCommunity(e.target.value) : setCommunityPopupVisible(true)

@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { InnerBlock } from '../../assets/css/common.style';
-import { EditCommunity } from '../../components/Community/EditCommunity';
 import { useOutletContext } from 'react-router-dom';
+import { InnerBlock } from '../../assets/css/common.style';
+import { EditCommunity } from '../../components/MyCommunity/EditCommunity';
 
 export const Settings = () => {
   const [ reloadCommunityList ] = useOutletContext();

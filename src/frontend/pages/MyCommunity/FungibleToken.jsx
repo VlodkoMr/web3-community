@@ -2,15 +2,15 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { InnerBlock, InnerTransparentBlock } from '../../assets/css/common.style';
 import { useAccount, useContractRead } from 'wagmi';
-import FungibleTokenABI from '../../contractsData/FungibleToken.json';
 import { convertFromEther, formatNumber, isContractAddress } from '../../utils/format';
-import { DeployFTContract } from '../../components/Community/FungibleToken/DeployFTContract';
+import { transformFTCampaign } from '../../utils/transform';
 import { useOutletContext } from 'react-router-dom';
 import { Button, Textarea } from '@material-tailwind/react';
-import { DistributionCampaignFTPopup } from '../../components/Community/FungibleToken/DistributionCampaignFTPopup';
-import { transformFTCampaign } from '../../utils/transform';
-import { OneFTDistribution } from '../../components/Community/FungibleToken/OneFTDistribution';
-import { PauseUnpausePopup } from '../../components/Community/NftCollection/PauseUnpausePopup';
+import { DeployFTContract } from '../../components/MyCommunity/FungibleToken/DeployFTContract';
+import { DistributionCampaignFTPopup } from '../../components/MyCommunity/FungibleToken/DistributionCampaignFTPopup';
+import { OneFTDistribution } from '../../components/MyCommunity/FungibleToken/OneFTDistribution';
+import { PauseUnpausePopup } from '../../components/MyCommunity/NftCollection/PauseUnpausePopup';
+import FungibleTokenABI from '../../contractsData/FungibleToken.json';
 
 export const FungibleToken = () => {
   const { address } = useAccount();

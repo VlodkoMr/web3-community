@@ -1,17 +1,17 @@
-import React, {useEffect, useState} from 'react';
-import {BrowserRouter, Route, Routes} from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import {
   Category, Home, Error404,
   MyCommunityLayout, Dashboard, FungibleToken, NftCollection, Settings, DAO, Members, Video,
   CommunityLayout, NFTSeriesDetails
 } from './pages';
-import {useAccount} from 'wagmi'
-import {Transaction} from './components/Transaction';
-import {useSelector} from 'react-redux';
+import { useAccount } from 'wagmi'
+import { Transaction } from './components/Transaction';
+import { useSelector } from 'react-redux';
 
 export default function App() {
-  const [isReady, setIsReady] = useState(false);
-  const {isConnected} = useAccount();
+  const [ isReady, setIsReady ] = useState(false);
+  const { isConnected } = useAccount();
   const transactions = useSelector(state => state.transactions.list);
 
   useAccount({
@@ -27,7 +27,7 @@ export default function App() {
     } else {
       document.location.href = "/";
     }
-  }, [isConnected])
+  }, [ isConnected ])
 
   return (
     <>
@@ -46,8 +46,8 @@ export default function App() {
               <Route exact path="members" element={<Members/>}/>
             </Route>
 
-            <Route exact path="/category/:id" element={<Category/>}/>
-            <Route exact path="/community/:id" element={<CommunityLayout/>}>
+            <Route exact path="/category/:categoryId" element={<Category/>}/>
+            <Route exact path="/category/:categoryId/:communityId" element={<CommunityLayout/>}>
               <Route exact path="nft/:seriesId" element={<NFTSeriesDetails/>}/>
             </Route>
 

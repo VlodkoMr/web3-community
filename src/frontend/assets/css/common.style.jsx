@@ -113,3 +113,15 @@ InnerBlock.Header = styled.div.attrs({
   mb-2
   text-gray-800`,
 })``
+
+
+export const Badge = styled.div.attrs({
+  className: `
+  text-sm 
+  bg-gray-100 
+  text-gray-500 
+  rounded 
+  px-2 
+  py-0.5 
+  ml-2`,
+})``

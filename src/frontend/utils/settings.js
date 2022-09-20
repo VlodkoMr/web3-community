@@ -1,6 +1,8 @@
 import { chain } from 'wagmi';
 import React from 'react';
 
+export const defaultCommunityLogo = "bafkreigrrdzq64tuawjek3gcbl2qrwqtad4kqayp2owtnokde7ayn7dvfu";
+
 export const communityTypes = [
   "Animals",
   "Art",

@@ -2,16 +2,16 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { InnerBlock, InnerTransparentBlock } from '../../assets/css/common.style';
 import { useContractRead } from 'wagmi';
-import { isContractAddress } from '../../utils/format';
-import { DeployNFTContract } from '../../components/Community/NftCollection/DeployNFTContract';
-import { CreateNFTSeriesPopup } from '../../components/Community/NftCollection/CreateNFTSeriesPopup';
-import { useOutletContext } from "react-router-dom";
-import { transformCollectionNFT } from '../../utils/transform';
-import { OneNFTSeries } from '../../components/Community/NftCollection/OneNFTSeries';
-import { MintNFTPopup } from '../../components/Community/NftCollection/MintNFTPopup';
-import { DistributionCampaignNFTPopup } from '../../components/Community/NftCollection/DistributionCampaignNFTPopup';
 import { Button } from '@material-tailwind/react';
-import { PauseUnpausePopup } from '../../components/Community/NftCollection/PauseUnpausePopup';
+import { useOutletContext } from "react-router-dom";
+import { isContractAddress } from '../../utils/format';
+import { DeployNFTContract } from '../../components/MyCommunity/NftCollection/DeployNFTContract';
+import { CreateNFTSeriesPopup } from '../../components/MyCommunity/NftCollection/CreateNFTSeriesPopup';
+import { transformCollectionNFT } from '../../utils/transform';
+import { OneNFTSeries } from '../../components/MyCommunity/NftCollection/OneNFTSeries';
+import { MintNFTPopup } from '../../components/MyCommunity/NftCollection/MintNFTPopup';
+import { DistributionCampaignNFTPopup } from '../../components/MyCommunity/NftCollection/DistributionCampaignNFTPopup';
+import { PauseUnpausePopup } from '../../components/MyCommunity/NftCollection/PauseUnpausePopup';
 import NFTCollectionABI from '../../contractsData/NFTCollection.json';
 
 export const NftCollection = () => {

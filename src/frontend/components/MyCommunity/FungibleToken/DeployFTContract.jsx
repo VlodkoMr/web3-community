@@ -56,10 +56,15 @@ export function DeployFTContract({ reloadCommunityList }) {
   });
 
   useEffect(() => {
+    console.log(`submitFormData`, submitFormData);
     if (deployWrite && deployStatus !== 'loading') {
       deployWrite();
     }
   }, [ deployWrite ]);
+
+  useEffect(() => {
+    console.log(`errorDeploy`, errorDeploy);
+  }, [ errorDeploy ]);
 
   // ------------- Form -------------
 

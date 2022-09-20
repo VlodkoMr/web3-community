@@ -21,7 +21,6 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
     category: editCommunity?.category || "",
     privacy: editCommunity?.privacy || "0",
     logo: editCommunity?.logo || "",
-    logoData: "",
     description: editCommunity?.description || ""
   });
 
@@ -57,6 +56,8 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
       setAddFormData({});
     },
     onSuccess: data => {
+      console.log(`community created`);
+
       setIsLoading(false);
       resetForm();
       if (data) {
@@ -70,6 +71,14 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
       addCommunityWrite();
     }
   }, [ addCommunityWrite ]);
+
+  useEffect(() => {
+    console.log(`errorAdd`, errorAdd);
+  }, [ errorAdd ]);
+
+  useEffect(() => {
+    console.log(`addCommunityStatus`, addCommunityStatus);
+  }, [ addCommunityStatus ]);
 
   // ------------- Update Community Methods -------------
 
@@ -205,7 +214,9 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
             />
           </div>
           {editCommunity && editCommunity.logo.length > 0 && (
-            <img className="w-12 h-12 bg-gray-100 rounded-md ml-6" src={mediaURL(editCommunity.logo)} alt="logo"/>
+            <img className="w-12 h-12 text-sm bg-gray-100 object-fill rounded-full ml-6"
+                 src={mediaURL(editCommunity.logo)}
+                 alt="logo"/>
           )}
         </div>
         <div className="flex gap-6 text-left">
@@ -227,7 +238,7 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
                     value={formData.privacy}
                     onChange={val => setFormData({ ...formData, privacy: val })}>
               <Option value={"0"}>Public</Option>
-              <Option value={"1"}>Private (whitelisted)</Option>
+              <Option value={"1"}>Private</Option>
             </Select>
           </div>
         </div>
@@ -249,10 +260,15 @@ export function EditCommunity({ handleSuccess, handleTxStart, editCommunity }) {
           </Button>
         </div>
 
-        {isLoading && (
+        {(isLoading || isMediaLoading) && (
           <div className="bg-white/80 absolute top-[-10px] bottom-0 right-0 left-0 z-10">
-            <div className={"w-12 mx-auto mt-10"}>
-              <Loader/>
+            <div className={"w-64 mx-auto mt-10"}>
+              <div className="w-12 mb-3 mx-auto">
+                <Loader/>
+              </div>
+              {isMediaLoading && (
+                <>Please wait, uploading media...</>
+              )}
             </div>
           </div>
         )}
