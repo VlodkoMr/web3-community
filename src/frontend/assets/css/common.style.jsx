@@ -96,6 +96,19 @@ export const InnerBlock = styled.section.attrs({
   py-6`,
 })``;
 
+export const InnerSmallBlock = styled.section.attrs({
+  className: `
+  w-full 
+  relative 
+  flex 
+  break-words 
+  bg-white 
+  rounded-xl 
+  shadow-gray-300/50 
+  shadow-md 
+  p-4`,
+})``;
+
 export const InnerTransparentBlock = styled.section.attrs({
   className: `
   w-full 
@@ -112,6 +125,14 @@ InnerBlock.Header = styled.div.attrs({
   font-semibold 
   mb-2
   text-gray-800`,
+})``
+
+InnerSmallBlock.Header = styled.div.attrs({
+  className: `
+  text-base
+  font-medium
+  mb-2
+  text-gray-600`,
 })``
 
 

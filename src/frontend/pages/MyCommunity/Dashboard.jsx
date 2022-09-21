@@ -1,8 +1,11 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { InnerBlock, InnerTransparentBlock } from '../../assets/css/common.style';
+import { Badge, InnerBlock, InnerSmallBlock, InnerTransparentBlock } from '../../assets/css/common.style';
 import { isContractAddress } from '../../utils/format';
 import { Button } from '@material-tailwind/react';
+import { EditCommunity } from "../../components/MyCommunity/EditCommunity";
+import { Link } from "react-router-dom";
+import { VscCopy } from "react-icons/all";
 
 export const Dashboard = () => {
   const dispatch = useDispatch();
@@ -18,16 +21,51 @@ export const Dashboard = () => {
     }
   }, [ window.contracts ]);
 
+  const InfoBlock = ({ title, value }) => (
+    <InnerSmallBlock className={"w-1/4"}>
+      <div className="flex-auto">
+        <InnerSmallBlock.Header className="flex justify-between">
+          {title}
+        </InnerSmallBlock.Header>
+        <div className="mt-2">
+          {value}
+        </div>
+      </div>
+    </InnerSmallBlock>
+  );
+
   return (
     <>
       <InnerTransparentBlock>
         <InnerBlock.Header className="flex justify-between">
           <span>Dashboard</span>
+          <div className={"text-sm flex flex-row"}>
+            {currentCommunity.privacy === "0" ? (
+              <>
+                <span className="pt-1 text-gray-600">Public URL:</span>
+                <Badge className={"border relative"}>
+                  <Link to={`/category/2/1`}>{process.env.WEBSITE_URL}category/2/1</Link>
+                </Badge>
+                {/*<VscCopy className={"absolute right-1.5 top-1.5"}/>*/}
+              </>
+            ) : (
+              <Badge className={"border border-red-100"}>
+                <Link to={`/my/settings`} className={"text-red-400"}>Private Community</Link>
+              </Badge>
+            )}
+          </div>
         </InnerBlock.Header>
-        <div>
-          ...
-        </div>
       </InnerTransparentBlock>
+
+      <div className="flex flex-row gap-6 mt-2">
+        <InfoBlock title={"General Settings"} value={"..."}></InfoBlock>
+        <InfoBlock title={"General Settings"} value={"..."}></InfoBlock>
+        <InfoBlock title={"General Settings"} value={"..."}></InfoBlock>
+        <InfoBlock title={"General Settings"} value={"..."}></InfoBlock>
+
+
+      </div>
+
     </>
   );
 }

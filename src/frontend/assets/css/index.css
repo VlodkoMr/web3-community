@@ -43,16 +43,16 @@ body {
   content: "";
   display: block;
   filter: blur(3rem);
-  height: 50vh;
+  height: 64vh;
   position: fixed;
-  width: 50vh;
+  width: 64vh;
   z-index: -1;
 }
 
 .community-bg:before {
   opacity: 0.8;
   background: linear-gradient(270deg, #fff3de 20%, #e1d7ff);
-  right: 25vh;
+  right: 10vh;
   top: 8vh;
 }
 
@@ -60,5 +60,5 @@ body {
   opacity: 0.8;
   background: linear-gradient(180deg, #e1d7ff 20%, #f8f8e1);
   bottom: 8vh;
-  left: 25vh;
+  left: 10vh;
 }

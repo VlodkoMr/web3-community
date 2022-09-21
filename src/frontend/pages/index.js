@@ -7,7 +7,6 @@ export * from "./MyCommunity/Settings";
 export * from "./MyCommunity/Video";
 export * from "./MyCommunity/DAO";
 export * from "./MyCommunity/Members";
-export * from "./Community/CommunityLayout";
-export * from "./Community/NFTSeriesDetails";
+export * from "./CommunityPage";
 export * from "./Category";
 export * from "./Error404";

@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import {
-  Category, Home, Error404,
-  MyCommunityLayout, Dashboard, FungibleToken, NftCollection, Settings, DAO, Members, Video,
-  CommunityLayout, NFTSeriesDetails
+  Category, Home, Error404, CommunityPage,
+  MyCommunityLayout, Dashboard, FungibleToken, NftCollection, Settings, DAO, Members, Video
 } from './pages';
 import { useAccount } from 'wagmi'
 import { Transaction } from './components/Transaction';
@@ -47,10 +46,7 @@ export default function App() {
             </Route>
 
             <Route exact path="/category/:categoryId" element={<Category/>}/>
-            <Route exact path="/category/:categoryId/:communityId" element={<CommunityLayout/>}>
-              <Route exact path="nft/:seriesId" element={<NFTSeriesDetails/>}/>
-            </Route>
-
+            <Route exact path="/category/:categoryId/:communityId" element={<CommunityPage/>}/>
             <Route path='*' element={<Error404/>}/>
           </Routes>
         )}
