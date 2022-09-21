@@ -5,10 +5,15 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
+import "../interfaces/IMembers.sol";
+
 contract MainContract is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 	address factoryNFTContract;
 	address factoryFTContract;
+	address membersContract;
+
 	uint public communityCount;
+
 	mapping(uint => Community) public communities;
 	mapping(address => uint[]) public userCommunities;
 	mapping(CommunityCategory => uint[]) public categoryCommunities;
@@ -46,12 +51,14 @@ contract MainContract is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 		uint id;
 		CommunityCategory category;
 		CommunityPrivacy privacy;
-		string name;
-		string description;
-		string logo;
 		address owner;
 		address nftContract;
 		address ftContract;
+		string name;
+		string description;
+		string logo;
+		string membersTable;
+		string memberStatsTable;
 	}
 
 	/// @custom:oz-upgrades-unsafe-allow constructor
@@ -66,9 +73,14 @@ contract MainContract is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 
 	function _authorizeUpgrade(address newImplementation) internal onlyOwner override {}
 
-	function updateFactoryContractsAddress(address _factoryNFTContract, address _factoryFTContract) public onlyOwner {
+	function updateFactoryContractsAddress(
+		address _factoryNFTContract,
+		address _factoryFTContract,
+		address _membersContract
+	) public onlyOwner {
 		factoryNFTContract = _factoryNFTContract;
 		factoryFTContract = _factoryFTContract;
+		membersContract = _membersContract;
 	}
 
 	// Add new community
@@ -78,11 +90,17 @@ contract MainContract is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 		require(bytes(_name).length > 3, "Community name too short");
 
 		communityCount += 1;
-		communities[communityCount] = Community(
-			communityCount, _category, _privacy, _name, _description, _logo, msg.sender, address(0), address(0)
+		uint _id = communityCount;
+
+		communities[_id] = Community(
+			_id, _category, _privacy, msg.sender, address(0), address(0), _name, _description, _logo, "", ""
 		);
-		userCommunities[msg.sender].push(communityCount);
-		categoryCommunities[_category].push(communityCount);
+		userCommunities[msg.sender].push(_id);
+		categoryCommunities[_category].push(_id);
+
+		// Create tableland members, member_stats tables
+		communities[_id].membersTable = IMembers(membersContract).createMemberTable(_id);
+//		communities[_id].memberStatsTable = IMembers(membersContract).createMemberStatsTable(_id);
 	}
 
 	// Update community

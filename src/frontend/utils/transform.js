@@ -10,6 +10,8 @@ export const transformCommunity = (item) => {
     nftContract: item.nftContract,
     ftContract: item.ftContract,
     description: item.description,
+    membersTable: item.membersTable,
+    memberStatsTable: item.memberStatsTable,
   }
 };
 

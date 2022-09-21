@@ -1,20 +1,11 @@
 const hre = require("hardhat");
 const { saveAllFrontendFiles, saveFrontendArtifact } = require('./utils');
 
-const TABLELAND_CONTRACT = "0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1";
+const TABLELAND_CONTRACT = "0x4b48841d4b32C4650E4ABc117A03FE8B51f38F68";
 
 async function main() {
-  // const [ deployer ] = await hre.ethers.getSigners();
-  // console.log("Account balance:", (await deployer.getBalance()).toString());
-  // const CanvasGame = await hre.ethers.getContractFactory("CanvasGame");
-  // const canvasGame = await CanvasGame.deploy(TABLELAND_CONTRACT);
-  //
-  // console.log(`CanvasGame`, canvasGame.address);
-  //
-  // // const TestInstance = await hre.ethers.getContractAt("CanvasGame", canvasGame.address);
-  // const x = await canvasGame.safeMint(deployer.address);
-  // console.log(`x`, x);
-
+  const [ deployer ] = await hre.ethers.getSigners();
+  console.log("Account balance:", (await deployer.getBalance()).toString());
 
   // Deploy main contract
   const MainContract = await hre.ethers.getContractFactory("MainContract");
