@@ -112,7 +112,8 @@ export function OneNFTSeries({ currentCommunity, nft, handleMint, handleCreateCa
                 </div>
                 {nft.distribution.eventCode > 0 && (
                   <div>
-                    <span className="font-medium mr-1">Event Code:</span> <b>{nft.distribution.eventCode}</b>
+                    <span className="font-medium mr-1">Event Code:</span>
+                    <b className={"text-gray-800 bg-gray-100 rounded px-1 py-0.5 inline-block"}>{nft.distribution.eventCode}</b>
                   </div>
                 )}
                 {nft.distribution.whitelist.length > 0 && (

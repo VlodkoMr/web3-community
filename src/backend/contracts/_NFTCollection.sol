@@ -7,12 +7,14 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 
 import "../abstract/utils.sol";
+import "../interfaces/IMainContract.sol";
 import {ByteHasher} from '../helpers/ByteHasher.sol';
 import {IWorldID} from '../interfaces/IWorldID.sol';
 
 
 contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply, Utils {
 	using ByteHasher for bytes;
+	address mainContractAddress;
 	string public name;
 	string public symbol;
 	uint public collectionsTotal;
@@ -59,11 +61,14 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply, Utils {
 		DistributionCampaign distribution;
 	}
 
-	constructor(string memory _name, string memory _symbol, address _owner, IWorldID _worldId) ERC1155("") {
+	constructor(
+		address _mainContract, string memory _name, string memory _symbol, address _owner, IWorldID _worldId
+	) ERC1155("") {
 		transferOwnership(_owner);
 		name = _name;
 		symbol = _symbol;
 		worldId = _worldId;
+		mainContractAddress = _mainContract;
 	}
 
 	function uri(uint _tokenId) override public view returns (string memory) {
@@ -180,7 +185,7 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply, Utils {
 
 	// Mint NFTs for other
 	function payToMint(
-		uint _collectionId, uint _amount, uint _eventCode, string memory email,
+		uint _communityId, uint _collectionId, uint _amount, uint _eventCode, string memory _email,
 		uint root, uint nullifierHash, uint[8] calldata proof
 	) public whenNotPaused payable {
 		Collection storage collection = collections[_getCollectionIndex(_collectionId)];
@@ -209,12 +214,23 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply, Utils {
 			nullifierHashes[nullifierHash] = true;
 		}
 
-		// check _eventCode
+		// check Event Code
+		if (collection.distribution.distType == DistributionType.Event) {
+			require(collection.distribution.eventCode == _eventCode, "Wrong Event Code");
+		}
 
-		// pay royalty
+		// pay Royalty
+		if (collection.royalty.account != address(0)) {
+			uint _payAmount = (msg.value * collection.royalty.percent) / 100;
+			(bool success,) = address(collection.royalty.account).call{value : _payAmount}("");
+			require(success, "Failed to send royalty");
+		}
 
 		collection.mintedTotal += _amount;
 		_mint(msg.sender, _collectionId, _amount, "");
+
+		// Add stats to tableland
+		IMainContract(mainContractAddress).addMemberStats(msg.sender, _email, _communityId, "NFT", _collectionId, msg.value);
 	}
 
 	function _beforeTokenTransfer(address _operator, address _from, address _to, uint256[] memory _ids, uint256[] memory _amounts, bytes memory _data)

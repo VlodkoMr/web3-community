@@ -60,7 +60,7 @@ export const NFTDetails = () => {
     contractInterface: NFTCollectionABI.abi,
     enabled: mintFormData?.amount > 0,
     functionName: 'payToMint',
-    args: [ nft?.id, mintFormData.amount, mintFormData.eventCode, mintFormData.email,
+    args: [ community?.id, nft?.id, mintFormData.amount, mintFormData.eventCode, mintFormData.email,
       worldIDProof?.merkle_root || 0, worldIDProof?.nullifier_hash || 0, getABIEncodedProof()
     ],
     overrides: {
@@ -176,11 +176,11 @@ export const NFTDetails = () => {
         <div className={"flex flex-row gap-10"}>
           <div className={"w-1/2 mb-10"}>
             <InnerBlock>
-              <img src={nft.mediaUri} alt={`NFT ${nft.title}`} className={"bg-gray-100 rounded-lg my-2"}/>
+              <img src={nft.mediaUri} alt={`NFT ${nft.title}`} className={"bg-gray-100 block rounded-lg my-2 min-h-[360px] w-full"}/>
             </InnerBlock>
           </div>
           <div className={"w-1/2"}>
-            <h1 className={"text-3xl font-semibold text-gray-800 pt-8 pr-4"}>{nft.title}</h1>
+            <h1 className={"text-3xl font-semibold text-gray-800 xl:pt-8 pt-2 pr-4"}>{nft.title}</h1>
 
             <p className={"pr-8 mt-6"}>
               There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by

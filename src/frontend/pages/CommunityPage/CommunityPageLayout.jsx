@@ -61,19 +61,19 @@ export const CommunityPageLayout = () => {
                   <div className="flex-4 text-right mr-3">
                     <a href="src/frontend/pages/CommunityPage/CommunityPage" target="_blank"
                        className={"w-8 inline-block opacity-70 hover:opacity-90"}>
-                      <TiSocialInstagramCircular size={"26"}/>
+                      <TiSocialInstagramCircular size={"30"}/>
                     </a>
                     <a href="src/frontend/pages/CommunityPage/CommunityPage" target="_blank"
                        className={"w-8 inline-block opacity-70 hover:opacity-90"}>
-                      <TiSocialTwitterCircular size={"26"}/>
+                      <TiSocialTwitterCircular size={"30"}/>
                     </a>
                     <a href="src/frontend/pages/CommunityPage/CommunityPage" target="_blank"
                        className={"w-8 inline-block opacity-70 hover:opacity-90"}>
-                      <RiTelegramLine size={"26"}/>
+                      <RiTelegramLine size={"30"}/>
                     </a>
                     <a href="src/frontend/pages/CommunityPage/CommunityPage" target="_blank"
                        className={"w-8 inline-block opacity-70 hover:opacity-90"}>
-                      <TiSocialFacebookCircular size={"26"}/>
+                      <TiSocialFacebookCircular size={"30"}/>
                     </a>
                   </div>
                 </div>
@@ -87,7 +87,9 @@ export const CommunityPageLayout = () => {
           </Wrapper>
         </>
       ) : (
-        <Loader/>
+        <div className={"h-96"}>
+          <Loader/>
+        </div>
       )}
 
       <Footer/>

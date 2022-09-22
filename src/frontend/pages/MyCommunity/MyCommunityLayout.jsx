@@ -35,7 +35,7 @@ export const MyCommunityLayout = () => {
 
   const loadCommunityList = (communityList, setLastByDefault = false) => {
     setIsReady(false);
-    if (communityList.length) {
+    if (communityList?.length) {
       if (setLastByDefault) {
         const lastCommunity = communityList[communityList.length - 1];
         localStorage.setItem("communityId", lastCommunity.id.toString());
@@ -73,7 +73,7 @@ export const MyCommunityLayout = () => {
 
       {isReady ? (
         <Wrapper>
-          {communityList.length > 0 ? (
+          {communityList?.length > 0 ? (
             <Container className="flex flex-row">
               <div className="w-56">
                 <DashboardLeftMenu/>

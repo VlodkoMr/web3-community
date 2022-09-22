@@ -11,7 +11,21 @@ These instructions will get you a copy of the project up and running on your Mum
 ```
 nodeJS >= 16.0
 npm
+evm-tableland
 ```
+
+### Local usage:
+
+1. Run hardhat local server
+2. Deploy tableland contract (use evm-tableland):
+
+``` 
+npx hardhat run scripts/deploy.ts --network localhost
+```
+
+3. Update TABLELAND_CONTRACT in deploy.local.js (set proxy address).
+4. Deploy smart-contracts
+5. Run frontend
 
 ### Installing
 

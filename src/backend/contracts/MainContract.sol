@@ -10,13 +10,13 @@ import "@tableland/evm/contracts/ITablelandTables.sol";
 contract MainContract is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 	address factoryNFTContract;
 	address factoryFTContract;
-	ITablelandTables private tableland;
 
-	uint public communityCount;
-	string public membersTable;
-	string public communityMembersTable;
+	ITablelandTables private tableland;
+	uint public lastMemberStatsId;
+	uint public memberStatsTableId;
 	string public memberStatsTable;
 
+	uint public communityCount;
 	mapping(uint => Community) public communities;
 	mapping(address => uint[]) public userCommunities;
 	mapping(CommunityCategory => uint[]) public categoryCommunities;
@@ -73,24 +73,15 @@ contract MainContract is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 		__UUPSUpgradeable_init();
 
 		tableland = ITablelandTables(_registry);
-		membersTable = createTable(
-			"members",
-			" (id int primary key, wallet text, email text, phone text, country text, city text);"
-		);
-		communityMembersTable = createTable(
-			"community_members",
-			" (id int primary key, member_id int, community_id int, created_at int);"
-		);
-		memberStatsTable = createTable(
+		(memberStatsTable, memberStatsTableId) = createTable(
 			"member_stats",
-			" (id int primary key, member_id int, community_id int, camp_type text, camp_id int, paid string, is_new_member int, created_at int);"
+			" (id int primary key, wallet text, email text, community_id int, camp_type text, camp_id int, paid string, created_at int);"
 		);
 	}
 
-
 	function _authorizeUpgrade(address newImplementation) internal onlyOwner override {}
 
-	function createTable(string memory _tableName, string memory _tableStructure) internal onlyOwner returns (string memory) {
+	function createTable(string memory _tableName, string memory _tableStructure) internal onlyOwner returns (string memory, uint) {
 		string memory _baseName = string.concat(_tableName, "_", Strings.toString(block.chainid));
 		uint _tableId = tableland.createTable(
 			address(this),
@@ -100,7 +91,7 @@ contract MainContract is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 				_tableStructure
 			)
 		);
-		return string.concat(_baseName, "_", Strings.toString(_tableId));
+		return (string.concat(_baseName, "_", Strings.toString(_tableId)), _tableId);
 	}
 
 	function updateFactoryContractsAddress(address _factoryNFTContract, address _factoryFTContract) public onlyOwner {
@@ -177,6 +168,33 @@ contract MainContract is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 	function updateCommunityFT(uint _id, address _ftContract) external {
 		require(msg.sender == factoryFTContract, "No Access for this action");
 		communities[_id].ftContract = _ftContract;
+	}
+
+	// Add member stats into tableland
+	function addMemberStats(address _member, string memory _email, uint _communityId, string memory _campType, uint _campId, uint _paid) external {
+		Community storage community = communities[_communityId];
+		// Allow access only for users contracts
+		require(msg.sender == community.nftContract || msg.sender == community.ftContract, "No Access for this action");
+
+		lastMemberStatsId += 1;
+		tableland.runSQL(
+			address(this),
+			memberStatsTableId,
+			string.concat(
+				"INSERT INTO ",
+				memberStatsTable,
+				" (id, wallet, email, community_id, camp_type, camp_id, paid, created_at) VALUES (",
+				Strings.toString(lastMemberStatsId),
+				", '", Strings.toHexString(uint256(uint160(_member)), 20),
+				"', '", _email,
+				"', ", Strings.toString(_communityId),
+				", '", _campType,
+				"', ", Strings.toString(_campId),
+				", '", Strings.toString(_paid),
+				"', ", Strings.toString(block.timestamp),
+				");"
+			)
+		);
 	}
 
 }

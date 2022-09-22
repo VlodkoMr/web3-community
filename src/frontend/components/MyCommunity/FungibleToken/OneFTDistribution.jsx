@@ -89,7 +89,7 @@ export function OneFTDistribution({ campaign, currentCommunity, tokenSymbol }) {
 
         {campaign.eventCode > 0 && (
           <div>
-            Event Code: <b>{campaign.eventCode}</b>
+            Event Code: <b className={"text-gray-800 bg-gray-100 rounded px-1 py-0.5 inline-block"}>{campaign.eventCode}</b>
           </div>
         )}
 

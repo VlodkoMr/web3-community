@@ -7,11 +7,13 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import "../abstract/utils.sol";
-import { IWorldID } from '../interfaces/IWorldID.sol';
+import "../interfaces/IMainContract.sol";
+import {IWorldID} from '../interfaces/IWorldID.sol';
 
 	error InvalidNullifier();
 
 contract FungibleToken is ERC20, Pausable, Ownable, Utils {
+	address mainContractAddress;
 	uint public campaignLastId;
 	DistributionCampaign[] distributionCampaigns;
 
@@ -41,10 +43,13 @@ contract FungibleToken is ERC20, Pausable, Ownable, Utils {
 		string worldcoinAction;
 	}
 
-	constructor(string memory _name, string memory _symbol, address _owner, uint _supply, IWorldID _worldId) ERC20(_name, _symbol) {
+	constructor(
+		address _mainContract, string memory _name, string memory _symbol, address _owner, uint _supply, IWorldID _worldId
+	) ERC20(_name, _symbol) {
 		_mint(_owner, _supply * 1e18);
 		transferOwnership(_owner);
 		worldId = _worldId;
+		mainContractAddress = _mainContract;
 	}
 
 	function pause() public onlyOwner {

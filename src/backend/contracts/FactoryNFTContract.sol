@@ -37,7 +37,7 @@ contract FactoryNFTContract is Initializable, OwnableUpgradeable, UUPSUpgradeabl
     (bool _isNFTContract,) = IMainContract(mainContractAddress).isContractExists(_communityId);
     require(!_isNFTContract, "Community already have NFT Contract");
 
-    NFTCollection collection = new NFTCollection(_name, _symbol, msg.sender, worldId);
+    NFTCollection collection = new NFTCollection(mainContractAddress, _name, _symbol, msg.sender, worldId);
     contractsNFTList.push(collection);
 
     // Update contract address

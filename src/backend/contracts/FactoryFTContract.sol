@@ -38,7 +38,7 @@ contract FactoryFTContract is Initializable, OwnableUpgradeable, UUPSUpgradeable
 		(,bool _isFTContract) = IMainContract(mainContractAddress).isContractExists(_communityId);
 		require(!_isFTContract, "Community already have FT Contract");
 
-		FungibleToken token = new FungibleToken(_name, _symbol, msg.sender, _supply, worldId);
+		FungibleToken token = new FungibleToken(mainContractAddress, _name, _symbol, msg.sender, _supply, worldId);
 		contractsFTList.push(token);
 
 		// Update contract address
