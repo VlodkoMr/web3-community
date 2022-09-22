@@ -4,7 +4,7 @@ const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fet
 
 const { saveAllFrontendFiles, saveFrontendArtifact } = require('./utils');
 
-const TABLELAND_CONTRACT = "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9";
+const TABLELAND_CONTRACT = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
 
 async function main() {
 

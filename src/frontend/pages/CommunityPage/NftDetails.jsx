@@ -35,7 +35,8 @@ export const NFTDetails = () => {
     enabled: community && isContractAddress(community?.nftContract),
     functionName: "collections",
     args: [ parseInt(nftId) - 1 ],
-    select: data => transformCollectionNFT(data)
+    select: data => transformCollectionNFT(data),
+    watch: true
   });
 
   // -------------- Claim NFT -------------
@@ -146,6 +147,18 @@ export const NFTDetails = () => {
       }
     }
 
+    if (nft.supply <= nft.mintedTotal) {
+      return "Not enough supply";
+    }
+
+    const now = +new Date();
+    if (nft.distribution.dateStart > 0 && now < nft.distribution.dateStart) {
+      return "Minting period not started";
+    }
+    if (nft.distribution.dateEnd > 0 && nft.distribution.dateEnd < now) {
+      return "Minting period ends";
+    }
+
     return false;
   }
 
@@ -220,6 +233,14 @@ export const NFTDetails = () => {
               )}
 
               <div>
+                <div className={"text-center"}>
+                  <span className={"text-red-400"}>{mintNFTError()}</span>
+
+                  {!mintNFTError() && nft.distribution.distType === 1 && (
+                    <>You can mint NFT:</>
+                  )}
+                </div>
+
                 {nft.distribution.distType === 3 && (
                   <div className={"flex flex-row gap-4"}>
                 <span className={"text-sm leading-4 text-right pt-2"}>

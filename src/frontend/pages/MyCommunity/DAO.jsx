@@ -15,8 +15,8 @@ export const DAO = () => {
         <InnerBlock.Header className="flex justify-between">
           <span>DAO</span>
         </InnerBlock.Header>
-        <div className="mt-8">
-          ...
+        <div className="mt-8 text-gray-500">
+          coming soon
         </div>
       </div>
     </InnerBlock>

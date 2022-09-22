@@ -15,8 +15,8 @@ export const Members = () => {
         <InnerBlock.Header className="flex justify-between">
           <span>Community Members</span>
         </InnerBlock.Header>
-        <div className="mt-8">
-          ...
+        <div className="mt-8 text-gray-500">
+          coming soon
         </div>
       </div>
     </InnerBlock>

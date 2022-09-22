@@ -18,6 +18,7 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply, Utils {
 	string public name;
 	string public symbol;
 	uint public collectionsTotal;
+	uint public mintedTotal;
 	Collection[] public collections;
 
 	IWorldID internal worldId;
@@ -227,6 +228,7 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply, Utils {
 		}
 
 		collection.mintedTotal += _amount;
+		mintedTotal += _amount;
 		_mint(msg.sender, _collectionId, _amount, "");
 
 		// Add stats to tableland

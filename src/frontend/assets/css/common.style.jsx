@@ -146,3 +146,14 @@ export const Badge = styled.div.attrs({
   py-0.5 
   ml-2`,
 })``
+
+export const TableTh = styled.td.attrs({
+  className: `
+  border-b dark:border-slate-600 font-medium p-4 pl-8 pt-2 pb-2 text-slate-400 dark:text-slate-200 text-left
+  `
+})``;
+export const TableTd = styled.td.attrs({
+  className: `
+  border-b border-slate-100 dark:border-slate-700 p-4 pl-8 text-slate-500 dark:text-slate-400
+  `
+})``;
