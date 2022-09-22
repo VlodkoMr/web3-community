@@ -58,9 +58,9 @@ export const Home = () => {
                     </ConnectKitButton.Custom>
                   </li>
                   <li>
-                    <ScrollLink to={"features"} smooth={true}>
-                      <span className=" px-6">All Features
-                      <MdKeyboardArrowRight className="text-lg align-bottom ml-1 inline-block"/>
+                    <ScrollLink to={"communities"} smooth={true}>
+                      <span className="px-6">All Communities
+                      <MdKeyboardArrowRight className="text-lg align-middle ml-2 inline-block"/>
                       </span>
                     </ScrollLink>
                   </li>

@@ -5,7 +5,7 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
-import "../interfaces/IMain.sol";
+import "../interfaces/IMainContract.sol";
 import "./_NFTCollection.sol";
 
 contract FactoryNFTContract is Initializable, OwnableUpgradeable, UUPSUpgradeable {
@@ -31,13 +31,13 @@ contract FactoryNFTContract is Initializable, OwnableUpgradeable, UUPSUpgradeabl
     require(bytes(_symbol).length >= 3 && bytes(_symbol).length <= 5, "Symbol length should be 3-5 chars");
 
     // Check community owner & get contract details
-    (bool _isNFTContract,) = IMain(mainContractAddress).isContractExists(_communityId);
+    (bool _isNFTContract,) = IMainContract(mainContractAddress).isContractExists(_communityId);
     require(!_isNFTContract, "Community already have NFT Contract");
 
     NFTCollection collection = new NFTCollection(_name, _symbol, msg.sender);
     contractsNFTList.push(collection);
 
     // Update contract address
-    IMain(mainContractAddress).updateCommunityNFT(_communityId, address(collection));
+    IMainContract(mainContractAddress).updateCommunityNFT(_communityId, address(collection));
   }
 }

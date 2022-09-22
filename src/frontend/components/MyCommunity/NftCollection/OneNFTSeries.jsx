@@ -82,9 +82,16 @@ export function OneNFTSeries({ currentCommunity, nft, handleMint, handleCreateCa
                 </>
               ) : "No"}
             </div>
-            <div>
-              <span className="font-medium mr-1">URL:</span> ...
-            </div>
+            {nft.distribution ? (
+              <div>
+                <span className="font-medium mr-1">URL:</span> ...
+              </div>
+            ) : (
+              <span className={"text-gray-500"}>
+                Not listed
+              </span>
+            )}
+
           </div>
           <div className="flex-auto ml-4">
             {nft.distribution && (

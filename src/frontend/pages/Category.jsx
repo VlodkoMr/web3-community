@@ -5,7 +5,7 @@ import { Badge, Container, Wrapper } from "../assets/css/common.style";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useContractRead } from "wagmi";
 import { transformCommunity } from "../utils/transform";
-import { Breadcrumbs, Card, CardBody, CardFooter, Typography } from "@material-tailwind/react";
+import { Card, CardBody, CardFooter, Typography } from "@material-tailwind/react";
 import { mainContract } from "../utils/contracts";
 import { communityTypes, defaultCommunityLogo } from "../utils/settings";
 import { MdKeyboardArrowLeft } from "react-icons/all";
@@ -56,7 +56,7 @@ export const Category = () => {
                   <div className="flex flex-row gap-5 mb-3">
                     <img src={mediaURL(community.logo || defaultCommunityLogo)}
                          alt="Logo"
-                         className="w-16 h-16 bg-gray-100 object-fill rounded-full shadow-lg"/>
+                         className="w-16 h-16 bg-gray-100 object-fill shadow-soft-sm rounded-xl"/>
                     <Typography variant="h5" className="text-gray-800 h-14 pt-2 overflow-hidden leading-6">
                       {community.name}
                     </Typography>

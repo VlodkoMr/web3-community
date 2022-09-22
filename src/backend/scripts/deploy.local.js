@@ -1,34 +1,15 @@
 const hre = require("hardhat");
 const { saveAllFrontendFiles, saveFrontendArtifact } = require('./utils');
 
-const TABLELAND_CONTRACT = "0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1";
+const TABLELAND_CONTRACT = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
 
 async function main() {
-  // const [ deployer ] = await hre.ethers.getSigners();
-  // console.log("Account balance:", (await deployer.getBalance()).toString());
-  // const CanvasGame = await hre.ethers.getContractFactory("CanvasGame");
-  // const canvasGame = await CanvasGame.deploy(TABLELAND_CONTRACT);
-  //
-  // console.log(`CanvasGame`, canvasGame.address);
-  //
-  // // const TestInstance = await hre.ethers.getContractAt("CanvasGame", canvasGame.address);
-  // const x = await canvasGame.safeMint(deployer.address);
-  // console.log(`x`, x);
-
-
   // Deploy main contract
   const MainContract = await hre.ethers.getContractFactory("MainContract");
-  const mainContract = await hre.upgrades.deployProxy(MainContract, [], {
+  const mainContract = await hre.upgrades.deployProxy(MainContract, [ TABLELAND_CONTRACT ], {
     initializer: "initialize"
   })
   await mainContract.deployed();
-
-  // Deploy Members factory contract
-  const FactoryMemberContract = await hre.ethers.getContractFactory("FactoryMemberContract");
-  const factoryMemberContract = await hre.upgrades.deployProxy(FactoryMemberContract, [ mainContract.address, TABLELAND_CONTRACT ], {
-    initializer: "initialize"
-  })
-  await factoryMemberContract.deployed();
 
   // Deploy NFT factory contract
   const FactoryNFTContract = await hre.ethers.getContractFactory("FactoryNFTContract");
@@ -46,10 +27,9 @@ async function main() {
 
   // Update main contract - add factory address
   const MainContractInstance = await hre.ethers.getContractAt("MainContract", mainContract.address);
-  await MainContractInstance.updateFactoryContractsAddress(factoryNFTContract.address, factoryFTContract.address, membersContract.address);
+  await MainContractInstance.updateFactoryContractsAddress(factoryNFTContract.address, factoryFTContract.address);
 
   console.log("Main Contract: ", mainContract.address);
-  console.log("Members Contract: ", factoryMemberContract.address);
   console.log("Factory NFT Contract: ", factoryNFTContract.address);
   console.log("Factory FT Contract: ", factoryFTContract.address);
 
@@ -57,7 +37,6 @@ async function main() {
   saveAllFrontendFiles(mainContract, "MainContract");
   saveAllFrontendFiles(factoryNFTContract, "FactoryNFTContract");
   saveAllFrontendFiles(factoryFTContract, "FactoryFTContract");
-  saveAllFrontendFiles(factoryMemberContract, "FactoryMemberContract");
 
   // Save user contracts ABI
   saveFrontendArtifact("NFTCollection");

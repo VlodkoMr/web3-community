@@ -10,14 +10,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setCurrentCommunity } from '../store/communitySlice';
 import { EditCommunity } from './MyCommunity/EditCommunity';
 import { MdKeyboardArrowLeft } from 'react-icons/all';
+import { useLocation } from "react-router-dom";
 
 export const Header = ({ isInner, reloadCommunityList }) => {
   const dispatch = useDispatch();
+  const location = useLocation();
   const { isConnected } = useAccount();
   const [ scroll, setScroll ] = useState(false);
   const [ communityPopupVisible, setCommunityPopupVisible ] = useState(false);
   const communityList = useSelector(state => state.community.list);
   const currentCommunity = useSelector(state => state.community.current);
+  const [ isHomepage, setIsHomepage ] = useState(true);
 
   useEffect(() => {
     // Change header bg on scroll
@@ -25,6 +28,10 @@ export const Header = ({ isInner, reloadCommunityList }) => {
       setScroll(window.scrollY > 80);
     });
   }, []);
+
+  useEffect(() => {
+    setIsHomepage(location.pathname === "/");
+  }, [ location ]);
 
   const closePopupCallback = () => {
     selectCommunity(localStorage.getItem("communityId"));
@@ -88,21 +95,44 @@ export const Header = ({ isInner, reloadCommunityList }) => {
               >
                 {!isInner ? (
                   <ul className="lg:flex">
-                    <li className="relative group">
-                      <ScrollLink to="/" onClick={toggleHome} dark={scroll ? "true" : undefined}>Home</ScrollLink>
-                    </li>
-                    <li className="relative group">
-                      <ScrollLink to={"about"} dark={scroll ? "true" : undefined} smooth={true}>Features</ScrollLink>
-                    </li>
-                    <li className="relative group">
-                      <ScrollLink to={"pricing"} dark={scroll ? "true" : undefined} smooth={true}>FAQ</ScrollLink>
-                    </li>
-                    <li className="relative group">
-                      <ScrollLink to={"communities"} dark={scroll ? "true" : undefined} smooth={true}>Communities</ScrollLink>
-                    </li>
-                    <li className="relative group">
-                      <ScrollLink to={"contact"} dark={scroll ? "true" : undefined} smooth={true}>Contact</ScrollLink>
-                    </li>
+                    {isHomepage ? (
+                      <>
+                        <li className="relative group">
+                          <ScrollLink to="/" onClick={toggleHome} dark={scroll ? "true" : undefined}>Home</ScrollLink>
+                        </li>
+                        <li className="relative group">
+                          <ScrollLink to={"about"} dark={scroll ? "true" : undefined} smooth={true}>Features</ScrollLink>
+                        </li>
+                        <li className="relative group">
+                          <ScrollLink to={"pricing"} dark={scroll ? "true" : undefined} smooth={true}>FAQ</ScrollLink>
+                        </li>
+                        <li className="relative group">
+                          <ScrollLink to={"communities"} dark={scroll ? "true" : undefined} smooth={true}>Communities</ScrollLink>
+                        </li>
+                        <li className="relative group">
+                          <ScrollLink to={"contact"} dark={scroll ? "true" : undefined} smooth={true}>Contact</ScrollLink>
+                        </li>
+                      </>
+                    ) : (
+                      <>
+                        <li className="relative group">
+                          <NavLink to="/">Home</NavLink>
+                        </li>
+                        <li className="relative group">
+                          <NavLink to="/#about">Features</NavLink>
+                        </li>
+                        <li className="relative group">
+                          <NavLink to="/#pricing">FAQ</NavLink>
+                        </li>
+                        <li className="relative group">
+                          <NavLink to="/#communities">Communities</NavLink>
+                        </li>
+                        <li className="relative group">
+                          <NavLink to="/#contact">Contact</NavLink>
+                        </li>
+                      </>
+                    )}
+
                   </ul>
                 ) : (
                   <ul className="lg:flex">

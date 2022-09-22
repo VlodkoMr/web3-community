@@ -5,7 +5,7 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
-import "../interfaces/IMain.sol";
+import "../interfaces/IMainContract.sol";
 import "./_FungibleToken.sol";
 
 contract FactoryFTContract is Initializable, OwnableUpgradeable, UUPSUpgradeable {
@@ -32,13 +32,13 @@ contract FactoryFTContract is Initializable, OwnableUpgradeable, UUPSUpgradeable
 		require(_supply > 0, "Wrong supply amount");
 
 		// Check community owner & get contract details
-		(,bool _isFTContract) = IMain(mainContractAddress).isContractExists(_communityId);
+		(,bool _isFTContract) = IMainContract(mainContractAddress).isContractExists(_communityId);
 		require(!_isFTContract, "Community already have FT Contract");
 
 		FungibleToken token = new FungibleToken(_name, _symbol, msg.sender, _supply);
 		contractsFTList.push(token);
 
 		// Update contract address
-		IMain(mainContractAddress).updateCommunityFT(_communityId, address(token));
+		IMainContract(mainContractAddress).updateCommunityFT(_communityId, address(token));
 	}
 }

@@ -4,15 +4,18 @@ pragma solidity ^0.8.12;
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-
-import "../interfaces/IMembers.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
+import "@tableland/evm/contracts/ITablelandTables.sol";
 
 contract MainContract is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 	address factoryNFTContract;
 	address factoryFTContract;
-	address factoryMemberContract;
+	ITablelandTables private tableland;
 
 	uint public communityCount;
+	string public membersTable;
+	string public communityMembersTable;
+	string public memberStatsTable;
 
 	mapping(uint => Community) public communities;
 	mapping(address => uint[]) public userCommunities;
@@ -58,8 +61,6 @@ contract MainContract is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 		string name;
 		string description;
 		string logo;
-		string membersTable;
-		string memberStatsTable;
 	}
 
 	/// @custom:oz-upgrades-unsafe-allow constructor
@@ -67,21 +68,44 @@ contract MainContract is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 		_disableInitializers();
 	}
 
-	function initialize() initializer public {
+	function initialize(address _registry) initializer public {
 		__Ownable_init();
 		__UUPSUpgradeable_init();
+
+		tableland = ITablelandTables(_registry);
+		membersTable = createTable(
+			"members",
+			" (id int primary key, wallet text, email text, phone text, country text, city text);"
+		);
+		communityMembersTable = createTable(
+			"community_members",
+			" (id int primary key, member_id int, community_id int, created_at int);"
+		);
+		memberStatsTable = createTable(
+			"member_stats",
+			" (id int primary key, member_id int, community_id int, camp_type text, camp_id int, paid string, is_new_member int, created_at int);"
+		);
 	}
+
 
 	function _authorizeUpgrade(address newImplementation) internal onlyOwner override {}
 
-	function updateFactoryContractsAddress(
-		address _factoryNFTContract,
-		address _factoryFTContract,
-		address _factoryMemberContract
-	) public onlyOwner {
+	function createTable(string memory _tableName, string memory _tableStructure) internal onlyOwner returns (string memory) {
+		string memory _baseName = string.concat(_tableName, "_", Strings.toString(block.chainid));
+		uint _tableId = tableland.createTable(
+			address(this),
+			string.concat(
+				"CREATE TABLE ",
+				_baseName,
+				_tableStructure
+			)
+		);
+		return string.concat(_baseName, "_", Strings.toString(_tableId));
+	}
+
+	function updateFactoryContractsAddress(address _factoryNFTContract, address _factoryFTContract) public onlyOwner {
 		factoryNFTContract = _factoryNFTContract;
 		factoryFTContract = _factoryFTContract;
-		factoryMemberContract = _factoryMemberContract;
 	}
 
 	// Add new community
@@ -94,15 +118,10 @@ contract MainContract is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 		uint _id = communityCount;
 
 		communities[_id] = Community(
-			_id, _category, _privacy, msg.sender, address(0), address(0), address(0), _name, _description, _logo, "", ""
+			_id, _category, _privacy, msg.sender, address(0), address(0), address(0), _name, _description, _logo
 		);
 		userCommunities[msg.sender].push(_id);
 		categoryCommunities[_category].push(_id);
-
-		// Create tableland members, member_stats tables
-		//	...deployMembersContract...
-		//		communities[_id].membersTable = IMembers(factoryMemberContract).createMemberTable(_id);
-		//		communities[_id].memberStatsTable = IMembers(factoryMemberContract).createMemberStatsTable(_id);
 	}
 
 	// Update community
@@ -158,16 +177,6 @@ contract MainContract is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 	function updateCommunityFT(uint _id, address _ftContract) external {
 		require(msg.sender == factoryFTContract, "No Access for this action");
 		communities[_id].ftContract = _ftContract;
-	}
-
-	// Update FT contract address
-	function updateMemberContract(
-		uint _id, address _membersContract, string memory _membersTable, string memory _memberStatsTable
-	) external {
-		require(msg.sender == factoryFTContract, "No Access for this action");
-		communities[_id].membersContract = _membersContract;
-		communities[_id].membersTable = _membersTable;
-		communities[_id].memberStatsTable = _memberStatsTable;
 	}
 
 }

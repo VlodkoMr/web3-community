@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import {
-  Category, Home, Error404, CommunityPage,
-  MyCommunityLayout, Dashboard, FungibleToken, NftCollection, Settings, DAO, Members, Video
+  Category, Home, Error404, CommunityPageLayout,
+  MyCommunityLayout, MyDashboard, FungibleToken, NftCollection, Settings, DAO, Members, Video, Dashboard, NFTDetails
 } from './pages';
 import { useAccount } from 'wagmi'
 import { Transaction } from './components/Transaction';
@@ -36,7 +36,7 @@ export default function App() {
             <Route exact path="/" element={<Home/>}/>
 
             <Route exact path="/my" element={<MyCommunityLayout/>}>
-              <Route exact path="dashboard" element={<Dashboard/>}/>
+              <Route exact path="dashboard" element={<MyDashboard/>}/>
               <Route exact path="nft" element={<NftCollection/>}/>
               <Route exact path="token" element={<FungibleToken/>}/>
               <Route exact path="settings" element={<Settings/>}/>
@@ -46,7 +46,11 @@ export default function App() {
             </Route>
 
             <Route exact path="/category/:categoryId" element={<Category/>}/>
-            <Route exact path="/category/:categoryId/:communityId" element={<CommunityPage/>}/>
+            <Route exact path="/category/:categoryId/:communityId" element={<CommunityPageLayout/>}>
+              <Route exact path="" element={<Dashboard/>}/>
+              <Route exact path="nft/:nftId" element={<NFTDetails/>}/>
+            </Route>
+
             <Route path='*' element={<Error404/>}/>
           </Routes>
         )}

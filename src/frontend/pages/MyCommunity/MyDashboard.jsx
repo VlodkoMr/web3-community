@@ -1,14 +1,9 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Badge, InnerBlock, InnerSmallBlock, InnerTransparentBlock } from '../../assets/css/common.style';
-import { isContractAddress } from '../../utils/format';
-import { Button } from '@material-tailwind/react';
-import { EditCommunity } from "../../components/MyCommunity/EditCommunity";
 import { Link } from "react-router-dom";
-import { VscCopy } from "react-icons/all";
 
-export const Dashboard = () => {
-  const dispatch = useDispatch();
+export const MyDashboard = () => {
   const currentCommunity = useSelector(state => state.community.current);
 
   useEffect(() => {
