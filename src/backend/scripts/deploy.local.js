@@ -24,11 +24,11 @@ async function main() {
   await mainContract.deployed();
 
   // Deploy Members factory contract
-  const MembersContract = await hre.ethers.getContractFactory("MembersContract");
-  const membersContract = await hre.upgrades.deployProxy(MembersContract, [ mainContract.address, TABLELAND_CONTRACT ], {
+  const FactoryMemberContract = await hre.ethers.getContractFactory("FactoryMemberContract");
+  const factoryMemberContract = await hre.upgrades.deployProxy(FactoryMemberContract, [ mainContract.address, TABLELAND_CONTRACT ], {
     initializer: "initialize"
   })
-  await membersContract.deployed();
+  await factoryMemberContract.deployed();
 
   // Deploy NFT factory contract
   const FactoryNFTContract = await hre.ethers.getContractFactory("FactoryNFTContract");
@@ -49,7 +49,7 @@ async function main() {
   await MainContractInstance.updateFactoryContractsAddress(factoryNFTContract.address, factoryFTContract.address, membersContract.address);
 
   console.log("Main Contract: ", mainContract.address);
-  console.log("Members Contract: ", membersContract.address);
+  console.log("Members Contract: ", factoryMemberContract.address);
   console.log("Factory NFT Contract: ", factoryNFTContract.address);
   console.log("Factory FT Contract: ", factoryFTContract.address);
 
@@ -57,7 +57,7 @@ async function main() {
   saveAllFrontendFiles(mainContract, "MainContract");
   saveAllFrontendFiles(factoryNFTContract, "FactoryNFTContract");
   saveAllFrontendFiles(factoryFTContract, "FactoryFTContract");
-  saveAllFrontendFiles(membersContract, "MembersContract");
+  saveAllFrontendFiles(factoryMemberContract, "FactoryMemberContract");
 
   // Save user contracts ABI
   saveFrontendArtifact("NFTCollection");

@@ -7,4 +7,6 @@ interface IMain {
 	function updateCommunityNFT(uint, address) external;
 
 	function updateCommunityFT(uint, address) external;
+
+	function updateMemberContract(uint, address) external;
 }

@@ -10,7 +10,7 @@ import "../interfaces/IMembers.sol";
 contract MainContract is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 	address factoryNFTContract;
 	address factoryFTContract;
-	address membersContract;
+	address factoryMemberContract;
 
 	uint public communityCount;
 
@@ -54,6 +54,7 @@ contract MainContract is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 		address owner;
 		address nftContract;
 		address ftContract;
+		address membersContract;
 		string name;
 		string description;
 		string logo;
@@ -76,11 +77,11 @@ contract MainContract is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 	function updateFactoryContractsAddress(
 		address _factoryNFTContract,
 		address _factoryFTContract,
-		address _membersContract
+		address _factoryMemberContract
 	) public onlyOwner {
 		factoryNFTContract = _factoryNFTContract;
 		factoryFTContract = _factoryFTContract;
-		membersContract = _membersContract;
+		factoryMemberContract = _factoryMemberContract;
 	}
 
 	// Add new community
@@ -93,14 +94,15 @@ contract MainContract is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 		uint _id = communityCount;
 
 		communities[_id] = Community(
-			_id, _category, _privacy, msg.sender, address(0), address(0), _name, _description, _logo, "", ""
+			_id, _category, _privacy, msg.sender, address(0), address(0), address(0), _name, _description, _logo, "", ""
 		);
 		userCommunities[msg.sender].push(_id);
 		categoryCommunities[_category].push(_id);
 
 		// Create tableland members, member_stats tables
-		communities[_id].membersTable = IMembers(membersContract).createMemberTable(_id);
-//		communities[_id].memberStatsTable = IMembers(membersContract).createMemberStatsTable(_id);
+		//	...deployMembersContract...
+		//		communities[_id].membersTable = IMembers(factoryMemberContract).createMemberTable(_id);
+		//		communities[_id].memberStatsTable = IMembers(factoryMemberContract).createMemberStatsTable(_id);
 	}
 
 	// Update community
@@ -156,6 +158,16 @@ contract MainContract is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 	function updateCommunityFT(uint _id, address _ftContract) external {
 		require(msg.sender == factoryFTContract, "No Access for this action");
 		communities[_id].ftContract = _ftContract;
+	}
+
+	// Update FT contract address
+	function updateMemberContract(
+		uint _id, address _membersContract, string memory _membersTable, string memory _memberStatsTable
+	) external {
+		require(msg.sender == factoryFTContract, "No Access for this action");
+		communities[_id].membersContract = _membersContract;
+		communities[_id].membersTable = _membersTable;
+		communities[_id].memberStatsTable = _memberStatsTable;
 	}
 
 }
