@@ -103,7 +103,7 @@ export const MyDashboard = () => {
         <InfoBlock title={"New Members (24h)"} value={"0"}></InfoBlock>
         <InfoBlock title={"New Members (30d)"} value={"0"}></InfoBlock>
       </div>
-      <div className={"mt-6 border-t pt-4"}>
+      <div className={"mt-6 border-t pt-4 mb-8"}>
         <InnerBlock>
           <div className={"w-full"}>
             <InnerBlock.Header>Last Activity</InnerBlock.Header>

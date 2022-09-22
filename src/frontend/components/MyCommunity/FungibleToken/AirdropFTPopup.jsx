@@ -131,22 +131,29 @@ export function AirdropFTPopup(
 
   // ------------ Actions ------------
 
-  const handleSendAirdrop = () => {
+  const totalUsersClaim = () => {
+    const tokensPerUser = parseInt(formData.tokensPerUser || "0");
+    const tokensAmount = parseInt(formData.tokensAmount || "0");
+    if (tokensPerUser > 0) {
+      return parseInt(tokensAmount / tokensPerUser);
+    }
+    return 0;
+  }
 
+  const handleSendAirdrop = (e) => {
+    e.preventDefault();
+    console.log(`send`, send);
   }
 
   return (
     <>
-      <Popup title="Create Distribution Campaign"
+      <Popup title="New Token Airdrop"
              isVisible={popupVisible}
              size={"lg"}
              setIsVisible={setPopupVisible}>
-        <form className="flex flex-row gap-8 relative" onSubmit={handleSendAirdrop}>
+        <form className="flex flex-row gap-10 relative" onSubmit={handleSendAirdrop}>
           <div className="w-1/3">
-            <div className="mb-1 block text-left font-semibold">
-              New Token Airdrop
-            </div>
-            <div>
+            <div className={"mt-4"}>
               <Input type="number"
                      label={`Total ${tokenSymbol} Amount*`}
                      className="flex-1"
@@ -156,35 +163,25 @@ export function AirdropFTPopup(
                      onChange={(e) => setFormData({ ...formData, tokensAmount: e.target.value })}
               />
             </div>
-            <div className="flex flex-row gap-4 mt-4">
-              <div className="flex-1">
-                <Input type="number"
-                       label={`${tokenSymbol} per user*`}
-                       className="flex-1"
-                       required={true}
-                       maxLength={50}
-                       value={formData.tokensPerUser}
-                       onChange={(e) => setFormData({ ...formData, tokensPerUser: e.target.value })}
-                />
-              </div>
-              {/*<div className={`flex-1  ${totalUsersClaim() > 100000 ? "" : "pt-2"} text-sm`}>*/}
-              {/*  <b>Total Users:</b> {totalUsersClaim()}*/}
-              {/*</div>*/}
+            <div className="mt-8">
+              Total Addresses: <b>100</b>
             </div>
-
-            <div className={"text-sm mt-6"}>
-              <Textarea label="List of Addresses:"
-                        variant={"static"}
-                        placeholder="Wallet addresses separated by coma"
-                        onChange={(e) => setFormData({ ...formData, whitelisted: e.target.value })}
-                        value={formData.whitelisted}
-              />
+            <div className="mt-1">
+              Tokens per address: <b>100 {tokenSymbol}</b>
             </div>
+          </div>
 
-            <div className="flex justify-between mt-8 ">
-              <div className="text-gray-500 text-sm pt-2"/>
+          <div className={"w-2/3 text-sm"}>
+            <Textarea label="List of Wallet addresses:"
+                      variant={"static"}
+                      className={"h-48 bg-gray-50 p-6 mt-4"}
+                      placeholder="Wallet addresses separated by coma"
+                      onChange={(e) => setFormData({ ...formData, whitelisted: e.target.value })}
+                      value={formData.whitelisted}
+            />
+            <div className={"flex justify-end mt-4"}>
               <Button type="Submit" variant="gradient">
-                Create Campaign
+                Send Airdrop
                 <MdKeyboardArrowRight className="text-lg align-bottom ml-1 inline-block"/>
               </Button>
             </div>

@@ -86,7 +86,7 @@ export const FungibleToken = () => {
 
               <hr className="mb-6"/>
 
-              <div className="flex flex-row gap-12">
+              <div className="flex flex-row gap-8">
                 <div className="w-2/3">
                   <div className="flex justify-between">
                     <h4 className="mb-3 mt-1 font-semibold">Distribution Campaigns</h4>
@@ -119,22 +119,18 @@ export const FungibleToken = () => {
                     </Button>
                   </div>
 
-                  <div className="bg-white rounded-xl shadow-gray-300/50 shadow-lg px-8 py-6 mt-3 text-center">
+                  <div className="bg-white rounded-xl shadow-gray-300/50 shadow-lg px-8 py-6 mt-3 mb-6 text-center">
                     <h4>
                       My Balance: <b>{formatNumber(convertFromEther(myBalance, 0))} {tokenSymbol}</b>
                     </h4>
-
                   </div>
 
                   {distributionCampaigns?.length > 0 && (
                     <>
-                      <h4 className="mt-6 mb-2 font-semibold">Tokenomic</h4>
-                      <InnerBlock className={"text-center"}>
-                        <div>
-                          <small className="text-gray-500 block mb-3">
-                            Describe your <b>{tokenSymbol}</b> token usage and distribution details:
-                          </small>
-                          <Textarea label={`${tokenSymbol} tokenomic`}/>
+                      <InnerBlock className={"text-center mb-8"}>
+                        <div className={"w-full"}>
+                          <h4 className="mb-3 pb-3 font-semibold border-b">Tokenomic</h4>
+                          <Textarea label={`${tokenSymbol} usage and distribution details`}/>
                         </div>
                       </InnerBlock>
                     </>
