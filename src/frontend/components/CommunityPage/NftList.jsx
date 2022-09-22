@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
 import { useContractRead, useNetwork } from "wagmi";
-import { isContractAddress, mediaURL } from "../../utils/format";
+import { isContractAddress } from "../../utils/format";
 import { transformCollectionNFT } from "../../utils/transform";
 import NFTCollectionABI from "../../contractsData/NFTCollection.json";
 import { Card, CardBody, CardFooter, CardHeader, Typography } from "@material-tailwind/react";
-import { defaultCommunityLogo, getTokenName } from "../../utils/settings";
+import { getTokenName } from "../../utils/settings";
 import { useNavigate } from "react-router-dom";
 
 export function NftList({ community }) {

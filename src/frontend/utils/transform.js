@@ -32,7 +32,7 @@ export const transformCollectionNFT = (item) => {
       dateEnd: parseInt(item.distribution.dateEnd),
       eventCode: parseInt(item.distribution.eventCode),
       whitelist: item.distribution.whitelist,
-      isProtected: item.distribution.isProtected
+      worldcoinAction: item.distribution.worldcoinAction
     }
   }
 
@@ -60,6 +60,6 @@ export const transformFTCampaign = (item) => {
     tokensTotal: item.tokensTotal,
     tokensMinted: item.tokensMinted,
     tokensPerUser: item.tokensPerUser,
-    isProtected: item.isProtected
+    worldcoinAction: item.worldcoinAction
   }
 };

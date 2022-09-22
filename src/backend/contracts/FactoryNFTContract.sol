@@ -5,22 +5,25 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
+import { IWorldID } from '../interfaces/IWorldID.sol';
 import "../interfaces/IMainContract.sol";
 import "./_NFTCollection.sol";
 
 contract FactoryNFTContract is Initializable, OwnableUpgradeable, UUPSUpgradeable {
   address mainContractAddress;
   NFTCollection[] private contractsNFTList;
+  IWorldID internal worldId;
 
   /// @custom:oz-upgrades-unsafe-allow constructor
   constructor() {
     _disableInitializers();
   }
 
-  function initialize(address _mainContractAddress) initializer public {
+  function initialize(address _mainContractAddress, IWorldID _worldId) initializer public {
     __Ownable_init();
     __UUPSUpgradeable_init();
     mainContractAddress = _mainContractAddress;
+    worldId = _worldId;
   }
 
   function _authorizeUpgrade(address newImplementation) internal onlyOwner override {}
@@ -34,7 +37,7 @@ contract FactoryNFTContract is Initializable, OwnableUpgradeable, UUPSUpgradeabl
     (bool _isNFTContract,) = IMainContract(mainContractAddress).isContractExists(_communityId);
     require(!_isNFTContract, "Community already have NFT Contract");
 
-    NFTCollection collection = new NFTCollection(_name, _symbol, msg.sender);
+    NFTCollection collection = new NFTCollection(_name, _symbol, msg.sender, worldId);
     contractsNFTList.push(collection);
 
     // Update contract address

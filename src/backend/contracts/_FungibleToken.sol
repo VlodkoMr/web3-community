@@ -5,11 +5,19 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
 import "../abstract/utils.sol";
+import { IWorldID } from '../interfaces/IWorldID.sol';
+
+	error InvalidNullifier();
 
 contract FungibleToken is ERC20, Pausable, Ownable, Utils {
 	uint public campaignLastId;
 	DistributionCampaign[] distributionCampaigns;
+
+	IWorldID internal immutable worldId;
+	uint256 internal immutable groupId = 1;
+	mapping(uint256 => bool) internal nullifierHashes;
 
 	enum DistributionType {
 		None,
@@ -30,12 +38,13 @@ contract FungibleToken is ERC20, Pausable, Ownable, Utils {
 		uint eventCode;
 		DistributionType distType;
 		address[] whitelist;
-		bool isProtected;
+		string worldcoinAction;
 	}
 
-	constructor(string memory _name, string memory _symbol, address _owner, uint _supply) ERC20(_name, _symbol) {
+	constructor(string memory _name, string memory _symbol, address _owner, uint _supply, IWorldID _worldId) ERC20(_name, _symbol) {
 		_mint(_owner, _supply * 1e18);
 		transferOwnership(_owner);
+		worldId = _worldId;
 	}
 
 	function pause() public onlyOwner {
@@ -56,7 +65,7 @@ contract FungibleToken is ERC20, Pausable, Ownable, Utils {
 
 	// New distribution campaign
 	function createDistributionCampaign(
-		DistributionType _distType, uint _dateStart, uint _dateEnd, address[] memory _whitelist, bool _isProtected, uint _tokensTotal, uint _tokensPerUser
+		DistributionType _distType, uint _dateStart, uint _dateEnd, address[] memory _whitelist, string memory _worldcoinAction, uint _tokensTotal, uint _tokensPerUser
 	) public payable onlyOwner {
 		require(_dateStart <= _dateEnd, "Wrong campaign date range");
 
@@ -79,7 +88,7 @@ contract FungibleToken is ERC20, Pausable, Ownable, Utils {
 				_randomNumber,
 				_distType,
 				_whitelist,
-				_isProtected
+				_worldcoinAction
 			)
 		);
 	}

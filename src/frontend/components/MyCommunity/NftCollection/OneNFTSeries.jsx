@@ -51,6 +51,10 @@ export function OneNFTSeries({ currentCommunity, nft, handleMint, handleCreateCa
     }
   }
 
+  const getNFTUrl = (id) => {
+    return `${process.env.WEBSITE_URL}category/${currentCommunity.category}/${currentCommunity.id}/nft/${id}`;
+  }
+
   return (
     <InnerBlock className="mb-4 flex-row gap-8">
       <div className="w-48 relative bg-gray-50 rounded-lg overflow-hidden">
@@ -69,7 +73,7 @@ export function OneNFTSeries({ currentCommunity, nft, handleMint, handleCreateCa
         </div>
 
         <div className="flex flex-row mt-4 text-sm">
-          <div className="w-64">
+          <div className="w-72">
             <div>
               <span className="font-medium mr-1">Price:</span>
               {nft.price > 0 ? `${nft.price} ${getTokenName(chain)}` : "Free"}
@@ -84,7 +88,10 @@ export function OneNFTSeries({ currentCommunity, nft, handleMint, handleCreateCa
             </div>
             {nft.distribution ? (
               <div>
-                <span className="font-medium mr-1">URL:</span> ...
+                <span className="font-medium mr-1">URL:</span>
+                <a target={"_blank"} className={"whitespace-nowrap overflow-hidden text-ellipsis w-56 inline-block align-bottom"}
+                   href={getNFTUrl(nft.id)}>{getNFTUrl(nft.id)}
+                </a>
               </div>
             ) : (
               <span className={"text-gray-500"}>
@@ -100,8 +107,8 @@ export function OneNFTSeries({ currentCommunity, nft, handleMint, handleCreateCa
                   <span className="font-medium mr-1">Distribution:</span>
                   <span>{distributionCampaignsNFT[nft.distribution.distType - 1]?.title}</span>
                 </div>
-                <div className={nft.distribution.isProtected ? "font-medium" : "opacity-60"}>
-                  {nft.distribution.isProtected ? "Protected by" : "No"} Proof of Personhood
+                <div className={nft.distribution.worldcoinAction.length > 0 ? "font-medium" : "opacity-60"}>
+                  {nft.distribution.worldcoinAction.length > 0 ? "Protected by" : "No"} Proof of Personhood
                 </div>
                 {nft.distribution.eventCode > 0 && (
                   <div>

@@ -33,6 +33,7 @@
     "@reduxjs/toolkit": "^1.8.5",
     "@tableland/evm": "^2.0.4",
     "@tableland/sdk": "^3.1.2",
+    "@worldcoin/id": "^0.8.0",
     "connectkit": "^0.0.2",
     "ethers": "^5.7.0",
     "node-fetch": "^3.2.10",

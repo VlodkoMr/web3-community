@@ -69,7 +69,7 @@ export function OneFTDistribution({ campaign, currentCommunity, tokenSymbol }) {
         <h2 className="text-lg font-semibold text-gray-800">
           {formatNumber(convertFromEther(campaign.tokensTotal, 0))} {tokenSymbol} for {campaignDetails?.title}
         </h2>
-        {campaign.dateStart > 0 && campaign.dateStart > 0 && (
+        {campaign.dateStart > 0 && campaign.dateEnd > 0 && (
           <span className="font-medium text-gray-500 text-sm bg-gray-100 rounded-md px-2 py-1 absolute right-6 top-6">
             {timestampToDate(campaign.dateStart)} - {timestampToDate(campaign.dateEnd)}
           </span>
@@ -93,8 +93,8 @@ export function OneFTDistribution({ campaign, currentCommunity, tokenSymbol }) {
           </div>
         )}
 
-        <div className={campaign.isProtected ? "font-medium" : "opacity-60"}>
-          {campaign.isProtected ? "Protected" : "Not protected"} by Proof of Personhood
+        <div className={campaign.worldcoinAction.length > 0 ? "font-medium" : "opacity-60"}>
+          {campaign.worldcoinAction.length > 0 ? "Protected" : "Not protected"} by Proof of Personhood
         </div>
 
         {campaign.whitelist.length > 0 && (

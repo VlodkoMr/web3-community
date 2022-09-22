@@ -11,24 +11,26 @@ import { Popup } from '../../Popup';
 import { convertToEther } from '../../../utils/format';
 import { BigNumber } from '@ethersproject/bignumber';
 
-export function DistributionCampaignFTPopup({
-                                              popupVisible,
-                                              setPopupVisible,
-                                              handleSuccess,
-                                              currentCommunity,
-                                              tokenSymbol,
-                                              myBalance,
-                                            }) {
+export function DistributionCampaignFTPopup(
+  {
+    popupVisible,
+    setPopupVisible,
+    handleSuccess,
+    currentCommunity,
+    tokenSymbol,
+    myBalance,
+  }) {
   const dispatch = useDispatch();
   const [ isLoading, setIsLoading ] = useState(false);
   const [ approveFormData, setApproveFormData ] = useState({});
   const [ submitFormData, setSubmitFormData ] = useState({});
+  const [ isLimit, setIsLimit ] = useState(false);
   const [ formData, setFormData ] = useState({
     distributionType: "",
     dateFrom: "",
     dateTo: "",
     whitelisted: "",
-    isLimit: false,
+    actionId: "",
     tokensAmount: "",
     tokensPerUser: ""
   });
@@ -87,7 +89,10 @@ export function DistributionCampaignFTPopup({
     contractInterface: FungibleTokenABI.abi,
     enabled: submitFormData?.distributionType > 0 && submitFormData?.tokensAmount > 0,
     functionName: 'createDistributionCampaign',
-    args: [ submitFormData.distributionType, submitFormData.dateFrom, submitFormData.dateTo, submitFormData.whitelisted || [], submitFormData.isLimit, submitFormData.tokensAmount, submitFormData.tokensPerUser ]
+    args: [
+      submitFormData.distributionType, submitFormData.dateFrom, submitFormData.dateTo, submitFormData.whitelisted || [],
+      submitFormData.actionId, submitFormData.tokensAmount, submitFormData.tokensPerUser
+    ]
   });
 
   const { data: createData, write: createWrite, status: createStatus } = useContractWrite({
@@ -165,13 +170,14 @@ export function DistributionCampaignFTPopup({
       dateFrom,
       dateTo,
       whitelisted,
-      isLimit: formData.isLimit,
+      actionId: formData.actionId,
       tokensAmount: convertToEther(formData.tokensAmount),
       tokensPerUser: convertToEther(formData.tokensPerUser)
     });
   }
 
   const resetForm = () => {
+    setIsLimit(false);
     setSubmitFormData({});
     setApproveFormData({});
     setFormData({
@@ -179,7 +185,7 @@ export function DistributionCampaignFTPopup({
       dateFrom: "",
       dateTo: "",
       whitelisted: "",
-      isLimit: false,
+      actionId: "",
       tokensAmount: "",
       tokensPerUser: ""
     });
@@ -269,17 +275,28 @@ export function DistributionCampaignFTPopup({
             <div className="mb-1 block text-left font-semibold mt-2">
               Proof of Personhood by World ID
             </div>
-            <div className="flex justify-between bg-yellow-50 text-sm font-medium pl-2 pr-6 py-2 rounded-md
-              border border-orange-200">
-              <Checkbox label="Limit: 1 mint/person"
-                        color="amber"
-                        onChange={() => setFormData({ ...formData, isLimit: !formData.isLimit })}
-                        className="font-semibold"/>
-              <a href="https://worldcoin.org/"
-                 className="underline pt-3 text-blue-500"
-                 target="_blank">
-                read more
-              </a>
+            <div className="bg-yellow-50 text-sm font-medium pl-2 pr-6 py-2 rounded-md border border-orange-200">
+              <div className={"flex justify-between"}>
+                <Checkbox label="Limit: 1 NFT/person"
+                          color="amber"
+                          onChange={() => setIsLimit(!isLimit)}
+                          className="font-semibold"/>
+                <a href="https://worldcoin.org/"
+                   className="underline pt-3 text-blue-500"
+                   target="_blank">
+                  read more
+                </a>
+              </div>
+              {isLimit && (
+                <div className={"ml-3 mb-2"}>
+                  <Input type="text"
+                         label="Action Id*"
+                         required={true}
+                         value={formData.actionId}
+                         onChange={(e) => setFormData({ ...formData, actionId: e.target.value })}
+                  />
+                </div>
+              )}
             </div>
           </div>
 

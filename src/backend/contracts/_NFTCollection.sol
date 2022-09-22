@@ -5,13 +5,24 @@ import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
+
 import "../abstract/utils.sol";
+import {ByteHasher} from '../helpers/ByteHasher.sol';
+import {IWorldID} from '../interfaces/IWorldID.sol';
+
 
 contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply, Utils {
+	using ByteHasher for bytes;
 	string public name;
 	string public symbol;
 	uint public collectionsTotal;
 	Collection[] public collections;
+
+	IWorldID internal worldId;
+	uint256 internal immutable groupId = 1;
+	mapping(uint256 => bool) internal nullifierHashes;
+
+	error InvalidNullifier();
 
 	enum DistributionType {
 		None,
@@ -28,7 +39,7 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply, Utils {
 		uint eventCode;
 		DistributionType distType;
 		address[] whitelist;
-		bool isProtected;
+		string worldcoinAction;
 	}
 
 	struct CollectionRoyalty {
@@ -48,10 +59,11 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply, Utils {
 		DistributionCampaign distribution;
 	}
 
-	constructor(string memory _name, string memory _symbol, address _owner) ERC1155("") {
+	constructor(string memory _name, string memory _symbol, address _owner, IWorldID _worldId) ERC1155("") {
 		transferOwnership(_owner);
 		name = _name;
 		symbol = _symbol;
+		worldId = _worldId;
 	}
 
 	function uri(uint _tokenId) override public view returns (string memory) {
@@ -117,12 +129,12 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply, Utils {
 
 	// Validate and get collection index
 	function _getEmptyDistribution() internal pure returns (DistributionCampaign memory){
-		return DistributionCampaign(0, 0, 0, DistributionType.None, new address[](0), false);
+		return DistributionCampaign(0, 0, 0, DistributionType.None, new address[](0), "");
 	}
 
 	// New distribution campaign
 	function createDistributionCampaign(
-		uint _collectionId, DistributionType _distType, uint _dateStart, uint _dateEnd, address[] memory _whitelist, bool _isProtected
+		uint _collectionId, DistributionType _distType, uint _dateStart, uint _dateEnd, address[] memory _whitelist, string memory _worldcoinAction
 	) public onlyOwner {
 		Collection storage collection = collections[_getCollectionIndex(_collectionId)];
 
@@ -137,7 +149,7 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply, Utils {
 			_randomNumber,
 			_distType,
 			_whitelist,
-			_isProtected
+			_worldcoinAction
 		);
 	}
 
@@ -167,7 +179,10 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply, Utils {
 	}
 
 	// Mint NFTs for other
-	function payToMint(uint _collectionId, uint256 _amount, uint _eventCode) public whenNotPaused payable {
+	function payToMint(
+		uint _collectionId, uint _amount, uint _eventCode, string memory email,
+		uint root, uint nullifierHash, uint[8] calldata proof
+	) public whenNotPaused payable {
 		Collection storage collection = collections[_getCollectionIndex(_collectionId)];
 		require(_amount > 0, "Wrong mint amount");
 		if (collection.supply > 0) {
@@ -178,6 +193,20 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply, Utils {
 			require(msg.value >= totalPrice, "Wrong payment amount");
 		} else {
 			require(_amount == 1, "You can't mint more than 1 NFT");
+		}
+
+		// check worldID
+		if (bytes(collection.distribution.worldcoinAction).length > 0) {
+			if (nullifierHashes[nullifierHash]) revert InvalidNullifier();
+			worldId.verifyProof(
+				root,
+				groupId,
+				abi.encodePacked(msg.sender).hashToField(),
+				nullifierHash,
+				abi.encodePacked(address(this)).hashToField(),
+				proof
+			);
+			nullifierHashes[nullifierHash] = true;
 		}
 
 		// check _eventCode

@@ -9,22 +9,24 @@ import { Checkbox, Textarea, Input, Radio, Button } from '@material-tailwind/rea
 import { Popup } from '../../Popup';
 import { MdKeyboardArrowRight } from 'react-icons/md';
 
-export function DistributionCampaignNFTPopup({
-                                               popupVisible,
-                                               setPopupVisible,
-                                               handleSuccess,
-                                               currentCommunity,
-                                               collection
-                                             }) {
+export function DistributionCampaignNFTPopup(
+  {
+    popupVisible,
+    setPopupVisible,
+    handleSuccess,
+    currentCommunity,
+    collection
+  }) {
   const dispatch = useDispatch();
   const [ isLoading, setIsLoading ] = useState(false);
   const [ submitFormData, setSubmitFormData ] = useState({});
+  const [ isLimit, setIsLimit ] = useState(false);
   const [ formData, setFormData ] = useState({
     distributionType: "",
     dateFrom: "",
     dateTo: "",
     whitelisted: "",
-    isLimit: false
+    actionId: ""
   });
 
   const { config: configCreate, error: errorCreate } = usePrepareContractWrite({
@@ -32,7 +34,10 @@ export function DistributionCampaignNFTPopup({
     contractInterface: NFTCollectionABI.abi,
     enabled: submitFormData?.distributionType > 0,
     functionName: 'createDistributionCampaign',
-    args: [ collection?.id, submitFormData.distributionType, submitFormData.dateFrom, submitFormData.dateTo, submitFormData.whitelisted || [], submitFormData.isLimit ]
+    args: [
+      collection?.id, submitFormData.distributionType, submitFormData.dateFrom, submitFormData.dateTo,
+      submitFormData.whitelisted || [], submitFormData.actionId
+    ]
   });
 
   const { data: createData, write: createWrite, status: createStatus } = useContractWrite({
@@ -97,7 +102,7 @@ export function DistributionCampaignNFTPopup({
       dateFrom,
       dateTo,
       whitelisted: whitelisted,
-      isLimit: formData.isLimit
+      actionId: formData.actionId
     });
   }
 
@@ -110,12 +115,13 @@ export function DistributionCampaignNFTPopup({
 
   const resetForm = () => {
     setSubmitFormData({});
+    setIsLimit(false);
     setFormData({
       distributionType: "",
       dateFrom: "",
       dateTo: "",
       whitelisted: "",
-      isLimit: false
+      actionId: ""
     });
   }
 
@@ -174,17 +180,28 @@ export function DistributionCampaignNFTPopup({
               <div className="mb-1 block text-left font-semibold mt-4">
                 Proof of Personhood by World ID
               </div>
-              <div className="flex justify-between bg-yellow-50 text-sm font-medium pl-2 pr-6 py-2 rounded-md
-              border border-orange-200">
-                <Checkbox label="Limit: 1 NFT/person"
-                          color="amber"
-                          onChange={() => setFormData({ ...formData, isLimit: !formData.isLimit })}
-                          className="font-semibold"/>
-                <a href="https://worldcoin.org/"
-                   className="underline pt-3 text-blue-500"
-                   target="_blank">
-                  read more
-                </a>
+              <div className="bg-yellow-50 text-sm font-medium pl-2 pr-6 py-2 rounded-md border border-orange-200">
+                <div className={"flex justify-between"}>
+                  <Checkbox label="Limit: 1 NFT/person"
+                            color="amber"
+                            onChange={() => setIsLimit(!isLimit)}
+                            className="font-semibold"/>
+                  <a href="https://worldcoin.org/"
+                     className="underline pt-3 text-blue-500"
+                     target="_blank">
+                    read more
+                  </a>
+                </div>
+                {isLimit && (
+                  <div className={"ml-3 mb-2"}>
+                    <Input type="text"
+                           label="Action Id*"
+                           required={true}
+                           value={formData.actionId}
+                           onChange={(e) => setFormData({ ...formData, actionId: e.target.value })}
+                    />
+                  </div>
+                )}
               </div>
             </div>
 
