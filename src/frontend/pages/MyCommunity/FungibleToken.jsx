@@ -10,6 +10,7 @@ import { DeployFTContract } from '../../components/MyCommunity/FungibleToken/Dep
 import { DistributionCampaignFTPopup } from '../../components/MyCommunity/FungibleToken/DistributionCampaignFTPopup';
 import { OneFTDistribution } from '../../components/MyCommunity/FungibleToken/OneFTDistribution';
 import { PauseUnpausePopup } from '../../components/MyCommunity/PauseUnpausePopup';
+import { AirdropFTPopup } from "../../components/MyCommunity/FungibleToken/AirdropFTPopup";
 import FungibleTokenABI from '../../contractsData/FungibleToken.json';
 
 export const FungibleToken = () => {
@@ -17,6 +18,7 @@ export const FungibleToken = () => {
   const [ reloadCommunityList ] = useOutletContext();
   const currentCommunity = useSelector(state => state.community.current);
   const [ campaignPopupVisible, setCampaignPopupVisible ] = useState(false);
+  const [ airdropPopupVisible, setAirdropPopupVisible ] = useState(false);
 
   const myFTContract = {
     addressOrName: currentCommunity?.ftContract,
@@ -112,7 +114,7 @@ export const FungibleToken = () => {
                 </div>
                 <div className="w-1/3">
                   <div className="-mt-3 flex justify-end">
-                    <Button onClick={() => setCampaignPopupVisible(true)}>
+                    <Button onClick={() => setAirdropPopupVisible(true)}>
                       New Token Airdrop
                     </Button>
                   </div>
@@ -145,6 +147,15 @@ export const FungibleToken = () => {
           )}
         </div>
       </InnerTransparentBlock>
+
+      <AirdropFTPopup
+        popupVisible={airdropPopupVisible}
+        setPopupVisible={setAirdropPopupVisible}
+        currentCommunity={currentCommunity}
+        tokenSymbol={tokenSymbol}
+        myBalance={myBalance}
+        handleSuccess={() => refetchCampaignsList()}
+      />
 
       <DistributionCampaignFTPopup
         popupVisible={campaignPopupVisible}
