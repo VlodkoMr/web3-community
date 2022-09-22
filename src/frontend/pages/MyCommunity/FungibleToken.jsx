@@ -14,9 +14,9 @@ import FungibleTokenABI from '../../contractsData/FungibleToken.json';
 
 export const FungibleToken = () => {
   const { address } = useAccount();
-  const [reloadCommunityList] = useOutletContext();
+  const [ reloadCommunityList ] = useOutletContext();
   const currentCommunity = useSelector(state => state.community.current);
-  const [campaignPopupVisible, setCampaignPopupVisible] = useState(false);
+  const [ campaignPopupVisible, setCampaignPopupVisible ] = useState(false);
 
   const myFTContract = {
     addressOrName: currentCommunity?.ftContract,
@@ -37,7 +37,7 @@ export const FungibleToken = () => {
     ...myFTContract,
     enabled: isContractAddress(currentCommunity?.ftContract),
     functionName: "balanceOf",
-    args: [address]
+    args: [ address ]
   });
 
   const { data: distributionCampaigns, refetch: refetchDistributionCampaigns } = useContractRead({
@@ -54,7 +54,7 @@ export const FungibleToken = () => {
 
   useEffect(() => {
     console.log('distributionCampaigns', distributionCampaigns)
-  }, [distributionCampaigns])
+  }, [ distributionCampaigns ])
 
   return (
     <div className="flex flex-row">
@@ -82,7 +82,7 @@ export const FungibleToken = () => {
                 </span>
               </div>
 
-              <hr className="mb-6" />
+              <hr className="mb-6"/>
 
               <div className="flex flex-row gap-12">
                 <div className="w-2/3">
@@ -111,9 +111,17 @@ export const FungibleToken = () => {
                   )}
                 </div>
                 <div className="w-1/3">
-                  <h4 className="mb-3 mt-1 font-semibold">My Wallet Balance</h4>
-                  <div className="bg-white rounded-xl shadow-gray-300/50 shadow-lg px-8 py-6 text-center">
-                    <b>{formatNumber(convertFromEther(myBalance, 0))} {tokenSymbol}</b>
+                  <div className="-mt-3 flex justify-end">
+                    <Button onClick={() => setCampaignPopupVisible(true)}>
+                      New Token Airdrop
+                    </Button>
+                  </div>
+
+                  <div className="bg-white rounded-xl shadow-gray-300/50 shadow-lg px-8 py-6 mt-3 text-center">
+                    <h4>
+                      My Balance: <b>{formatNumber(convertFromEther(myBalance, 0))} {tokenSymbol}</b>
+                    </h4>
+
                   </div>
 
                   {distributionCampaigns?.length > 0 && (
@@ -124,7 +132,7 @@ export const FungibleToken = () => {
                           <small className="text-gray-500 block mb-3">
                             Describe your <b>{tokenSymbol}</b> token usage and distribution details:
                           </small>
-                          <Textarea label={`${tokenSymbol} tokenomic`} />
+                          <Textarea label={`${tokenSymbol} tokenomic`}/>
                         </div>
                       </InnerBlock>
                     </>
@@ -133,7 +141,7 @@ export const FungibleToken = () => {
               </div>
             </>
           ) : (
-            <DeployFTContract reloadCommunityList={reloadCommunityList} />
+            <DeployFTContract reloadCommunityList={reloadCommunityList}/>
           )}
         </div>
       </InnerTransparentBlock>
