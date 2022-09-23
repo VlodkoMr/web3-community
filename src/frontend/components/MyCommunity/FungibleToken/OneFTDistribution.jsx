@@ -106,7 +106,10 @@ export function OneFTDistribution({ campaign, currentCommunity, tokenSymbol, han
         </div>
 
         {campaign.whitelist.length > 0 && (
-          <span className="absolute right-6 bottom-6 text-blue-500 cursor-pointer underline">whitelisted addresses</span>
+          <span onClick={() => alert("Coming soon, will be all whitelisted addresses")}
+                className="absolute right-6 bottom-6 text-blue-500 cursor-pointer underline">
+            whitelisted addresses
+          </span>
         )}
 
         <div className={'mt-4'}>

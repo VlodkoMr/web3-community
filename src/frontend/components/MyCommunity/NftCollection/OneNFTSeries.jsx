@@ -117,7 +117,10 @@ export function OneNFTSeries({ currentCommunity, nft, handleMint, handleCreateCa
                   </div>
                 )}
                 {nft.distribution.whitelist.length > 0 && (
-                  <span className={`underline text-blue-500 cursor-pointer`}>whitelisted addresses</span>
+                  <span onClick={() => alert("Coming soon, will be all whitelisted addresses")}
+                        className={`underline text-blue-500 cursor-pointer`}>
+                    whitelisted addresses
+                  </span>
                 )}
               </>
             )}
