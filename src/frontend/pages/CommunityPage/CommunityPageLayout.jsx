@@ -44,7 +44,7 @@ export const CommunityPageLayout = () => {
                       <Link to={`/category/${community.category}/${community.id}`}>
                         <img src={mediaURL(community.logo || defaultCommunityLogo)}
                              alt="logo"
-                             className="w-full shadow-soft-sm rounded-xl"/>
+                             className="w-20 h-20 object-cover shadow-soft-sm rounded-xl"/>
                       </Link>
                     </div>
                   </div>

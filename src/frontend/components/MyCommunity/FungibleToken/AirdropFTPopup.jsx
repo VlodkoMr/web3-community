@@ -20,13 +20,8 @@ export function AirdropFTPopup(
   const [ submitFormData, setSubmitFormData ] = useState({});
   const [ isLimit, setIsLimit ] = useState(false);
   const [ formData, setFormData ] = useState({
-    distributionType: "",
-    dateFrom: "",
-    dateTo: "",
     whitelisted: "",
-    actionId: "",
     tokensAmount: "",
-    tokensPerUser: ""
   });
 
   // ------------ Approve token transfer ------------
@@ -131,18 +126,36 @@ export function AirdropFTPopup(
 
   // ------------ Actions ------------
 
-  const totalUsersClaim = () => {
-    const tokensPerUser = parseInt(formData.tokensPerUser || "0");
-    const tokensAmount = parseInt(formData.tokensAmount || "0");
-    if (tokensPerUser > 0) {
-      return parseInt(tokensAmount / tokensPerUser);
+  // const totalUsersClaim = () => {
+  //   const tokensPerUser = parseInt(formData.tokensPerUser || "0");
+  //   const tokensAmount = parseInt(formData.tokensAmount || "0");
+  //   if (tokensPerUser > 0) {
+  //     return parseInt(tokensAmount / tokensPerUser);
+  //   }
+  //   return 0;
+  // }
+
+  const addressCount = () => {
+    let count = 0;
+    formData.whitelisted.replace("\n", ",").split(",").map(address => {
+      if (address.length > 3) {
+        count++;
+      }
+    });
+    return count;
+  }
+
+  const tokensPerUser = () => {
+    const totalTokens = parseInt(formData.tokensAmount);
+    const count = addressCount();
+    if (count > 0) {
+      return parseInt(totalTokens / count);
     }
     return 0;
   }
 
   const handleSendAirdrop = (e) => {
     e.preventDefault();
-    console.log(`send`, send);
   }
 
   return (
@@ -164,10 +177,10 @@ export function AirdropFTPopup(
               />
             </div>
             <div className="mt-8">
-              Total Addresses: <b>100</b>
+              Total Addresses: <b>{addressCount()}</b>
             </div>
             <div className="mt-1">
-              Tokens per address: <b>100 {tokenSymbol}</b>
+              Tokens per address: <b>{tokensPerUser()} {tokenSymbol}</b>
             </div>
           </div>
 

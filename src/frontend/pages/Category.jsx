@@ -56,7 +56,7 @@ export const Category = () => {
                   <div className="flex flex-row gap-5 mb-3">
                     <img src={mediaURL(community.logo || defaultCommunityLogo)}
                          alt="Logo"
-                         className="w-16 h-16 bg-gray-100 object-fill shadow-soft-sm rounded-xl"/>
+                         className="w-16 h-16 bg-gray-100 object-cover shadow-soft-sm rounded-xl"/>
                     <Typography variant="h5" className="text-gray-800 h-14 pt-2 overflow-hidden leading-6">
                       {community.name}
                     </Typography>
