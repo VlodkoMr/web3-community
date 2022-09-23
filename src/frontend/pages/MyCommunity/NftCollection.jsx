@@ -87,7 +87,7 @@ export const NftCollection = () => {
               <hr className="mb-6"/>
               <div className="flex justify-between text-sm mb-4">
                 <div>
-                  {(parseInt(totalCollections) === 0) ? (
+                  {(parseInt(totalCollections || "0") === 0) ? (
                     <>*No NFT Series</>
                   ) : (
                     <div className="pt-1">

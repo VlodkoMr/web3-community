@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useAccount, useContractWrite, usePrepareContractWrite, useWaitForTransaction } from "wagmi";
-import { convertFromEther, formatNumber, timestampToDate } from "../../utils/format";
+import { useAccount, useContractRead, useContractWrite, usePrepareContractWrite, useWaitForTransaction } from "wagmi";
+import { convertFromEther, formatNumber, isContractAddress, timestampToDate } from "../../utils/format";
 import { Button, Input } from "@material-tailwind/react";
 import { emailRegex } from "../../utils/settings";
 import { defaultAbiCoder as abi } from "@ethersproject/abi/lib/abi-coder";
@@ -9,7 +9,7 @@ import { addTransaction } from "../../store/transactionSlice";
 import { useDispatch } from "react-redux";
 import FungibleTokenABI from "../../contractsData/FungibleToken.json";
 
-export function OneTokenCampaign({ community, campaign, tokenSymbol, ftCampaignTitles }) {
+export function OneTokenCampaign({ community, campaign, tokenSymbol, ftCampaignTitles, onSuccess }) {
   const { address } = useAccount();
   const dispatch = useDispatch();
   const [ worldIDProof, setWorldIDProof ] = React.useState(null);
@@ -19,6 +19,28 @@ export function OneTokenCampaign({ community, campaign, tokenSymbol, ftCampaignT
     email: "",
     eventCode: "",
   });
+
+  // -------- Get FT Claimed ---------
+
+  const { data: ftClaimed, error: errorClaimed, isSuccess: isCheckSuccess } = useContractRead({
+    addressOrName: community?.ftContract,
+    contractInterface: FungibleTokenABI.abi,
+    enabled: community && isContractAddress(community?.ftContract),
+    functionName: "mintedList",
+    args: [ campaign.id, address ],
+    watch: true
+  });
+
+
+  useEffect(() => {
+    console.log(`ftClaimed`, ftClaimed);
+  }, [ ftClaimed ]);
+
+  useEffect(() => {
+    console.log(`isCheckSuccess`, isCheckSuccess);
+  }, [ isCheckSuccess ]);
+
+  // -------- Claim ---------
 
   const getABIEncodedProof = () => {
     if (worldIDProof?.proof) {
@@ -61,6 +83,7 @@ export function OneTokenCampaign({ community, campaign, tokenSymbol, ftCampaignT
       if (data) {
         console.log('data', data);
         setClaimFormData({});
+        onSuccess?.();
       }
     },
   });
@@ -72,10 +95,7 @@ export function OneTokenCampaign({ community, campaign, tokenSymbol, ftCampaignT
     }
   }, [ claimWrite ]);
 
-  useEffect(() => {
-    console.log(`errorClaim`, errorClaim);
-    console.log(`claimFormData`, !!claimFormData.ready);
-  }, [ errorClaim ]);
+  // -------- Actions ---------
 
   const isWhitelisted = () => {
     return campaign.whitelist.indexOf(address) !== -1;
@@ -193,10 +213,23 @@ export function OneTokenCampaign({ community, campaign, tokenSymbol, ftCampaignT
           </div>
         )}
 
-        <Button variant={"outlined"}
-                disabled={claimError()}
-                onClick={handleClaim}
-                className={"w-full mt-2"}>Claim</Button>
+        {isCheckSuccess && (
+          <>
+            {ftClaimed ? (
+              <div className={
+                "pt-3 mt-4 border-t text-center font-medium text-green-500"
+              }>
+                Tokens Claimed!
+              </div>
+            ) : (
+              <Button variant={"outlined"}
+                      disabled={claimError()}
+                      onClick={handleClaim}
+                      className={"w-full mt-2"}>Claim</Button>
+            )}
+          </>
+        )}
+
       </div>
     </div>
   );

@@ -111,6 +111,7 @@ export const Dashboard = () => {
                           community={community}
                           tokenSymbol={tokenSymbol}
                           ftCampaignTitles={ftCampaignTitles}
+                          onSuccess={() => loadSuperToken()}
                         />
                       ))}
                     </div>

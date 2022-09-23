@@ -40,6 +40,17 @@ export const NFTDetails = () => {
     watch: true
   });
 
+  // -------- Get is NFT Claimed ---------
+
+  const { data: nftClaimed, error: errorClaimed, isSuccess: isCheckSuccess } = useContractRead({
+    addressOrName: community?.nftContract,
+    contractInterface: NFTCollectionABI.abi,
+    enabled: community && isContractAddress(community?.nftContract),
+    functionName: "mintedList",
+    args: [ nftId, address ],
+    watch: true
+  });
+
   // -------------- Claim NFT -------------
 
   const getABIEncodedProof = () => {
@@ -100,25 +111,24 @@ export const NFTDetails = () => {
   });
 
   useEffect(() => {
-    console.log(`mintWrite`, mintWrite);
     if (mintWrite && mintWriteStatus !== 'loading') {
       mintWrite();
     }
   }, [ mintWrite ]);
 
 
-  useEffect(() => {
-    console.log(`errorMint`, errorMint);
-  }, [ errorMint ]);
+  // useEffect(() => {
+  //   console.log(`errorMint`, errorMint);
+  // }, [ errorMint ]);
+  //
+  // useEffect(() => {
+  //   console.log(`mintFormData`, mintFormData);
+  // }, [ mintFormData ]);
 
-  useEffect(() => {
-    console.log(`mintFormData`, mintFormData);
-  }, [ mintFormData ]);
 
-
-  useEffect(() => {
-    console.log(`nft`, nft);
-  }, [ nft ]);
+  // useEffect(() => {
+  //   console.log(`nft`, nft);
+  // }, [ nft ]);
 
   const isWhitelisted = () => {
     return nft.distribution.whitelist.indexOf(address) !== -1;
@@ -223,80 +233,94 @@ export const NFTDetails = () => {
                 </b>
                 </div>
 
-                <div className={"p-6 bg-white/50 border border-blue-100/50 rounded-lg mt-6 mr-12 shadow-gray-300/50 shadow-lg"}>
-                  {nft.distribution.distType === 2 && (
-                    <>{isWhitelisted() ? (
-                      <div className="text-blue-600 text-center border-b pb-4 pt-1 font-semibold">
-                        Great, your wallet address in whitelist!
+                {isCheckSuccess && (
+                  <>
+                    {nftClaimed ? (
+                      <div className={
+                        "p-6 bg-white/50 border border-blue-100/50 rounded-lg mt-6 mr-12 shadow-gray-300/50 shadow-lg " +
+                        "text-center font-medium text-green-500"
+                      }>
+                        NFT Successfully Claimed!
                       </div>
                     ) : (
-                      <div className="text-red-400 text-center border-b pb-4 pt-1 font-semibold">
-                        No Access to mint - your wallet not found in whitelist.
-                      </div>
-                    )}</>
-                  )}
+                      <div className={"p-6 bg-white/50 border border-blue-100/50 rounded-lg mt-6 mr-12 shadow-gray-300/50 shadow-lg"}>
+                        {nft.distribution.distType === 2 && (
+                          <>{isWhitelisted() ? (
+                            <div className="text-blue-600 text-center border-b pb-4 pt-1 font-semibold">
+                              Great, your wallet address in whitelist!
+                            </div>
+                          ) : (
+                            <div className="text-red-400 text-center border-b pb-4 pt-1 font-semibold">
+                              No Access to mint - your wallet not found in whitelist.
+                            </div>
+                          )}</>
+                        )}
 
-                  <div>
-                    <div className={"text-center"}>
-                      {!mintNFTError() && nft.distribution.distType === 1 && (
-                        <>You can mint NFT:</>
-                      )}
-                    </div>
+                        <div>
+                          <div className={"text-center"}>
+                            {!mintNFTError() && nft.distribution.distType === 1 && (
+                              <>You can mint NFT:</>
+                            )}
+                          </div>
 
-                    {nft.distribution.distType === 3 && (
-                      <div className={"flex flex-row gap-4"}>
+                          {nft.distribution.distType === 3 && (
+                            <div className={"flex flex-row gap-4"}>
                         <span className={"text-sm leading-4 text-right pt-2"}>
                         Confirm your email to mint NFT:
                         </span>
-                        <Input type="email"
-                               label="Your Email*"
-                               size={"lg"}
-                               required={true}
-                               value={formData.email}
-                               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        />
-                      </div>
-                    )}
-                    {nft.distribution.distType === 4 && (
-                      <div className={"flex flex-row gap-4"}>
+                              <Input type="email"
+                                     label="Your Email*"
+                                     size={"lg"}
+                                     required={true}
+                                     value={formData.email}
+                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                              />
+                            </div>
+                          )}
+                          {nft.distribution.distType === 4 && (
+                            <div className={"flex flex-row gap-4"}>
                         <span className={"text-sm leading-4 text-right pt-2"}>
                         Provide 6-digits code to mint NFT:
                         </span>
-                        <Input type="number"
-                               label="Event Code*"
-                               size={"lg"}
-                               required={true}
-                               value={formData.eventCode}
-                               onChange={(e) => setFormData({ ...formData, eventCode: e.target.value })}
-                        />
+                              <Input type="number"
+                                     label="Event Code*"
+                                     size={"lg"}
+                                     required={true}
+                                     value={formData.eventCode}
+                                     onChange={(e) => setFormData({ ...formData, eventCode: e.target.value })}
+                              />
+                            </div>
+                          )}
+
+                          <div className={"flex justify-between flex-row gap-6 mt-6"}>
+                            {nft.distribution.worldcoinAction.length > 0 && (
+                              <WorldIDWidget
+                                actionId={nft.distribution.worldcoinAction}
+                                signal="my_signal"
+                                enableTelemetry
+                                onSuccess={(verificationResponse) => {
+                                  console.log('verificationResponse', verificationResponse);
+                                  setWorldIDProof(verificationResponse);
+                                }} // pass the proof to the API or your smart contract
+                                onError={(error) => console.error(error)}
+                                debug={true} // to aid with debugging, remove in production
+                              />
+                            )}
+                            <Button className={"flex-auto -mt-0.5"}
+                                    color={"indigo"}
+                                    onClick={() => mintNFT()}
+                                    disabled={!!mintNFTError()}
+                                    size={"lg"}>
+                              MINT NFT
+                            </Button>
+                          </div>
+                        </div>
                       </div>
-                    )}
+                    )
+                    }
+                  </>
+                )}
 
-                    <div className={"flex justify-between flex-row gap-6 mt-6"}>
-                      {nft.distribution.worldcoinAction.length > 0 && (
-                        <WorldIDWidget
-                          actionId={nft.distribution.worldcoinAction}
-                          signal="my_signal"
-                          enableTelemetry
-                          onSuccess={(verificationResponse) => {
-                            console.log('verificationResponse', verificationResponse);
-                            setWorldIDProof(verificationResponse);
-                          }} // pass the proof to the API or your smart contract
-                          onError={(error) => console.error(error)}
-                          debug={true} // to aid with debugging, remove in production
-                        />
-                      )}
-                      <Button className={"flex-auto -mt-0.5"}
-                              color={"indigo"}
-                              onClick={() => mintNFT()}
-                              disabled={!!mintNFTError()}
-                              size={"lg"}>
-                        MINT NFT
-                      </Button>
-                    </div>
-
-                  </div>
-                </div>
               </div>
             </div>
           ) : (

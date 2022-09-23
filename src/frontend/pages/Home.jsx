@@ -68,18 +68,20 @@ export const Home = () => {
                 <div className="text-center wow fadeInUp flex flex-row justify-center gap-8">
                   <a href="https://www.optimism.io/" target={"_blank"}>
                     <img src={require("../assets/images/logo/optimism-logo.png")} alt="optimism"
+                         className={"h-10 mt-1 opacity-50 hover:opacity-100 transition"}/>
+                  </a>
+                  <a href="https://ethereum.org/" target={"_blank"}>
+                    <img src={require("../assets/images/logo/eth-logo.png")} alt="aurora"
                          className={"h-12 opacity-50 hover:opacity-100 transition"}/>
                   </a>
                   <a href="https://polygon.technology/" target={"_blank"}>
                     <img src={require("../assets/images/logo/polygon-logo.png")} alt="polygon"
-                         className={"h-12 opacity-50 hover:opacity-100 transition"}/>
+                         className={"h-10 mt-1 opacity-50 hover:opacity-100 transition"}/>
                   </a>
-                  <a href="https://aurora.dev/" target={"_blank"}>
-                    <img src={require("../assets/images/logo/aurora-logo.png")} alt="aurora"
-                         className={"h-12 opacity-50 hover:opacity-100 transition"}/>
-                  </a>
-
-
+                  {/*<a href="https://aurora.dev/" target={"_blank"}>*/}
+                  {/*  <img src={require("../assets/images/logo/aurora-logo.png")} alt="aurora"*/}
+                  {/*       className={"h-12 opacity-50 hover:opacity-100 transition"}/>*/}
+                  {/*</a>*/}
                 </div>
               </div>
             </div>

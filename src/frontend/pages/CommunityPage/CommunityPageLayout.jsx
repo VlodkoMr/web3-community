@@ -87,8 +87,10 @@ export const CommunityPageLayout = () => {
           </Wrapper>
         </>
       ) : (
-        <div className={"h-96"}>
-          <Loader/>
+        <div className={"h-screen"}>
+          <div className={"w-12 mx-auto mt-16"}>
+            <Loader/>
+          </div>
         </div>
       )}
 

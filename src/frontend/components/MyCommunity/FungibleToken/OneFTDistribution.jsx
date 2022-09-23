@@ -1,33 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { convertFromEther, formatNumber, timestampToDate } from '../../../utils/format';
 import { InnerBlock } from '../../../assets/css/common.style';
-import { distributionCampaignsNFT } from '../../../utils/settings';
+import { distributionCampaignsFT } from '../../../utils/settings';
 import { Button } from '@material-tailwind/react';
 import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
 import { addTransaction } from '../../../store/transactionSlice';
 import { useDispatch } from 'react-redux';
-import NFTCollectionABI from '../../../contractsData/NFTCollection.json';
+import FungibleTokenABI from '../../../contractsData/FungibleToken.json';
 
-export function OneFTDistribution({ campaign, currentCommunity, tokenSymbol }) {
+export function OneFTDistribution({ campaign, currentCommunity, tokenSymbol, handleUpdate }) {
   const dispatch = useDispatch();
   const [ campaignDetails, setCampaignDetails ] = useState();
 
-  useEffect(() => {
-    distributionCampaignsNFT.map(campSettings => {
-      if (parseInt(campSettings.id) === campaign.distType) {
-        setCampaignDetails(campSettings)
-      }
-    });
-  }, []);
-
   const { config: configCancelCampaign, error: errorCancelCampaign } = usePrepareContractWrite({
-    addressOrName: currentCommunity?.nftContract,
-    contractInterface: NFTCollectionABI.abi,
+    addressOrName: currentCommunity?.ftContract,
+    contractInterface: FungibleTokenABI.abi,
     functionName: 'cancelDistributionCampaign',
     args: [ campaign?.id ]
   });
 
-  const { data: cancelCampaignData, write: cancelCampaignWrite } = useContractWrite({
+  const { data: cancelCampaignData, write: cancelCampaignWrite, error: errorCancelWrite } = useContractWrite({
     ...configCancelCampaign,
     onSuccess: ({ hash }) => {
       dispatch(addTransaction({
@@ -47,10 +39,26 @@ export function OneFTDistribution({ campaign, currentCommunity, tokenSymbol }) {
     },
     onSuccess: data => {
       if (data) {
-        console.log('...')
+        handleUpdate?.();
       }
     },
   });
+
+  useEffect(() => {
+    console.log(`errorCancelCampaign`, errorCancelCampaign);
+  }, [ errorCancelCampaign ])
+
+  useEffect(() => {
+    console.log(`errorCancelWrite`, errorCancelWrite);
+  }, [ errorCancelWrite ])
+
+  useEffect(() => {
+    distributionCampaignsFT.map(campSettings => {
+      if (parseInt(campSettings.id) === campaign.distType) {
+        setCampaignDetails(campSettings)
+      }
+    });
+  }, []);
 
   const claimedPct = () => {
     const mintedPct = campaign.tokensMinted.mul(100).div(campaign.tokensTotal);
@@ -75,12 +83,12 @@ export function OneFTDistribution({ campaign, currentCommunity, tokenSymbol }) {
           </span>
         )}
         <div className="mt-2">
-          Claimed: {formatNumber(convertFromEther(campaign.tokensMinted))} {tokenSymbol}
+          Claimed: <b>{formatNumber(convertFromEther(campaign.tokensMinted))} {tokenSymbol}
           {campaign.tokensMinted > 0 && (
             <span className="ml-2 opacity-60">
               ({claimedPct()}%)
             </span>
-          )}
+          )}</b>
         </div>
 
         <div>

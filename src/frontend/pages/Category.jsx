@@ -3,7 +3,7 @@ import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { Badge, Container, Wrapper } from "../assets/css/common.style";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useContractRead } from "wagmi";
+import { useAccount, useContractRead } from "wagmi";
 import { transformCommunity } from "../utils/transform";
 import { Card, CardBody, CardFooter, Typography } from "@material-tailwind/react";
 import { mainContract } from "../utils/contracts";
@@ -12,6 +12,7 @@ import { MdKeyboardArrowLeft } from "react-icons/all";
 import { isContractAddress, mediaURL } from "../utils/format";
 
 export const Category = () => {
+  let { isConnected } = useAccount();
   let { categoryId } = useParams();
   const navigate = useNavigate();
 
@@ -47,45 +48,50 @@ export const Category = () => {
             </h3>
           </div>
 
-          <div className="md:flex md:flex-row md:gap-8 justify-center">
-            {communities?.length > 0 ? communities.map(community => (
-              <Card className="w-96 border border-gray-100 mb-8 cursor-pointer hover:shadow-lg hover:border-gray-200 transition"
-                    key={community.id}
-                    onClick={() => navigate(`/category/${categoryId}/${community.id}`)}>
-                <CardBody>
-                  <div className="flex flex-row gap-5 mb-3">
-                    <img src={mediaURL(community.logo || defaultCommunityLogo)}
-                         alt="Logo"
-                         className="w-16 h-16 bg-gray-100 object-cover shadow-soft-sm rounded-xl"/>
-                    <Typography variant="h5" className="text-gray-800 h-14 pt-2 overflow-hidden leading-6">
-                      {community.name}
+
+          {isConnected ? (
+            <div className="md:flex md:flex-row md:gap-8 justify-center">
+              {communities?.length > 0 ? communities.map(community => (
+                <Card className="w-96 border border-gray-100 mb-8 cursor-pointer hover:shadow-lg hover:border-gray-200 transition"
+                      key={community.id}
+                      onClick={() => navigate(`/category/${categoryId}/${community.id}`)}>
+                  <CardBody>
+                    <div className="flex flex-row gap-5 mb-3">
+                      <img src={mediaURL(community.logo || defaultCommunityLogo)}
+                           alt="Logo"
+                           className="w-16 h-16 bg-gray-100 object-cover shadow-soft-sm rounded-xl"/>
+                      <Typography variant="h5" className="text-gray-800 h-14 pt-2 overflow-hidden leading-6">
+                        {community.name}
+                      </Typography>
+                    </div>
+
+                    <Typography variant="small" className="max-h-20 overflow-hidden leading-5">
+                      {community.description || "No community description."}
                     </Typography>
-                  </div>
+                  </CardBody>
 
-                  <Typography variant="small" className="max-h-20 overflow-hidden leading-5">
-                    {community.description || "No community description."}
-                  </Typography>
-                </CardBody>
-
-                <CardFooter divider className="flex items-center justify-between py-3">
-                  <Typography variant="small">
-                    ...
-                  </Typography>
-                  <div className="flex gap-1 text-gray-500 text-sm">
-                    <i className="fas fa-map-marker-alt fa-sm mt-[3px]"/>
-                    {isContractAddress(community.nftContract) && (
-                      <Badge>NFT</Badge>
-                    )}
-                    {isContractAddress(community.ftContract) && (
-                      <Badge>FT</Badge>
-                    )}
-                  </div>
-                </CardFooter>
-              </Card>
-            )) : (
-              <p className={"text-gray-500"}>*No Communities</p>
-            )}
-          </div>
+                  <CardFooter divider className="flex items-center justify-between py-3">
+                    <Typography variant="small">
+                      ...
+                    </Typography>
+                    <div className="flex gap-1 text-gray-500 text-sm">
+                      <i className="fas fa-map-marker-alt fa-sm mt-[3px]"/>
+                      {isContractAddress(community.nftContract) && (
+                        <Badge>NFT</Badge>
+                      )}
+                      {isContractAddress(community.ftContract) && (
+                        <Badge>FT</Badge>
+                      )}
+                    </div>
+                  </CardFooter>
+                </Card>
+              )) : (
+                <p className={"text-gray-500"}>*No Communities</p>
+              )}
+            </div>
+          ) : (
+            <div className={"font-medium text-center"}>Please connect your wallet to view Communities List!</div>
+          )}
 
         </Container>
       </Wrapper>

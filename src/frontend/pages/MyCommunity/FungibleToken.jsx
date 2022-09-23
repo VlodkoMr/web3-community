@@ -143,6 +143,7 @@ export const FungibleToken = () => {
                                            campaign={campaign}
                                            tokenSymbol={tokenSymbol}
                                            currentCommunity={currentCommunity}
+                                           handleUpdate={refetchCampaignsList}
                         />
                       ))}
                     </>
