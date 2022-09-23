@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
+import { useContractWrite, useNetwork, usePrepareContractWrite, useProvider, useWaitForTransaction } from 'wagmi';
 import FungibleTokenABI from '../../../contractsData/FungibleToken.json';
 import { useDispatch } from 'react-redux';
 import { addTransaction } from '../../../store/transactionSlice';
@@ -10,6 +10,7 @@ import { Loader } from '../../Loader';
 import { Popup } from '../../Popup';
 import { convertToEther } from '../../../utils/format';
 import { BigNumber } from '@ethersproject/bignumber';
+import { Framework } from "@superfluid-finance/sdk-core";
 
 export function DistributionCampaignFTPopup(
   {
@@ -21,6 +22,8 @@ export function DistributionCampaignFTPopup(
     myBalance,
   }) {
   const dispatch = useDispatch();
+  const provider = useProvider();
+  const { chain } = useNetwork();
   const [ isLoading, setIsLoading ] = useState(false);
   const [ approveFormData, setApproveFormData ] = useState({});
   const [ submitFormData, setSubmitFormData ] = useState({});
@@ -135,6 +138,10 @@ export function DistributionCampaignFTPopup(
     }
   }, [ createWrite ]);
 
+  useEffect(() => {
+    console.log(`errorApprove`, errorApprove);
+  }, [ errorApprove ]);
+
   // ------------ Actions ------------
 
   const handleCreateCampaign = (e) => {
@@ -175,6 +182,28 @@ export function DistributionCampaignFTPopup(
       tokensPerUser: convertToEther(formData.tokensPerUser)
     });
   }
+
+  // const approveToken = async () => {
+  //   const sf = await Framework.create({
+  //     chainId: chain.id,
+  //     provider
+  //   });
+  //   const superToken = await sf.loadSuperToken(currentCommunity.ftContract);
+  //   superToken.approve({
+  //     receiver: currentCommunity.ftContract,
+  //     amount: convertToEther(formData.tokensAmount)
+  //   });
+  //
+  //   setSubmitFormData({ ...approveFormData });
+  //   setApproveFormData({});
+  // }
+  //
+  // useEffect(() => {
+  //   if (approveFormData?.distributionType) {
+  //     console.log(`+`);
+  //     approveToken();
+  //   }
+  // }, [ approveFormData ])
 
   const resetForm = () => {
     setIsLimit(false);
@@ -277,7 +306,7 @@ export function DistributionCampaignFTPopup(
             </div>
             <div className="bg-yellow-50 text-sm font-medium pl-2 pr-6 py-2 rounded-md border border-orange-200">
               <div className={"flex justify-between"}>
-                <Checkbox label="Limit: 1 NFT/person"
+                <Checkbox label="Limit: 1 claim/person"
                           color="amber"
                           onChange={() => setIsLimit(!isLimit)}
                           className="font-semibold"/>

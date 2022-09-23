@@ -7,10 +7,21 @@ import NFTCollectionABI from "../../contractsData/NFTCollection.json";
 import FungibleTokenABI from '../../contractsData/FungibleToken.json';
 import { convertFromEther, formatNumber, isContractAddress } from "../../utils/format";
 import { transformFTCampaign } from "../../utils/transform";
+import { mainContract } from "../../utils/contracts";
 
 export const MyDashboard = () => {
   const { address } = useAccount();
   const currentCommunity = useSelector(state => state.community.current);
+
+  const { data: memberStatsTable } = useContractRead({
+    ...mainContract,
+    functionName: "memberStatsTable",
+  });
+
+  useEffect(() => {
+    console.log(`memberStatsTable`, memberStatsTable);
+  }, [ memberStatsTable ]);
+
 
   // ---------------- NFT ----------------
 
@@ -83,8 +94,10 @@ export const MyDashboard = () => {
             {currentCommunity.privacy === "0" ? (
               <>
                 <span className="pt-1 text-gray-600">Public URL:</span>
-                <Badge className={"border relative"}>
-                  <Link to={`/category/2/1`}>{process.env.WEBSITE_URL}category/2/1</Link>
+                <Badge className={"border relative bg-blue-50/50 border-blue-100"}>
+                  <Link className={"text-blue-600"} to={`/category/${currentCommunity.category}/${currentCommunity.id}`}>
+                    {process.env.WEBSITE_URL}category/{currentCommunity.category}/{currentCommunity.id}
+                  </Link>
                 </Badge>
                 {/*<VscCopy className={"absolute right-1.5 top-1.5"}/>*/}
               </>
@@ -108,7 +121,7 @@ export const MyDashboard = () => {
           <div className={"w-full"}>
             <InnerBlock.Header>Last Activity</InnerBlock.Header>
 
-            <table className="border-collapse table-auto w-full text-sm mt-4">
+            <table className="border-collapse table-auto w-full text-sm mt-4 opacity-50">
               <thead className={"bg-gray-50"}>
               <tr>
                 <TableTh>Member</TableTh>
@@ -118,7 +131,7 @@ export const MyDashboard = () => {
                 <TableTh>Date</TableTh>
               </tr>
               </thead>
-              <tbody class="bg-white dark:bg-slate-800">
+              <tbody className="bg-white dark:bg-slate-800">
               <tr>
                 <TableTd>0x71fd...45e3</TableTd>
                 <TableTd>Mint NFT</TableTd>

@@ -73,26 +73,25 @@ contract MainContract is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 		__UUPSUpgradeable_init();
 
 		tableland = ITablelandTables(_registry);
-		(memberStatsTable, memberStatsTableId) = createTable(
-			"member_stats",
-			" (id int primary key, wallet text, email text, community_id int, camp_type text, camp_id int, paid string, created_at int);"
-		);
-	}
+		string memory _baseName = string.concat("member_stats", "_", Strings.toString(block.chainid));
 
-	function _authorizeUpgrade(address newImplementation) internal onlyOwner override {}
-
-	function createTable(string memory _tableName, string memory _tableStructure) internal onlyOwner returns (string memory, uint) {
-		string memory _baseName = string.concat(_tableName, "_", Strings.toString(block.chainid));
-		uint _tableId = tableland.createTable(
+		memberStatsTableId = tableland.createTable(
 			address(this),
 			string.concat(
 				"CREATE TABLE ",
 				_baseName,
-				_tableStructure
+				" (id int primary key, wallet text, email text, community_id int, camp_type text, camp_id int, paid string, created_at int);"
 			)
 		);
-		return (string.concat(_baseName, "_", Strings.toString(_tableId)), _tableId);
+
+		memberStatsTable = string.concat(
+			_baseName,
+			"_",
+			Strings.toString(memberStatsTableId)
+		);
 	}
+
+	function _authorizeUpgrade(address newImplementation) internal onlyOwner override {}
 
 	function updateFactoryContractsAddress(address _factoryNFTContract, address _factoryFTContract) public onlyOwner {
 		factoryNFTContract = _factoryNFTContract;

@@ -5,7 +5,7 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
-import { IWorldID } from '../interfaces/IWorldID.sol';
+import {IWorldID} from '../interfaces/IWorldID.sol';
 import "../interfaces/IMainContract.sol";
 import "./_FungibleToken.sol";
 
@@ -13,17 +13,19 @@ contract FactoryFTContract is Initializable, OwnableUpgradeable, UUPSUpgradeable
 	address mainContractAddress;
 	FungibleToken[] private contractsFTList;
 	IWorldID internal worldId;
+	address superTokenFactory;
 
 	/// @custom:oz-upgrades-unsafe-allow constructor
 	constructor() {
 		_disableInitializers();
 	}
 
-	function initialize(address _mainContractAddress, IWorldID _worldId) initializer public {
+	function initialize(address _mainContractAddress, IWorldID _worldId, address _superTokenFactory) initializer public {
 		__Ownable_init();
 		__UUPSUpgradeable_init();
 		mainContractAddress = _mainContractAddress;
 		worldId = _worldId;
+		superTokenFactory = _superTokenFactory;
 	}
 
 	function _authorizeUpgrade(address newImplementation) internal onlyOwner override {}
@@ -38,7 +40,8 @@ contract FactoryFTContract is Initializable, OwnableUpgradeable, UUPSUpgradeable
 		(,bool _isFTContract) = IMainContract(mainContractAddress).isContractExists(_communityId);
 		require(!_isFTContract, "Community already have FT Contract");
 
-		FungibleToken token = new FungibleToken(mainContractAddress, _name, _symbol, msg.sender, _supply, worldId);
+		FungibleToken token = new FungibleToken();
+		token.initialize(mainContractAddress, _name, _symbol, msg.sender, _supply, worldId, superTokenFactory, "");
 		contractsFTList.push(token);
 
 		// Update contract address

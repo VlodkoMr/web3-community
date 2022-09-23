@@ -34,12 +34,12 @@ export const Footer = () => (
                 <img
                   src={require("../assets/images/social/discord.png")}
                   alt="logo"
-                  className="h-8 mr-2 opacity-90 hover:opacity-100 cursor-pointer"
+                  className="h-8 mr-2.5 opacity-90 hover:opacity-100 cursor-pointer"
                 />
                 <img
                   src={require("../assets/images/social/twitter.png")}
                   alt="logo"
-                  className="h-8 mr-2 opacity-90 hover:opacity-100 cursor-pointer"
+                  className="h-8 mr-2.5 opacity-90 hover:opacity-100 cursor-pointer"
                 />
                 <img
                   src={require("../assets/images/social/telegram.png")}

@@ -65,6 +65,22 @@ export const Home = () => {
                     </ScrollLink>
                   </li>
                 </ul>
+                <div className="text-center wow fadeInUp flex flex-row justify-center gap-8">
+                  <a href="https://www.optimism.io/" target={"_blank"}>
+                    <img src={require("../assets/images/logo/optimism-logo.png")} alt="optimism"
+                         className={"h-12 opacity-50 hover:opacity-100 transition"}/>
+                  </a>
+                  <a href="https://polygon.technology/" target={"_blank"}>
+                    <img src={require("../assets/images/logo/polygon-logo.png")} alt="polygon"
+                         className={"h-12 opacity-50 hover:opacity-100 transition"}/>
+                  </a>
+                  <a href="https://aurora.dev/" target={"_blank"}>
+                    <img src={require("../assets/images/logo/aurora-logo.png")} alt="aurora"
+                         className={"h-12 opacity-50 hover:opacity-100 transition"}/>
+                  </a>
+
+
+                </div>
               </div>
             </div>
 
@@ -73,7 +89,7 @@ export const Home = () => {
                 className="mx-auto max-w-[845px] relative z-10 wow fadeInUp"
                 data-wow-delay=".25s"
               >
-                <div className="mt-16">
+                <div className="mt-12">
                   <img
                     src={require("../assets/images/hero/hero-image.jpg")}
                     alt="hero"
@@ -100,37 +116,37 @@ export const Home = () => {
             <div className="w-full px-4">
               <div className="mb-12 lg:mb-20 max-w-[620px]">
               <span className="font-semibold text-lg text-primary mb-2 block">
-                Features
+                Overview
               </span>
                 <h2
                   className="font-bold text-3xl sm:text-4xl md:text-[42px] text-dark mb-4"
                 >
-                  Main Features Of Play
+                  Main Features
                 </h2>
                 <p
                   className="text-lg sm:text-xl leading-relaxed sm:leading-relaxed text-body-color"
                 >
-                  There are many variations of passages of Lorem Ipsum available
-                  but the majority have suffered alteration in some form.
+                  Create and manage your Web3 community in few clicks:
+                  Tokenomic, NFT Collections, DAO, events and video streams.
                 </p>
               </div>
             </div>
           </div>
 
           <div className="flex flex-wrap -mx-4">
-            <Feature title="Free and Open-Source"
+            <Feature title="Free and Easy to use"
                      text="Lorem Ipsum is simply dummy text of the printing and industry."
                      icon="gift"
             />
-            <Feature title="Multipurpose Template"
+            <Feature title="Extend community"
                      text="Lorem Ipsum is simply dummy text of the printing and industry."
                      icon="move"
             />
-            <Feature title="Multipurpose Template"
+            <Feature title="Web3 Marketing tools"
                      text="Lorem Ipsum is simply dummy text of the printing and industry."
                      icon="apps"
             />
-            <Feature title="Multipurpose Template"
+            <Feature title="Multipurpose Service"
                      text="Lorem Ipsum is simply dummy text of the printing and industry."
                      icon="layers"
             />
@@ -155,13 +171,11 @@ export const Home = () => {
                     About Us
                   </span>
                     <h2 className="font-bold text-3xl sm:text-4xl 2xl:text-[40px] sm:leading-snug text-dark mb-6">
-                      Brilliant Toolkit to Build Nextgen Website Faster.
+                      New Tools in Web3 to extend your possibilities!
                     </h2>
                     <p className="text-base text-body-color mb-9 leading-relaxed">
-                      The main ‘thrust' is to focus on educating attendees on how
-                      to best protect highly vulnerable business applications with
-                      interactive panel discussions and roundtables led by subject
-                      matter experts.
+                      Create your own community or fan-zone in a few clicks with modern web3 features: NFT collections, token, DAO, raffles,
+                      news and much more! Perfect solution for: any teams, musicians, artists, singers and any groups of people by interest.
                     </p>
                     <p className="text-base text-body-color mb-9 leading-relaxed">
                       The main ‘thrust' is to focus on educating attendees on how

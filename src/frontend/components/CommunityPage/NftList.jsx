@@ -28,7 +28,7 @@ export function NftList({ community }) {
   }, [ community ])
 
   return (
-    <div className={"flex flex-wrap flex-row gap-6"}>
+    <div className={"flex flex-wrap flex-row gap-6 justify-around"}>
       {(collectionNFT && collectionNFT.length > 0) ? collectionNFT.map(nft => (
         <Card className="w-64 border border-gray-100 mb-8 cursor-pointer hover:shadow-lg hover:border-gray-200 transition"
               key={nft.id}
@@ -55,9 +55,9 @@ export function NftList({ community }) {
           </CardFooter>
         </Card>
       )) : (
-        <>
+        <div className={"text-center flex-auto"}>
           *No NFT Listed
-        </>
+        </div>
       )}
     </div>
   );

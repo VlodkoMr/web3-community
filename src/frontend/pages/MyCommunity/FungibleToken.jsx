@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { Framework } from "@superfluid-finance/sdk-core";
 import { useSelector } from "react-redux";
 import { InnerBlock, InnerTransparentBlock } from '../../assets/css/common.style';
-import { useAccount, useContractRead } from 'wagmi';
+import { useAccount, useContractRead, useNetwork, useProvider } from 'wagmi';
 import { convertFromEther, formatNumber, isContractAddress } from '../../utils/format';
 import { transformFTCampaign } from '../../utils/transform';
 import { useOutletContext } from 'react-router-dom';
@@ -12,35 +13,44 @@ import { OneFTDistribution } from '../../components/MyCommunity/FungibleToken/On
 import { PauseUnpausePopup } from '../../components/MyCommunity/PauseUnpausePopup';
 import { AirdropFTPopup } from "../../components/MyCommunity/FungibleToken/AirdropFTPopup";
 import FungibleTokenABI from '../../contractsData/FungibleToken.json';
+import { Loader } from "../../components/Loader";
 
 export const FungibleToken = () => {
   const { address } = useAccount();
+  const { chain } = useNetwork();
+  const provider = useProvider();
   const [ reloadCommunityList ] = useOutletContext();
   const currentCommunity = useSelector(state => state.community.current);
   const [ campaignPopupVisible, setCampaignPopupVisible ] = useState(false);
   const [ airdropPopupVisible, setAirdropPopupVisible ] = useState(false);
+  const [ tokenSymbol, setTokenSymbol ] = useState("");
+  const [ totalSupply, setTotalSupply ] = useState("");
+  const [ myBalance, setMyBalance ] = useState("");
+  const [ isTokenReady, setIsTokenReady ] = useState(false);
 
   const myFTContract = {
     addressOrName: currentCommunity?.ftContract,
     contractInterface: FungibleTokenABI.abi,
   };
 
-  const { data: totalSupply } = useContractRead({
-    ...myFTContract,
-    enabled: isContractAddress(currentCommunity?.ftContract),
-    functionName: "totalSupply",
-  });
-  const { data: tokenSymbol } = useContractRead({
-    ...myFTContract,
-    enabled: isContractAddress(currentCommunity?.ftContract),
-    functionName: "symbol",
-  });
-  const { data: myBalance, refetch: refetchBalance } = useContractRead({
-    ...myFTContract,
-    enabled: isContractAddress(currentCommunity?.ftContract),
-    functionName: "balanceOf",
-    args: [ address ]
-  });
+  // const { data: totalSupply } = useContractRead({
+  //   ...myFTContract,
+  //   enabled: isContractAddress(currentCommunity?.ftContract),
+  //   functionName: "totalSupply",
+  // });
+  // const { data: tokenSymbol } = useContractRead({
+  //   ...myFTContract,
+  //   enabled: isContractAddress(currentCommunity?.ftContract),
+  //   functionName: "symbol",
+  // });
+
+
+  // const { data: myBalance, refetch: refetchBalance } = useContractRead({
+  //   ...myFTContract,
+  //   enabled: isContractAddress(currentCommunity?.ftContract),
+  //   functionName: "balanceOf",
+  //   args: [ address ]
+  // });
 
   const { data: distributionCampaigns, refetch: refetchDistributionCampaigns } = useContractRead({
     ...myFTContract,
@@ -50,9 +60,32 @@ export const FungibleToken = () => {
   });
 
   const refetchCampaignsList = () => {
-    refetchBalance();
+    // refetchBalance();
     refetchDistributionCampaigns();
+    loadSuperToken();
   }
+
+  const loadSuperToken = async () => {
+    const sf = await Framework.create({
+      chainId: chain.id,
+      provider
+    });
+    const superToken = await sf.loadSuperToken(currentCommunity.ftContract);
+    const symbol = await superToken.symbol({ providerOrSigner: provider });
+    const supply = await superToken.totalSupply({ providerOrSigner: provider });
+    const myBalance = await superToken.balanceOf({ providerOrSigner: provider, account: address });
+
+    setTokenSymbol(symbol);
+    setTotalSupply(supply);
+    setMyBalance(myBalance);
+    setIsTokenReady(true);
+  }
+
+  useEffect(() => {
+    if (currentCommunity?.ftContract) {
+      loadSuperToken();
+    }
+  }, [ currentCommunity?.ftContract ])
 
   useEffect(() => {
     console.log('distributionCampaigns', distributionCampaigns)
@@ -76,7 +109,14 @@ export const FungibleToken = () => {
               <div className="flex justify-between text-sm mb-3 -mt-1">
                 <div className="mr-10">
                   <span>Total Supply:</span>
-                  <b className="ml-1 font-medium">{formatNumber(convertFromEther(totalSupply, 0))} {tokenSymbol}</b>
+                  {isTokenReady ? (
+                    <b className="ml-1 font-medium">{formatNumber(convertFromEther(totalSupply, 0))} {tokenSymbol}</b>
+                  ) : (
+                    <span className="ml-2">
+                      <Loader size={"sm"}/>
+                    </span>
+                  )}
+
                 </div>
                 <span className="text-sm font-normal text-slate-500">
                   <span className="font-medium mr-1">Contract:</span>
@@ -113,15 +153,18 @@ export const FungibleToken = () => {
                   )}
                 </div>
                 <div className="w-1/3">
-                  <div className="-mt-3 flex justify-end">
+                  <div className="-mt-3 mb-3 flex justify-end">
                     <Button onClick={() => setAirdropPopupVisible(true)}>
                       New Token Airdrop
                     </Button>
                   </div>
 
-                  <div className="bg-white rounded-xl shadow-gray-300/50 shadow-lg px-8 py-6 mt-3 mb-6 text-center">
+                  <div className="bg-white rounded-xl shadow-gray-300/50 shadow-lg px-8 py-6 mb-6 text-center">
                     <h4>
-                      My Balance: <b>{formatNumber(convertFromEther(myBalance, 0))} {tokenSymbol}</b>
+                      <span className={"mr-2"}>My Balance:</span>
+                      {isTokenReady ? (
+                        <b>{formatNumber(convertFromEther(myBalance, 0))} {tokenSymbol}</b>
+                      ) : (<Loader size={"sm"}/>)}
                     </h4>
                   </div>
 
@@ -150,6 +193,7 @@ export const FungibleToken = () => {
         currentCommunity={currentCommunity}
         tokenSymbol={tokenSymbol}
         myBalance={myBalance}
+        tokenAddress={currentCommunity?.ftContract}
         handleSuccess={() => refetchCampaignsList()}
       />
 

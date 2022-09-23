@@ -5,6 +5,7 @@ const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fet
 const { saveAllFrontendFiles, saveFrontendArtifact } = require('./utils');
 
 const TABLELAND_CONTRACT = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+const SUPER_TOKEN_FACTORY = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
 
 async function main() {
 
@@ -29,7 +30,7 @@ async function main() {
 
   // Deploy FT factory contract
   const FactoryFTContract = await hre.ethers.getContractFactory("FactoryFTContract");
-  const factoryFTContract = await hre.upgrades.deployProxy(FactoryFTContract, [ mainContract.address, worldIDAddress ], {
+  const factoryFTContract = await hre.upgrades.deployProxy(FactoryFTContract, [ mainContract.address, worldIDAddress, SUPER_TOKEN_FACTORY ], {
     initializer: "initialize"
   })
   await factoryFTContract.deployed();

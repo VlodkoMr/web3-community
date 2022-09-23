@@ -12,6 +12,7 @@ import { addTransaction } from "../../store/transactionSlice";
 import { defaultAbiCoder as abi } from "@ethersproject/abi";
 import { useDispatch } from "react-redux";
 import { BigNumber } from "ethers";
+import { Loader } from "../../components/Loader";
 
 export const NFTDetails = () => {
   const dispatch = useDispatch();
@@ -122,6 +123,7 @@ export const NFTDetails = () => {
   const isWhitelisted = () => {
     return nft.distribution.whitelist.indexOf(address) !== -1;
   }
+
   const mintNFTError = () => {
     let result = true;
     if (nft.distribution.distType === 2) {
@@ -147,7 +149,7 @@ export const NFTDetails = () => {
       }
     }
 
-    if (nft.supply <= nft.mintedTotal) {
+    if (nft.supply > 0 && nft.supply <= nft.mintedTotal) {
       return "Not enough supply";
     }
 
@@ -162,7 +164,7 @@ export const NFTDetails = () => {
     return false;
   }
 
-  const mintNFT = (e) => {
+  const mintNFT = () => {
     const error = mintNFTError();
     if (!error) {
       setMintFormData({
@@ -185,126 +187,135 @@ export const NFTDetails = () => {
         </Breadcrumbs>
       </Container>
 
-      {nft && nft.distribution ? (
-        <div className={"flex flex-row gap-10"}>
-          <div className={"w-1/2 mb-10"}>
-            <InnerBlock>
-              <img src={nft.mediaUri} alt={`NFT ${nft.title}`} className={"bg-gray-100 block rounded-lg my-2 min-h-[360px] w-full"}/>
-            </InnerBlock>
-          </div>
-          <div className={"w-1/2"}>
-            <h1 className={"text-3xl font-semibold text-gray-800 xl:pt-8 pt-2 pr-4"}>{nft.title}</h1>
+      {nft ? (
+        <>
+          {nft.distribution ? (
+            <div className={"flex flex-row gap-10"}>
+              <div className={"w-1/2 mb-10"}>
+                <InnerBlock>
+                  <img src={nft.mediaUri} alt={`NFT ${nft.title}`} className={"bg-gray-100 block rounded-lg my-2 min-h-[360px] w-full"}/>
+                </InnerBlock>
+              </div>
+              <div className={"w-1/2"}>
+                <h1 className={"text-3xl font-semibold text-gray-800 xl:pt-8 pt-2 pr-4"}>{nft.title}</h1>
 
-            <p className={"pr-8 mt-6"}>
-              There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by
-              injected humour, or randomised words which don't look even slightly believable.
-            </p>
-            <div className={"mt-6"}>
-              Minted: <b className={"font-medium text-gray-700"}>
-              {nft.mintedTotal}{nft.supply === 0 ? "" : "/" + nft.supply} NFT
-            </b>
-            </div>
-            <div>
-              {nft.distribution.dateStart > 0 && nft.distribution.dateEnd > 0 && (
-                <>
-                  Available: <b className={"font-medium text-gray-700"}>
-                  {timestampToDate(nft.distribution.dateStart)} - {timestampToDate(nft.distribution.dateEnd)}
+                <p className={"pr-8 mt-6"}>
+                  There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by
+                  injected humour, or randomised words which don't look even slightly believable.
+                </p>
+                <div className={"mt-6"}>
+                  Minted: <b className={"font-medium text-gray-700"}>
+                  {nft.mintedTotal}{nft.supply === 0 ? "" : "/" + nft.supply} NFT
                 </b>
-                </>
-              )}
-            </div>
-            <div>
-              Price: <b className={"font-medium text-gray-700"}>
-              {parseFloat(nft.price) > 0 ? `${nft.price} ${getTokenName(chain)}` : "Free"}
-            </b>
-            </div>
-
-            <div className={"p-6 bg-white/50 border border-blue-100/50 rounded-lg mt-6 mr-12 shadow-gray-300/50 shadow-lg"}>
-              {nft.distribution.distType === 2 && (
-                <>{isWhitelisted() ? (
-                  <div className="text-blue-600 text-center border-b pb-4 pt-1 font-semibold">
-                    Great, your wallet address in whitelist!
-                  </div>
-                ) : (
-                  <div className="text-red-400 text-center border-b pb-4 pt-1 font-semibold">
-                    No Access to mint - your wallet not found in whitelist.
-                  </div>
-                )}</>
-              )}
-
-              <div>
-                <div className={"text-center"}>
-                  <span className={"text-red-400"}>{mintNFTError()}</span>
-
-                  {!mintNFTError() && nft.distribution.distType === 1 && (
-                    <>You can mint NFT:</>
+                </div>
+                <div>
+                  {nft.distribution.dateStart > 0 && nft.distribution.dateEnd > 0 && (
+                    <>
+                      Available: <b className={"font-medium text-gray-700"}>
+                      {timestampToDate(nft.distribution.dateStart)} - {timestampToDate(nft.distribution.dateEnd)}
+                    </b>
+                    </>
                   )}
                 </div>
-
-                {nft.distribution.distType === 3 && (
-                  <div className={"flex flex-row gap-4"}>
-                <span className={"text-sm leading-4 text-right pt-2"}>
-                Confirm your email to mint NFT:
-                </span>
-                    <Input type="email"
-                           label="Your Email*"
-                           size={"lg"}
-                           required={true}
-                           value={formData.email}
-                           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    />
-                  </div>
-                )}
-                {nft.distribution.distType === 4 && (
-                  <div className={"flex flex-row gap-4"}>
-                <span className={"text-sm leading-4 text-right pt-2"}>
-                Provide 6-digits code to mint NFT:
-                </span>
-                    <Input type="number"
-                           label="Event Code*"
-                           size={"lg"}
-                           required={true}
-                           value={formData.eventCode}
-                           onChange={(e) => setFormData({ ...formData, eventCode: e.target.value })}
-                    />
-                  </div>
-                )}
-
-                <div className={"flex justify-between flex-row gap-6 mt-6"}>
-                  {nft.distribution.worldcoinAction.length > 0 && (
-                    <WorldIDWidget
-                      actionId={nft.distribution.worldcoinAction}
-                      signal="my_signal"
-                      enableTelemetry
-                      onSuccess={(verificationResponse) => {
-                        console.log('verificationResponse', verificationResponse);
-                        setWorldIDProof(verificationResponse);
-                      }} // pass the proof to the API or your smart contract
-                      onError={(error) => console.error(error)}
-                      debug={true} // to aid with debugging, remove in production
-                    />
-                  )}
-                  <Button className={"flex-auto -mt-0.5"}
-                          color={"indigo"}
-                          onClick={() => mintNFT()}
-                          disabled={!!mintNFTError()}
-                          size={"lg"}>
-                    MINT NFT
-                  </Button>
+                <div>
+                  Price: <b className={"font-medium text-gray-700"}>
+                  {parseFloat(nft.price) > 0 ? `${nft.price} ${getTokenName(chain)}` : "Free"}
+                </b>
                 </div>
 
+                <div className={"p-6 bg-white/50 border border-blue-100/50 rounded-lg mt-6 mr-12 shadow-gray-300/50 shadow-lg"}>
+                  {nft.distribution.distType === 2 && (
+                    <>{isWhitelisted() ? (
+                      <div className="text-blue-600 text-center border-b pb-4 pt-1 font-semibold">
+                        Great, your wallet address in whitelist!
+                      </div>
+                    ) : (
+                      <div className="text-red-400 text-center border-b pb-4 pt-1 font-semibold">
+                        No Access to mint - your wallet not found in whitelist.
+                      </div>
+                    )}</>
+                  )}
+
+                  <div>
+                    <div className={"text-center"}>
+                      {!mintNFTError() && nft.distribution.distType === 1 && (
+                        <>You can mint NFT:</>
+                      )}
+                    </div>
+
+                    {nft.distribution.distType === 3 && (
+                      <div className={"flex flex-row gap-4"}>
+                        <span className={"text-sm leading-4 text-right pt-2"}>
+                        Confirm your email to mint NFT:
+                        </span>
+                        <Input type="email"
+                               label="Your Email*"
+                               size={"lg"}
+                               required={true}
+                               value={formData.email}
+                               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        />
+                      </div>
+                    )}
+                    {nft.distribution.distType === 4 && (
+                      <div className={"flex flex-row gap-4"}>
+                        <span className={"text-sm leading-4 text-right pt-2"}>
+                        Provide 6-digits code to mint NFT:
+                        </span>
+                        <Input type="number"
+                               label="Event Code*"
+                               size={"lg"}
+                               required={true}
+                               value={formData.eventCode}
+                               onChange={(e) => setFormData({ ...formData, eventCode: e.target.value })}
+                        />
+                      </div>
+                    )}
+
+                    <div className={"flex justify-between flex-row gap-6 mt-6"}>
+                      {nft.distribution.worldcoinAction.length > 0 && (
+                        <WorldIDWidget
+                          actionId={nft.distribution.worldcoinAction}
+                          signal="my_signal"
+                          enableTelemetry
+                          onSuccess={(verificationResponse) => {
+                            console.log('verificationResponse', verificationResponse);
+                            setWorldIDProof(verificationResponse);
+                          }} // pass the proof to the API or your smart contract
+                          onError={(error) => console.error(error)}
+                          debug={true} // to aid with debugging, remove in production
+                        />
+                      )}
+                      <Button className={"flex-auto -mt-0.5"}
+                              color={"indigo"}
+                              onClick={() => mintNFT()}
+                              disabled={!!mintNFTError()}
+                              size={"lg"}>
+                        MINT NFT
+                      </Button>
+                    </div>
+
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
+          ) : (
+            <div className={"text-center"}>
+              <div>
+                <b>*NFT Not Found</b>
+              </div>
+              <Link className={"underline mt-2"} to={`/category/${community.category}/${community.id}`}>Back to Community</Link>
+            </div>
+          )}
+        </>
       ) : (
-        <div className={"text-center"}>
-          <div>
-            <b>*NFT Not Found</b>
+        <div className={"h-screen"}>
+          <div className={"w-12 mx-auto mt-16"}>
+            <Loader/>
           </div>
-          <Link className={"underline mt-2"} to={`/category/${community.category}/${community.id}`}>Back to Community</Link>
         </div>
       )}
+
     </Container>
   );
 }

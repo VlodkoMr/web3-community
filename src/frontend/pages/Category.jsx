@@ -62,7 +62,7 @@ export const Category = () => {
                     </Typography>
                   </div>
 
-                  <Typography variant="small" className="h-20 overflow-hidden leading-5">
+                  <Typography variant="small" className="max-h-20 overflow-hidden leading-5">
                     {community.description || "No community description."}
                   </Typography>
                 </CardBody>

@@ -24,6 +24,7 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply, Utils {
 	IWorldID internal worldId;
 	uint256 internal immutable groupId = 1;
 	mapping(uint256 => bool) internal nullifierHashes;
+	mapping(uint => mapping(address => bool)) public mintedList;
 
 	error InvalidNullifier();
 
@@ -190,7 +191,10 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply, Utils {
 		uint root, uint nullifierHash, uint[8] calldata proof
 	) public whenNotPaused payable {
 		Collection storage collection = collections[_getCollectionIndex(_collectionId)];
+
+		require(mintedList[_collectionId][msg.sender] == false, "You already minted NFT");
 		require(_amount > 0, "Wrong mint amount");
+
 		if (collection.supply > 0) {
 			require(collection.supply >= collection.mintedTotal + _amount, "Not enough supply left");
 		}
@@ -227,6 +231,7 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply, Utils {
 			require(success, "Failed to send royalty");
 		}
 
+		mintedList[_collectionId][msg.sender] = true;
 		collection.mintedTotal += _amount;
 		mintedTotal += _amount;
 		_mint(msg.sender, _collectionId, _amount, "");
