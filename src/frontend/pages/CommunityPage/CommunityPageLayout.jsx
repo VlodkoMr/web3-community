@@ -22,9 +22,9 @@ export const CommunityPageLayout = () => {
     args: [ communityId ]
   });
 
-  useEffect(() => {
-    console.log(`community`, community);
-  }, [ community ])
+  // useEffect(() => {
+  //   console.log(`community`, community);
+  // }, [ community ])
 
   return (
     <div className="flex flex-col h-screen relative">

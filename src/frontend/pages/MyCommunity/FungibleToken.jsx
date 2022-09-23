@@ -87,9 +87,9 @@ export const FungibleToken = () => {
     }
   }, [ currentCommunity?.ftContract ])
 
-  useEffect(() => {
-    console.log('distributionCampaigns', distributionCampaigns)
-  }, [ distributionCampaigns ])
+  // useEffect(() => {
+  //   console.log('distributionCampaigns', distributionCampaigns)
+  // }, [ distributionCampaigns ])
 
   return (
     <div className="flex flex-row">

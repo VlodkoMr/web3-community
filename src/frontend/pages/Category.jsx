@@ -24,9 +24,9 @@ export const Category = () => {
     args: [ categoryId ]
   })
 
-  useEffect(() => {
-    console.log(`communities`, communities);
-  }, [ communities ])
+  // useEffect(() => {
+  //   console.log(`communities`, communities);
+  // }, [ communities ])
 
   return (
     <div className="flex flex-col h-screen relative">

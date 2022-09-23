@@ -13,14 +13,23 @@ export const MyDashboard = () => {
   const { address } = useAccount();
   const currentCommunity = useSelector(state => state.community.current);
 
-  const { data: memberStatsTable } = useContractRead({
-    ...mainContract,
-    functionName: "memberStatsTable",
-  });
-
-  useEffect(() => {
-    console.log(`memberStatsTable`, memberStatsTable);
-  }, [ memberStatsTable ]);
+  // const { data: memberStatsTable } = useContractRead({
+  //   ...mainContract,
+  //   functionName: "memberStatsTable",
+  // });
+  //
+  // const loadLastActivity = async () => {
+  //   const selectLastSQL = `SELECT * FROM ${memberStatsTable}`;
+  //   const activity = await fetch(`https://testnet.tableland.network/query?s=${selectLastSQL}`);
+  //   console.log(`activity`, activity);
+  // }
+  //
+  // useEffect(() => {
+  //   if (memberStatsTable) {
+  //     console.log(`memberStatsTable`, memberStatsTable);
+  //     loadLastActivity();
+  //   }
+  // }, [ memberStatsTable ]);
 
 
   // ---------------- NFT ----------------
@@ -58,13 +67,13 @@ export const MyDashboard = () => {
 
   // ---------------- Actions ----------------
 
-  useEffect(() => {
-    console.log('currentCommunity', currentCommunity);
-  }, [ currentCommunity ]);
+  // useEffect(() => {
+  //   console.log('currentCommunity', currentCommunity);
+  // }, [ currentCommunity ]);
 
-  useEffect(() => {
-    console.log('mintedTotal', mintedTotal);
-  }, [ mintedTotal ]);
+  // useEffect(() => {
+  //   console.log('mintedTotal', mintedTotal);
+  // }, [ mintedTotal ]);
 
   useEffect(() => {
     if (window.contracts) {

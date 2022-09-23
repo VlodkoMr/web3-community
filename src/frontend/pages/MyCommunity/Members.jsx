@@ -5,9 +5,9 @@ import { InnerBlock } from '../../assets/css/common.style';
 export const Members = () => {
   const currentCommunity = useSelector(state => state.community.current);
 
-  useEffect(() => {
-    console.log('currentCommunity', currentCommunity);
-  }, [ currentCommunity ]);
+  // useEffect(() => {
+  //   console.log('currentCommunity', currentCommunity);
+  // }, [ currentCommunity ]);
 
   return (
     <InnerBlock className={"flex-1"}>

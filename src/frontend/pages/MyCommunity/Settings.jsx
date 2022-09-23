@@ -19,9 +19,9 @@ export const Settings = ({ edit }) => {
     website: edit?.website || ""
   });
 
-  useEffect(() => {
-    console.log('currentCommunity', currentCommunity);
-  }, [ currentCommunity ]);
+  // useEffect(() => {
+  //   console.log('currentCommunity', currentCommunity);
+  // }, [ currentCommunity ]);
 
   return (
     <div className="flex gap-6">
