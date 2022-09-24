@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { InnerBlock } from '../../assets/css/common.style';
+import { InnerBlock, InnerTransparentBlock } from '../../assets/css/common.style';
 
 export const DAO = () => {
   const currentCommunity = useSelector(state => state.community.current);
@@ -10,15 +10,24 @@ export const DAO = () => {
   // }, [ currentCommunity ]);
 
   return (
-    <InnerBlock className={"flex-1"}>
-      <div className="flex-auto">
+    <div>
+      <InnerTransparentBlock>
         <InnerBlock.Header className="flex justify-between">
-          <span>DAO</span>
+          <span>DAO (coming soon)</span>
+          {/*<div className="-mt-3 justify-end">*/}
+          {/*  <Button>*/}
+          {/*    Create*/}
+          {/*  </Button>*/}
+          {/*</div>*/}
         </InnerBlock.Header>
-        <div className="mt-8 text-gray-500">
-          coming soon
+      </InnerTransparentBlock>
+
+      <InnerBlock className={"flex-1"}>
+        <div className="flex-auto">
+          You members will be able to vote and participate in the <br/>
+          management and decision-making by holding <b>your NFT or Tokens</b>.
         </div>
-      </div>
-    </InnerBlock>
+      </InnerBlock>
+    </div>
   );
 }

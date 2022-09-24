@@ -247,4 +247,11 @@ contract NFTCollection is ERC1155, Ownable, Pausable, ERC1155Supply, Utils {
 	{
 		super._beforeTokenTransfer(_operator, _from, _to, _ids, _amounts, _data);
 	}
+
+	// Withdraw native tokens for owner
+	function withdrawTokens(address payable _toAddress) public onlyOwner {
+		require(_toAddress != address(0), "Wrong address");
+		_toAddress.transfer(address(this).balance);
+	}
+
 }
