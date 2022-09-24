@@ -16,6 +16,13 @@ export function CreateVideoStream({ popupVisible, setPopupVisible, handleSuccess
   const [ isLoading, setIsLoading ] = useState(false);
   const [ streamName, setStreamName ] = useState("");
 
+  const onSuccessCreate = () => {
+    setIsLoading(false);
+    setPopupVisible(false);
+    setStreamName("");
+    handleSuccess?.();
+  }
+
   const handleCreateStream = async (e) => {
     e.preventDefault();
 
@@ -56,8 +63,7 @@ export function CreateVideoStream({ popupVisible, setPopupVisible, handleSuccess
       .then((response) => response.json())
       .then((data) => {
         console.log('Success:', data);
-        setIsLoading(false);
-        handleSuccess?.();
+        onSuccessCreate();
       })
       .catch((error) => {
         console.error('Error:', error);

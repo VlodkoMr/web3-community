@@ -49,34 +49,43 @@ export const Video = () => {
       <InnerBlock className={"flex-1"}>
         <div className="flex-auto">
 
-          {streams.map((stream) => (
-            <div className="border rounded-lg mb-3 px-8 py-4" key={stream.id}>
-              <Link to={`/my/video/stream/${stream.id}`} className={"flex flex-row"}>
-                <div className={"flex-1 text-sm"}>
-                  <h2 className={"block text-lg text-gray-800 font-semibold mb-2 mt-0"}>{stream.name} </h2>
-                  <p>Stream Status: {stream.isActive ? "Live Now!" : "Not Live"}</p>
-                  <p>Stream Key: {stream.streamKey}</p>
-                  <p>Stream Playback Id: {stream.playbackId}</p>
+          {streams && streams.length > 0 ? (
+            <>
+              {streams.map((stream) => (
+                <div className="border rounded-lg mb-3 px-8 py-4" key={stream.id}>
+                  <Link to={`/my/video/stream/${stream.id}`} className={"flex flex-row"}>
+                    <div className={"flex-1 text-sm"}>
+                      <h2 className={"block text-lg text-gray-800 font-semibold mb-2 mt-0"}>{stream.name} </h2>
+                      <p>Stream Status: {stream.isActive ? "Live Now!" : "Not Live"}</p>
+                      <p>Stream Key: {stream.streamKey}</p>
+                      <p>Stream Playback Id: {stream.playbackId}</p>
+                    </div>
+                    <div className={"w-64 text-center small text-right"}>
+                      {stream.isActive ? (
+                        <>
+                          <h2 className="font-semibold text-green-400 pt-2 mb-2"> Now Watching: {stream.name} </h2>
+                          <VideoPlayer
+                            playbackId={`${stream.playbackId}`}
+                            className={"w-96 h-64 border-2"}
+                            autoPlay={false}
+                            loop
+                            muted
+                          />
+                        </>
+                      ) : (
+                        <h2 className="font-semibold text-gray-500 pt-2">Not online</h2>
+                      )}
+                    </div>
+                  </Link>
                 </div>
-                <div className={"w-64 text-center small text-right"}>
-                  {stream.isActive ? (
-                    <>
-                      <h2 className="font-semibold text-green-400 pt-2 mb-2"> Now Watching: {stream.name} </h2>
-                      <VideoPlayer
-                        playbackId={`${stream.playbackId}`}
-                        className={"w-96 h-64 border-2"}
-                        autoPlay={false}
-                        loop
-                        muted
-                      />
-                    </>
-                  ) : (
-                    <h2 className="font-semibold text-gray-500 pt-2">Not online</h2>
-                  )}
-                </div>
-              </Link>
-            </div>
-          ))}
+              ))}
+            </>
+          ) : (
+            <span>
+            *No Video Streams
+            </span>
+          )}
+
         </div>
       </InnerBlock>
 

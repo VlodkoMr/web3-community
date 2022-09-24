@@ -1,6 +1,6 @@
 const cors = require("cors");
 const express = require("express");
-const request = require('request');
+const axios = require('axios').default;
 
 const app = express();
 
@@ -20,24 +20,19 @@ app.use(cors(corsConfig));
 
 const livePeerURL = "https://livepeer.studio/api/stream";
 
-app.get("/api/stream-list", async (req, response) => {
-  const options = {
-    json: true,
+app.get("/api/stream-list", async (request, response) => {
+  axios.get(`${livePeerURL}?streamsonly=1`, {
     headers: {
-      Authorization: `Bearer ${process.env.LIVEPEER_API_KEY}`,
+      'Authorization': `Bearer ${process.env.LIVEPEER_API_KEY}`,
       'Content-Type': 'application/json',
-    },
-  };
-
-  request(`${livePeerURL}?streamsonly=1`, options, (error, res, body) => {
-    if (error) {
-      return response.json({ error });
     }
-
-    if (!error && res.statusCode === 200) {
-      console.log(`body`, body);
-      return response.json({ data: body });
-    }
+  }).then(function (result) {
+    // handle success
+    return response.json({ data: result.data });
+  }).catch(function (error) {
+    // handle error
+    console.log(error);
+    return response.json({ error });
   });
 });
 
@@ -45,29 +40,22 @@ app.get("/api/stream-list", async (req, response) => {
  * Create new stream
  * @method GET
  */
-app.post("/api/create-stream", async (req, response) => {
-  const headers = {
-    Authorization: `Bearer ${process.env.LIVEPEER_API_KEY}`,
-    // 'Content-Type': 'application/json',
-  };
-
-  const form = {
-    name: req.body.name,
-    profiles: req.body.profiles
-  };
-
-  request.post({ url: `${livePeerURL}`, form: form, headers: headers }, (error, res, body) => {
-    console.log(`error`, error);
-    console.log(`body`, body);
-
-    if (error) {
-      return response.json({ error });
+app.post("/api/create-stream", async (request, response) => {
+  axios.post(`${livePeerURL}`, {
+    name: request.body.name,
+    profiles: request.body.profiles
+  }, {
+    headers: {
+      'Authorization': `Bearer ${process.env.LIVEPEER_API_KEY}`,
+      'Content-Type': 'application/json',
     }
-
-    if (!error && res.statusCode === 200) {
-      console.log(`body`, body);
-      return response.json({ data: body });
-    }
+  }).then(function (result) {
+    // handle success
+    return response.json({ data: result.data });
+  }).catch(function (error) {
+    // handle error
+    console.log(error);
+    return response.json({ error });
   });
 
   // try {
