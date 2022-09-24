@@ -109,3 +109,20 @@ export const getTokenName = (currentChain) => {
 
   return token;
 }
+
+export const getAlchemyURL = (chainId) => {
+  if (chainId === 80001) {
+    // Mumbai
+    return "https://polygon-mumbai.g.alchemy.com/nft/v2"
+  } else if (chainId === 5) {
+    // Goerly
+    return "https://eth-goerli.g.alchemy.com/nft/v2"
+  } else if (chainId === 137) {
+    // Polygon
+    return "https://polygon-mainnet.g.alchemyapi.io/nft/v2"
+  } else if (chainId === 10) {
+    // Optimism
+    return "https://opt-mainnet.alchemyapi.io/nft/v2"
+  }
+  return "https://eth-mainnet.g.alchemy.com/nft/v2";
+}

@@ -301,7 +301,7 @@ export function DistributionCampaignFTPopup(
               </div>
             </div>
 
-            <div className="mb-1 block text-left font-semibold mt-2">
+            <div className="mb-1 block text-left font-semibold mt-4 border-t pt-4">
               Proof of Personhood by World ID
             </div>
             <div className="bg-yellow-50 text-sm font-medium pl-2 pr-6 py-2 rounded-md border border-orange-200">
@@ -326,6 +326,24 @@ export function DistributionCampaignFTPopup(
                   />
                 </div>
               )}
+            </div>
+
+
+            <div className="mb-1 block text-left font-semibold mt-4">
+              Allow Token streaming
+            </div>
+            <div className="bg-yellow-50 text-sm font-medium pl-2 pr-6 py-2 rounded-md border border-orange-200">
+              <div className={"flex justify-between"}>
+                <Checkbox label="Stream by Superfluid"
+                          color="amber"
+                          onChange={() => alert('coming soon')}
+                          className="font-semibold"/>
+                <a href="https://superfluid.finance/"
+                   className="underline pt-3 text-blue-500"
+                   target="_blank">
+                  read more
+                </a>
+              </div>
             </div>
           </div>
 

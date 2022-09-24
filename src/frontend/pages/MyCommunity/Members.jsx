@@ -2,15 +2,18 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { InnerBlock, InnerTransparentBlock } from '../../assets/css/common.style';
 import NFTCollectionABI from "../../contractsData/NFTCollection.json";
-import { useContractRead } from "wagmi";
+import { useContractRead, useNetwork } from "wagmi";
 import { isContractAddress } from "../../utils/format";
 import { transformCollectionNFT } from "../../utils/transform";
 import { Button, Option, Select } from "@material-tailwind/react";
-import { communityTypes } from "../../utils/settings";
+import { communityTypes, getAlchemyURL } from "../../utils/settings";
 
 export const Members = () => {
+  const { chain } = useNetwork();
   const currentCommunity = useSelector(state => state.community.current);
   const [ filterCollection, setFilterCollection ] = useState("");
+  const [ filterCollectionTitle, setFilterCollectionTitle ] = useState("");
+  const [ nftOwners, setNftOwners ] = useState([]);
 
   // useEffect(() => {
   //   console.log('currentCommunity', currentCommunity);
@@ -28,12 +31,30 @@ export const Members = () => {
     select: data => data.map(collection => transformCollectionNFT(collection))
   });
 
+  const loadHoldersNFT = async () => {
+    const chainURL = getAlchemyURL(chain.id);
+    fetch(`${chainURL}/${process.env.ALCHEMY_API_KEY}/getOwnersForToken?contractAddress=${currentCommunity?.nftContract}&tokenId=${filterCollection}`)
+      .then(result => result.json())
+      .then((data) => {
+        setNftOwners(data.owners);
+      });
+  }
+
   useEffect(() => {
-
-    fetch("https://eth-mainnet.g.alchemy.com/nft/v2/{apiKey}/getNFTsForCollection")
-
     console.log(`collectionItems`, collectionItems);
   }, [ collectionItems ]);
+
+  useEffect(() => {
+    if (filterCollection) {
+      collectionItems.map(item => {
+        if (item.id.toString() === filterCollection) {
+          setFilterCollectionTitle(item.title);
+        }
+      })
+
+      loadHoldersNFT();
+    }
+  }, [ filterCollection ]);
 
   return (
     <div>
@@ -41,27 +62,35 @@ export const Members = () => {
         <InnerBlock.Header className="flex justify-between">
           <span>Members</span>
           <div className="w-64 -mt-3">
-            <Select label="NFT Collection*"
-                    value={filterCollection}
-                    className={"bg-white"}
-                    disabled={!collectionItems}
-                    onChange={val => setFilterCollection(val)}>
-              {collectionItems.map((collection, index) => (
-                <Option value={collection.id.toString()} key={index}>
-                  {collection.title}
-                </Option>
-              ))}
-            </Select>
+            {collectionItems && (
+              <Select label="NFT Collection*"
+                      value={filterCollection}
+                      className={"bg-white"}
+                      disabled={!collectionItems}
+                      onChange={val => setFilterCollection(val)}>
+                {collectionItems.map((collection, index) => (
+                  <Option value={collection.id.toString()} key={index}>
+                    {collection.title}
+                  </Option>
+                ))}
+              </Select>
+            )}
           </div>
         </InnerBlock.Header>
       </InnerTransparentBlock>
 
       <InnerBlock className={"flex-1"}>
         <div className="flex-auto">
-          {filterCollection ? (
-            <>
-              show
-            </>
+          {nftOwners && nftOwners.length > 0 ? (
+            <div className={"text-sm"}>
+              <b className={"block mb-4"}>NFT Holders for collection "{filterCollectionTitle}":</b>
+              {nftOwners.map(address => (
+                <div key={address}>
+                  <span>{address}</span>
+                  <span className={"opacity-0"}>,</span>
+                </div>
+              ))}
+            </div>
           ) : (
             <div className={"text-gray-500"}>
               Please select NFT Collection to view all NFT holders.
