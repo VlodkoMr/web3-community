@@ -28,6 +28,12 @@ export const Members = () => {
     select: data => data.map(collection => transformCollectionNFT(collection))
   });
 
+  useEffect(() => {
+
+    fetch("https://eth-mainnet.g.alchemy.com/nft/v2/{apiKey}/getNFTsForCollection")
+
+    console.log(`collectionItems`, collectionItems);
+  }, [ collectionItems ]);
 
   return (
     <div>
@@ -37,7 +43,8 @@ export const Members = () => {
           <div className="w-64 -mt-3">
             <Select label="NFT Collection*"
                     value={filterCollection}
-                    disabled={!!collectionItems}
+                    className={"bg-white"}
+                    disabled={!collectionItems}
                     onChange={val => setFilterCollection(val)}>
               {collectionItems.map((collection, index) => (
                 <Option value={collection.id.toString()} key={index}>
