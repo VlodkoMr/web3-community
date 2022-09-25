@@ -70,15 +70,17 @@ export const FungibleToken = () => {
       chainId: chain.id,
       provider
     });
-    const superToken = await sf.loadSuperToken(currentCommunity.ftContract);
-    const symbol = await superToken.symbol({ providerOrSigner: provider });
-    const supply = await superToken.totalSupply({ providerOrSigner: provider });
-    const myBalance = await superToken.balanceOf({ providerOrSigner: provider, account: address });
+    if (isContractAddress(currentCommunity.ftContract)) {
+      const superToken = await sf.loadSuperToken(currentCommunity.ftContract);
+      const symbol = await superToken.symbol({ providerOrSigner: provider });
+      const supply = await superToken.totalSupply({ providerOrSigner: provider });
+      const myBalance = await superToken.balanceOf({ providerOrSigner: provider, account: address });
 
-    setTokenSymbol(symbol);
-    setTotalSupply(supply);
-    setMyBalance(myBalance);
-    setIsTokenReady(true);
+      setTokenSymbol(symbol);
+      setTotalSupply(supply);
+      setMyBalance(myBalance);
+      setIsTokenReady(true);
+    }
   }
 
   useEffect(() => {
