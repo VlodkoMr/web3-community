@@ -38,9 +38,9 @@ module.exports = {
       url: process.env.MUMBAI_TESTNET_RPC_URL !== undefined ? process.env.MUMBAI_TESTNET_RPC_URL : "",
       accounts: process.env.MUMBAI_TESTNET_PRIVATE_KEY !== undefined ? [process.env.MUMBAI_TESTNET_PRIVATE_KEY] : [],
     },
-    polygon_mainnet: {
-      url: process.env.POLYGON_RPC_URL !== undefined ? process.env.POLYGON_RPC_URL : "",
-      accounts: process.env.POLYGON_MAINNET_PRIVATE_KEY !== undefined ? [process.env.POLYGON_MAINNET_PRIVATE_KEY] : [],
-    }
+    optimism_testnet: {
+      url: process.env.OPTIMISM_TESTNET_RPC_URL !== undefined ? process.env.OPTIMISM_TESTNET_RPC_URL : "",
+      accounts: process.env.OPTIMISM_TESTNET_PRIVATE_KEY !== undefined ? [process.env.OPTIMISM_TESTNET_PRIVATE_KEY] : [],
+    },
   }
 };

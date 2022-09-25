@@ -301,7 +301,7 @@ export function DistributionCampaignFTPopup(
               </div>
             </div>
 
-            <div className="mb-1 block text-left font-semibold mt-4 border-t pt-4">
+            <div className="mb-1 block text-left font-semibold mt-2 border-t pt-4">
               Proof of Personhood by World ID
             </div>
             <div className="bg-yellow-50 text-sm font-medium pl-2 pr-6 py-2 rounded-md border border-orange-200">
@@ -309,7 +309,7 @@ export function DistributionCampaignFTPopup(
                 <Checkbox label="Limit: 1 claim/person"
                           color="amber"
                           onChange={() => setIsLimit(!isLimit)}
-                          className="font-semibold"/>
+                          className="font-semibold bg-white"/>
                 <a href="https://worldcoin.org/"
                    className="underline pt-3 text-blue-500"
                    target="_blank">
@@ -328,7 +328,6 @@ export function DistributionCampaignFTPopup(
               )}
             </div>
 
-
             <div className="mb-1 block text-left font-semibold mt-4">
               Allow Token streaming
             </div>
@@ -337,7 +336,7 @@ export function DistributionCampaignFTPopup(
                 <Checkbox label="Stream by Superfluid"
                           color="amber"
                           onChange={() => alert('coming soon')}
-                          className="font-semibold"/>
+                          className="font-semibold bg-white"/>
                 <a href="https://superfluid.finance/"
                    className="underline pt-3 text-blue-500"
                    target="_blank">

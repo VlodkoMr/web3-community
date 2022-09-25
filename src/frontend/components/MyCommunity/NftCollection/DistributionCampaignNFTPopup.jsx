@@ -185,7 +185,7 @@ export function DistributionCampaignNFTPopup(
                   <Checkbox label="Limit: 1 NFT/person"
                             color="amber"
                             onChange={() => setIsLimit(!isLimit)}
-                            className="font-semibold"/>
+                            className="font-semibold bg-white"/>
                   <a href="https://worldcoin.org/"
                      className="underline pt-3 text-blue-500"
                      target="_blank">

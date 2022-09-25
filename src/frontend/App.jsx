@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import {
   Category, Home, Error404, CommunityPageLayout,
-  MyCommunityLayout, MyDashboard, FungibleToken, NftCollection, Settings, DAO, Members, Video, Dashboard, NFTDetails
+  MyCommunityLayout, MyDashboard, FungibleToken, NftCollection, Settings, DAO, Members, Video, Dashboard, NFTDetails, Raffle
 } from './pages';
 import { useAccount } from 'wagmi'
 import { Transaction } from './components/Transaction';
@@ -42,6 +42,7 @@ export default function App() {
               <Route exact path="settings" element={<Settings/>}/>
               <Route exact path="video" element={<Video/>}/>
               <Route exact path="dao" element={<DAO/>}/>
+              <Route exact path="raffle" element={<Raffle/>}/>
               <Route exact path="members" element={<Members/>}/>
             </Route>
 

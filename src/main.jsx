@@ -11,8 +11,8 @@ import { ThemeProvider } from "@material-tailwind/react";
 import { DevSupport } from "@react-buddy/ide-toolbox";
 import { ComponentPreviews, useInitial } from "./dev";
 
-// const chains = [chain.mainnet, chain.polygon, chain.optimism, chain.arbitrum]
-const chains = [ chain.hardhat, chain.polygonMumbai, chain.optimismGoerli ]
+// const chains = [chain.hardhat, chain.mainnet, chain.polygon, chain.optimism, chain.arbitrum]
+const chains = [ chain.polygonMumbai, chain.optimismGoerli ]
 
 const client = createClient(
   getDefaultClient({
