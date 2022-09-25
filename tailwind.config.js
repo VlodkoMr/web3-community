@@ -2,7 +2,7 @@ const withMT = require("@material-tailwind/react/utils/withMT");
 
 
 module.exports = withMT({
-  content: ["./*.html", "./src/**/*.{js,jsx,ts,tsx}"],
+  content: ["./src/**/*.{js,jsx,ts,tsx}"],
 
   theme: {
     screens: {
@@ -27,10 +27,10 @@ module.exports = withMT({
         "warning": "#FBBF24",
       },
       boxShadow: {
-        input: "0px 7px 20px rgba(0, 0, 0, 0.03)",
-        pricing: "0px 39px 23px -27px rgba(0, 0, 0, 0.04)",
+        "input": "0px 7px 20px rgba(0, 0, 0, 0.03)",
+        "pricing": "0px 39px 23px -27px rgba(0, 0, 0, 0.04)",
         "switch-1": "0px 0px 5px rgba(0, 0, 0, 0.15)",
-        testimonial: "0px 60px 120px -20px #EBEFFD",
+        "testimonial": "0px 60px 120px -20px #EBEFFD",
       },
       zIndex: {
         '100': '100',

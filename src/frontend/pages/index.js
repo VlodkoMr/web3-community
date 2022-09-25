@@ -10,6 +10,6 @@ export * from "./MyCommunity/Raffle";
 export * from "./MyCommunity/Members";
 export * from "./CommunityPage/CommunityPageLayout";
 export * from "./CommunityPage/Dashboard";
-export * from "./CommunityPage/NFTDetails";
+export * from "./CommunityPage/NftDetails";
 export * from "./Category";
 export * from "./Error404";

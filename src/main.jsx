@@ -8,8 +8,6 @@ import { ConnectKitProvider, getDefaultClient } from 'connectkit'
 import { chain } from "wagmi"
 import { Provider } from "react-redux"
 import { ThemeProvider } from "@material-tailwind/react";
-import { DevSupport } from "@react-buddy/ide-toolbox";
-import { ComponentPreviews, useInitial } from "./dev";
 
 // const chains = [chain.hardhat, chain.mainnet, chain.polygon, chain.optimism, chain.arbitrum]
 const chains = [ chain.polygonMumbai, chain.optimismGoerli ]
@@ -27,11 +25,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <ConnectKitProvider>
       <Provider store={store}>
         <ThemeProvider>
-          <DevSupport ComponentPreviews={ComponentPreviews}
-                      useInitialHook={useInitial}
-          >
-            <App/>
-          </DevSupport>
+          <App/>
         </ThemeProvider>
       </Provider>
     </ConnectKitProvider>

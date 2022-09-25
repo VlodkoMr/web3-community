@@ -4,7 +4,7 @@ import { InnerBlock, InnerTransparentBlock } from '../../assets/css/common.style
 import { Button } from "@material-tailwind/react";
 import { CreateVideoStream } from "../../components/MyCommunity/Video/CreateVideoStream";
 import { Link } from "react-router-dom";
-import { VideoPlayer } from '@livepeer/react';
+// import { VideoPlayer } from '@livepeer/react';
 
 export const Video = () => {
   const currentCommunity = useSelector(state => state.community.current);
@@ -64,13 +64,13 @@ export const Video = () => {
                       {stream.isActive ? (
                         <>
                           <h2 className="font-semibold text-green-400 pt-2 mb-2"> Now Watching: {stream.name} </h2>
-                          <VideoPlayer
-                            playbackId={`${stream.playbackId}`}
-                            className={"w-96 h-64 border-2"}
-                            autoPlay={false}
-                            loop
-                            muted
-                          />
+                          {/*<VideoPlayer*/}
+                          {/*  playbackId={`${stream.playbackId}`}*/}
+                          {/*  className={"w-96 h-64 border-2"}*/}
+                          {/*  autoPlay={false}*/}
+                          {/*  loop*/}
+                          {/*  muted*/}
+                          {/*/>*/}
                         </>
                       ) : (
                         <h2 className="font-semibold text-gray-500 pt-2">Not online</h2>
