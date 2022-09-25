@@ -20,7 +20,8 @@
     "verify:mumbai": "env $(cat .env) npx hardhat verify '0xCE887EE940278bA1DFC5287067ea0925cc21F5F6' --network mumbai_testnet",
     "build:mumbai": "cp src/frontend/contractsData/mumbai_testnet/* src/frontend/contractsData/ && npm run cleanup && NODE_ENV=testnet.mumbai npm run parcel:build",
     "deploy:polygon": "env $(cat .env) npx hardhat run src/backend/scripts/deploy.polygon.js --network polygon_mainnet",
-    "deploy:optimism": "env $(cat .env) npx hardhat run src/backend/scripts/deploy.optimism.js --network optimism_testnet",
+    "deploy:optimism": "cp src/frontend/contractsData/optimism_testnet/* src/frontend/contractsData/ && npm run cleanup && NODE_ENV=testnet.optimism npm run parcel:build",
+    "build:optimism": "env $(cat .env) npx hardhat run src/backend/scripts/deploy.optimism.js --network optimism_testnet",
     "update:polygon": "env $(cat .env) npx hardhat run src/backend/scripts/update.polygon.js --network polygon_mainnet",
     "verify:polygon": "env $(cat .env) npx hardhat verify '0x82a0434135aEABB5284A4dfEda20b8bB4a25624A' --network polygon_mainnet",
     "build:polygon": "cp src/frontend/contractsData/polygon_mainnet/* src/frontend/contractsData/ && npm run cleanup && NODE_ENV=mainnet.polygon npm run parcel:build"
